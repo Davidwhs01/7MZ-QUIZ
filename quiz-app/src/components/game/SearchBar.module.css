@@ -80,13 +80,29 @@
   top: calc(100% + 8px);
   left: 0;
   right: 0;
+  max-height: 380px;
+  overflow-y: auto;
   background: rgba(16, 16, 30, 0.95);
   border: 1px solid var(--border-orange);
   border-radius: var(--radius-md);
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6), var(--glow-orange);
-  overflow: hidden;
   animation: slideDown 200ms ease;
   backdrop-filter: blur(16px);
+}
+
+/* Custom scrollbar for dropdown */
+.dropdown::-webkit-scrollbar {
+  width: 8px;
+}
+.dropdown::-webkit-scrollbar-track {
+  background: transparent;
+}
+.dropdown::-webkit-scrollbar-thumb {
+  background: rgba(255, 107, 43, 0.3);
+  border-radius: 4px;
+}
+.dropdown::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 107, 43, 0.6);
 }
 
 .dropdownItem {

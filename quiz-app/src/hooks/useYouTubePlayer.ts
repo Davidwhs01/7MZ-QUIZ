@@ -117,6 +117,30 @@ export function useYouTubePlayer(containerId: string, options?: UseYouTubePlayer
     }, durationSeconds * 1000);
   }, []);
 
+  // Load a video silently and return its real duration
+  const getRealDuration = useCallback((videoId: string): Promise<number> => {
+    return new Promise((resolve) => {
+      if (!playerRef.current) { resolve(0); return; }
+
+      // Mute, load at 0, then poll getDuration
+      const prevVol = playerRef.current.getVolume?.() ?? 70;
+      playerRef.current.setVolume(0);
+      playerRef.current.loadVideoById({ videoId, startSeconds: 0 });
+
+      let attempts = 0;
+      const poll = setInterval(() => {
+        attempts++;
+        const dur = playerRef.current?.getDuration?.() ?? 0;
+        if (dur > 0 || attempts > 40) {  // max ~4 seconds of polling
+          clearInterval(poll);
+          playerRef.current?.pauseVideo();
+          playerRef.current?.setVolume(prevVol);
+          resolve(dur > 0 ? dur : 240); // fallback 4min
+        }
+      }, 100);
+    });
+  }, []);
+
   const replay = useCallback((
     videoId: string,
     startSeconds: number,
@@ -156,6 +180,7 @@ export function useYouTubePlayer(containerId: string, options?: UseYouTubePlayer
     volume,
     changeVolume,
     loadAndPlay,
+    getRealDuration,
     replay,
     pause,
     stop,

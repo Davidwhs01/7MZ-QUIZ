@@ -1,195 +1,206 @@
+export type SongCategory = 'NERD HITS' | '7MZ RECORDS';
+
 export interface Song {
   id: string;
   title: string;
   youtubeId: string;
-  duration: number; // seconds
+  duration: number; // 0 = use getRealDuration() at runtime
+  category: SongCategory;
   anime?: string;
-  album?: string;
-  year?: number;
   searchTerms: string[];
 }
 
-// 7 Minutoz songs with verified YouTube IDs
+// ============================================================
+// 172 songs scraped from the official NERD HITS playlist:
+// https://www.youtube.com/playlist?list=PL-BkHM-E3ctUqvJYhFb0R2RFPPg7AaP8J
+// Duration is fetched at runtime via YouTube API getDuration()
+// Category: NERD HITS = classic "Rap do X" format
+//           7MZ RECORDS = newer standalone releases
+// ============================================================
 export const songs: Song[] = [
-  // === User-verified IDs ===
-  {
-    id: "l-death-note",
-    title: "Rap do L (Death Note) - O Maior Detetive",
-    youtubeId: "fCtWj7X31jE",
-    duration: 280,
-    anime: "Death Note",
-    searchTerms: ["l", "death note", "maior detetive", "lawliet"]
-  },
-  {
-    id: "doflamingo",
-    title: "Rap do Doflamingo (One Piece) - Um Rei",
-    youtubeId: "6CXJ61UaDhE",
-    duration: 290,
-    anime: "One Piece",
-    searchTerms: ["doflamingo", "one piece", "um rei", "doffy"]
-  },
-  {
-    id: "akatsuki",
-    title: "Rap da Akatsuki - Os Ninjas Mais Procurados do Mundo",
-    youtubeId: "-oYMo8k22Vw",
-    duration: 355,
-    anime: "Naruto",
-    album: "JINCHUURIKI",
-    year: 2020,
-    searchTerms: ["akatsuki", "ninjas mais procurados", "naruto"]
-  },
-  {
-    id: "nagato",
-    title: "Rap do Nagato (Naruto) - Minha Dor",
-    youtubeId: "iUM3YdqwgPg",
-    duration: 285,
-    anime: "Naruto",
-    searchTerms: ["nagato", "minha dor", "naruto", "pain"]
-  },
-  {
-    id: "itachi",
-    title: "Rap do Itachi (Naruto) - Essa Dor Que Causei",
-    youtubeId: "zs_zpMnwNMs",
-    duration: 290,
-    anime: "Naruto",
-    year: 2017,
-    searchTerms: ["itachi", "dor que causei", "naruto", "uchiha"]
-  },
-  {
-    id: "chopper",
-    title: "Rap do Chopper (One Piece) - Sou Um Monstro",
-    youtubeId: "ZJoHrBYg-iQ",
-    duration: 265,
-    anime: "One Piece",
-    searchTerms: ["chopper", "one piece", "sou um monstro", "tony tony"]
-  },
-  {
-    id: "deidara",
-    title: "Rap do Deidara (Naruto) - A Arte É a Explosão",
-    youtubeId: "y2LqIojs2wc",
-    duration: 275,
-    anime: "Naruto",
-    searchTerms: ["deidara", "arte", "explosão", "naruto", "akatsuki"]
-  },
-  {
-    id: "pain-shinra",
-    title: "Rap do Nagato / Pain (Naruto) - Shinra Tensei",
-    youtubeId: "KN4Tnp6XcGk",
-    duration: 300,
-    anime: "Naruto",
-    searchTerms: ["pain", "nagato", "shinra tensei", "naruto"]
-  },
-  {
-    id: "coringas",
-    title: "Rap dos Coringas - Circo dos Horrores",
-    youtubeId: "qMNX3FJh4Z4",
-    duration: 320,
-    anime: "DC Comics",
-    year: 2019,
-    searchTerms: ["coringas", "circo dos horrores", "coringa", "joker"]
-  },
-  {
-    id: "hokages",
-    title: "Rap dos Hokages (Naruto) - A Vontade do Fogo",
-    youtubeId: "W8dWDjwkMDw",
-    duration: 345,
-    anime: "Naruto",
-    year: 2019,
-    searchTerms: ["hokages", "vontade do fogo", "naruto"]
-  },
-  {
-    id: "gachiakuta",
-    title: "Rudo Surebrec (Gachiakuta) - Do Paraíso ao Inferno",
-    youtubeId: "qeZCx2u_Uz0",
-    duration: 260,
-    anime: "Gachiakuta",
-    year: 2024,
-    searchTerms: ["gachiakuta", "rudo", "surebrec", "paraíso", "inferno"]
-  },
-  {
-    id: "mahito",
-    title: "Mahito ft. Small (Novatroop)",
-    youtubeId: "ayIn3hFDFYg",
-    duration: 265,
-    anime: "Jujutsu Kaisen",
-    year: 2021,
-    searchTerms: ["mahito", "jujutsu kaisen", "novatroop", "small"]
-  },
-  {
-    id: "itadori",
-    title: "Itadori ft. M4rkim",
-    youtubeId: "tTAOA8POclQ",
-    duration: 275,
-    anime: "Jujutsu Kaisen",
-    year: 2021,
-    searchTerms: ["itadori", "yuji", "jujutsu kaisen", "m4rkim"]
-  },
-  {
-    id: "satoru-gojo",
-    title: "Satoru Gojo ft. Henrique Mendonça",
-    youtubeId: "fu9dCuPRFHY",
-    duration: 295,
-    anime: "Jujutsu Kaisen",
-    year: 2021,
-    searchTerms: ["gojo", "satoru", "mais forte", "jujutsu kaisen", "henrique"]
-  },
-  {
-    id: "judas",
-    title: "Judas",
-    youtubeId: "6b02hELah9Y",
-    duration: 250,
-    year: 2023,
-    searchTerms: ["judas"]
-  },
-  {
-    id: "sukuna",
-    title: "Sukuna ft. Basara",
-    youtubeId: "wViRL-63XJk",
-    duration: 270,
-    anime: "Jujutsu Kaisen",
-    year: 2022,
-    searchTerms: ["sukuna", "ryomen", "jujutsu kaisen", "basara", "rei das maldições"]
-  },
-  {
-    id: "zoro",
-    title: "Rap do Zoro (One Piece) - O Maior Espadachim do Mundo",
-    youtubeId: "YLif14qUxg0",
-    duration: 285,
-    anime: "One Piece",
-    searchTerms: ["zoro", "one piece", "espadachim", "roronoa"]
-  },
-  {
-    id: "ban",
-    title: "Rap do Ban (Nanatsu no Taizai) - O Pecado da Ganância",
-    youtubeId: "dUoWRyZiVaA",
-    duration: 280,
-    anime: "Nanatsu no Taizai",
-    searchTerms: ["ban", "nanatsu", "pecado", "ganância", "seven deadly sins"]
-  },
-  {
-    id: "sasuke-renegado",
-    title: "Rap do Sasuke - O Renegado",
-    youtubeId: "r1blNSgRD00",
-    duration: 285,
-    anime: "Naruto",
-    searchTerms: ["sasuke", "renegado", "naruto", "uchiha"]
-  },
-  {
-    id: "sasuke-maldicao",
-    title: "Rap do Sasuke (Naruto) - Maldição do Ódio",
-    youtubeId: "WYJ2hKTXKWA",
-    duration: 285,
-    anime: "Naruto",
-    year: 2018,
-    searchTerms: ["sasuke", "maldição", "ódio", "naruto", "uchiha"]
-  },
+  { id: "draken", title: "Rap do Draken (Tokyo Revengers) - Cuidado com o Dragão", youtubeId: "0cVRlCgMycM", duration: 0, category: 'NERD HITS', anime: "Tokyo Revengers", searchTerms: ["draken", "tokyo revengers", "dragão"] },
+  { id: "mikey", title: "Rap do Mikey (Tokyo Revengers) - O Invencível", youtubeId: "ALA7CoagMUk", duration: 0, category: 'NERD HITS', anime: "Tokyo Revengers", searchTerms: ["mikey", "tokyo revengers", "invencível"] },
+  { id: "takemichi", title: "Rap do Takemichi (Tokyo Revengers) - Lágrimas e Sangue", youtubeId: "lB6EY3nYbdM", duration: 0, category: 'NERD HITS', anime: "Tokyo Revengers", searchTerms: ["takemichi", "tokyo revengers", "lágrimas", "sangue"] },
+  { id: "sharingan", title: "Rap do Sharingan (Naruto) - Cuidado com os Meus Olhos", youtubeId: "ZRDvW2QhEw8", duration: 0, category: 'NERD HITS', anime: "Naruto", searchTerms: ["sharingan", "naruto", "olhos"] },
+  { id: "naruto-kurama", title: "Rap do Naruto e Kurama (Boruto) - Nosso Adeus", youtubeId: "VpZSoY99mUY", duration: 0, category: 'NERD HITS', anime: "Boruto", searchTerms: ["naruto", "kurama", "boruto", "adeus"] },
+  { id: "circo-horrores-2", title: "Rap do Coringa, Arlequina, Hisoka e Pennywise - Circo dos Horrores 2", youtubeId: "bI3IJ8jJJPo", duration: 0, category: 'NERD HITS', anime: "DC Comics", searchTerms: ["coringa", "arlequina", "hisoka", "pennywise", "circo", "horrores"] },
+  { id: "joel-ellie", title: "Rap do Joel e Ellie (The Last of Us) - Os Últimos de Nós", youtubeId: "YYA-0j8JyTg", duration: 0, category: 'NERD HITS', anime: "The Last of Us", searchTerms: ["joel", "ellie", "last of us", "últimos"] },
+  { id: "poder-ira-2", title: "Rap do Broly, Kyuubi e Levi - O Poder da Minha Ira 2", youtubeId: "AzppuJHCDVQ", duration: 0, category: 'NERD HITS', searchTerms: ["broly", "kyuubi", "levi", "poder", "ira"] },
+  { id: "minato-naruto", title: "Rap do Minato e Naruto - A Canção de Pai e Filho", youtubeId: "O7p4ZE6n9Ys", duration: 0, category: 'NERD HITS', anime: "Naruto", searchTerms: ["minato", "naruto", "pai", "filho", "canção"] },
+  { id: "gojo-jjk", title: "Rap do Satoru Gojo (Jujutsu Kaisen) - Mais Poderoso Desse Mundo Todo", youtubeId: "RVG0qs7eMNE", duration: 0, category: 'NERD HITS', anime: "Jujutsu Kaisen", searchTerms: ["gojo", "satoru", "jujutsu kaisen", "poderoso"] },
+  { id: "itadori-sukuna-jjk", title: "Rap do Itadori Yuji e Sukuna (Jujutsu Kaisen) - Receptáculo do Rei das Maldições", youtubeId: "BO3jhSY4HyI", duration: 0, category: 'NERD HITS', anime: "Jujutsu Kaisen", searchTerms: ["itadori", "yuji", "sukuna", "jujutsu kaisen", "maldições"] },
+  { id: "scorpion-subzero", title: "Rap do Scorpion e Sub-Zero (Mortal Kombat) - Rivais", youtubeId: "JZpqp6OLe3U", duration: 0, category: 'NERD HITS', anime: "Mortal Kombat", searchTerms: ["scorpion", "sub-zero", "mortal kombat", "rivais"] },
+  { id: "ichigo", title: "Rap do Ichigo (Bleach) - Eu Sou um Shinigami", youtubeId: "vrBjtC3blsA", duration: 0, category: 'NERD HITS', anime: "Bleach", searchTerms: ["ichigo", "bleach", "shinigami"] },
+  { id: "kirito", title: "Rap do Kirito (Sword Art Online) - O Espadachim Negro", youtubeId: "jfLHgN_1dLU", duration: 0, category: 'NERD HITS', anime: "Sword Art Online", searchTerms: ["kirito", "sword art online", "sao", "espadachim negro"] },
+  { id: "natsu", title: "Rap do Natsu (Fairy Tail) - Como Se Eu Fosse um Dragão", youtubeId: "nCV4O8UfXVI", duration: 0, category: 'NERD HITS', anime: "Fairy Tail", searchTerms: ["natsu", "fairy tail", "dragão"] },
+  { id: "omni-man", title: "Rap do Omni-Man (Invencível) - Olhem Pro Céu", youtubeId: "PAGxkdAe2fg", duration: 0, category: 'NERD HITS', anime: "Invencível", searchTerms: ["omni-man", "invencível", "céu"] },
+  { id: "invencivel", title: "Rap do Invencível - O Mundo Vai Me Chamar de Herói", youtubeId: "ne2vCwhN2Wg", duration: 0, category: 'NERD HITS', anime: "Invencível", searchTerms: ["invencível", "herói", "mark grayson"] },
+  { id: "killua", title: "Rap do Killua (Hunter x Hunter) - Meu Nome Começa com Kill", youtubeId: "3OaW85ZB3_M", duration: 0, category: 'NERD HITS', anime: "Hunter x Hunter", searchTerms: ["killua", "hunter x hunter", "kill", "zoldyck"] },
+  { id: "homens-aranha", title: "Rap dos Homens-Aranha - Nem Todo Mundo Nasce Herói", youtubeId: "FzsvnVOIV3c", duration: 0, category: 'NERD HITS', anime: "Marvel", searchTerms: ["homem-aranha", "herói", "aranha"] },
+  { id: "todoroki", title: "Rap do Todoroki (Boku no Hero) - Fogo e Gelo", youtubeId: "xUnBXpi3bpI", duration: 0, category: 'NERD HITS', anime: "Boku no Hero Academia", searchTerms: ["todoroki", "boku no hero", "fogo", "gelo", "shoto"] },
+  { id: "endeavor", title: "Rap do Endeavor (Boku no Hero) - O Novo Number One", youtubeId: "5oXtgMhWA4w", duration: 0, category: 'NERD HITS', anime: "Boku no Hero Academia", searchTerms: ["endeavor", "boku no hero", "number one"] },
+  { id: "mirio", title: "Rap do Mirio (Boku no Hero) - Vou Salvar 1 Milhão", youtubeId: "ffy4SNMFWi4", duration: 0, category: 'NERD HITS', anime: "Boku no Hero Academia", searchTerms: ["mirio", "boku no hero", "milhão", "lemillion"] },
+  { id: "bakugou", title: "Rap do Bakugou (Boku no Hero) - Eu Vou Ser o Herói Número 1", youtubeId: "ULQbJTwZqn0", duration: 0, category: 'NERD HITS', anime: "Boku no Hero Academia", searchTerms: ["bakugou", "boku no hero", "herói", "katsuki"] },
+  { id: "sem-poderes", title: "Rap do Homem de Ferro, Batman e Arqueiro Verde - Sem Poderes", youtubeId: "P-hkqYetpHs", duration: 0, category: 'NERD HITS', anime: "DC Comics", searchTerms: ["homem de ferro", "batman", "arqueiro verde", "sem poderes"] },
+  { id: "miles-morales", title: "Rap do Miles Morales (Aranhaverso) - O Novo Homem-Aranha", youtubeId: "kljHo1symEI", duration: 0, category: 'NERD HITS', anime: "Aranhaverso", searchTerms: ["miles morales", "aranhaverso", "homem-aranha"] },
+  { id: "ace", title: "Rap do Ace (One Piece) - Punhos de Fogo", youtubeId: "6syTF_BjTcw", duration: 0, category: 'NERD HITS', anime: "One Piece", searchTerms: ["ace", "one piece", "punhos", "fogo", "portgas"] },
+  { id: "sanji", title: "Rap do Sanji (One Piece) - Apenas um Trago", youtubeId: "OgXC6-r_C3Q", duration: 0, category: 'NERD HITS', anime: "One Piece", searchTerms: ["sanji", "one piece", "trago"] },
+  { id: "doflamingo", title: "Rap do Doflamingo (One Piece) - Um Rei", youtubeId: "6CXJ61UaDhE", duration: 0, category: 'NERD HITS', anime: "One Piece", searchTerms: ["doflamingo", "one piece", "rei", "doffy"] },
+  { id: "zoro", title: "Rap do Zoro (One Piece) - O Maior Espadachim do Mundo", youtubeId: "EUMNqA-KM5U", duration: 0, category: 'NERD HITS', anime: "One Piece", searchTerms: ["zoro", "one piece", "espadachim", "roronoa"] },
+  { id: "zabuza", title: "Rap do Zabuza (Naruto) - O Demônio da Névoa Oculta", youtubeId: "S26b5dIx2VU", duration: 0, category: 'NERD HITS', anime: "Naruto", searchTerms: ["zabuza", "naruto", "demônio", "névoa"] },
+  { id: "killer-bee-raikage", title: "Rap do Killer Bee e Raikage (Naruto) - Double Lariat", youtubeId: "w1kUPXoV-WA", duration: 0, category: 'NERD HITS', anime: "Naruto", searchTerms: ["killer bee", "raikage", "naruto", "double lariat"] },
+  { id: "tobirama", title: "Rap do Tobirama (Naruto) - Segundo Hokage", youtubeId: "EsHJHxMQIGM", duration: 0, category: 'NERD HITS', anime: "Naruto", searchTerms: ["tobirama", "naruto", "hokage", "segundo"] },
+  { id: "kisame", title: "Rap do Kisame (Naruto) - Uma Bijuu Sem Cauda", youtubeId: "6rFsxilCbIc", duration: 0, category: 'NERD HITS', anime: "Naruto", searchTerms: ["kisame", "naruto", "bijuu", "akatsuki"] },
+  { id: "hidan", title: "Rap do Hidan (Naruto) - Vai Começar o Ritual", youtubeId: "8InAw9TnINQ", duration: 0, category: 'NERD HITS', anime: "Naruto", searchTerms: ["hidan", "naruto", "ritual", "akatsuki"] },
+  { id: "hokages", title: "Rap dos Hokages (Naruto) - A Vontade do Fogo", youtubeId: "W8dWDjwkMDw", duration: 0, category: 'NERD HITS', anime: "Naruto", searchTerms: ["hokages", "naruto", "vontade", "fogo"] },
+  { id: "sasuke-itachi", title: "Rap do Sasuke e Itachi (Naruto) - A Canção dos Renegados", youtubeId: "F_edwYXyowc", duration: 0, category: 'NERD HITS', anime: "Naruto", searchTerms: ["sasuke", "itachi", "naruto", "renegados", "uchiha"] },
+  { id: "edward-elric", title: "Rap do Edward Elric (Fullmetal Alchemist) - Troca Equivalente", youtubeId: "PYRE6bOlrno", duration: 0, category: 'NERD HITS', anime: "Fullmetal Alchemist", searchTerms: ["edward", "elric", "fullmetal", "troca equivalente"] },
+  { id: "gon", title: "Rap do Gon (Hunter x Hunter) - Quero Ser um Caçador", youtubeId: "DLgOtrYk8tA", duration: 0, category: 'NERD HITS', anime: "Hunter x Hunter", searchTerms: ["gon", "hunter x hunter", "caçador", "freecss"] },
+  { id: "tanjiro", title: "Rap do Tanjiro (Demon Slayer) - Filho do Sol", youtubeId: "pUCOziorxHw", duration: 0, category: 'NERD HITS', anime: "Demon Slayer", searchTerms: ["tanjiro", "demon slayer", "kimetsu", "sol"] },
+  { id: "luffy-rei", title: "Rap do Luffy (One Piece) - Rei dos Piratas", youtubeId: "hgTuSp_qF0Q", duration: 0, category: 'NERD HITS', anime: "One Piece", searchTerms: ["luffy", "one piece", "rei", "piratas"] },
+  { id: "asta-rei-mago", title: "Rap do Asta (Black Clover) - Eu Vou Ser o Rei Mago", youtubeId: "QDLVSyBQHDU", duration: 0, category: 'NERD HITS', anime: "Black Clover", searchTerms: ["asta", "black clover", "rei mago"] },
+  { id: "near-mello", title: "Rap do Near e Mello (Death Note) - O Sucessor do L", youtubeId: "0fip0Jce2nU", duration: 0, category: 'NERD HITS', anime: "Death Note", searchTerms: ["near", "mello", "death note", "sucessor"] },
+  { id: "l-death-note", title: "Rap do L (Death Note) - O Maior Detetive", youtubeId: "fCtWj7X31jE", duration: 0, category: 'NERD HITS', anime: "Death Note", searchTerms: ["l", "death note", "detetive", "lawliet"] },
+  { id: "kira", title: "Rap do Kira (Death Note) - O Deus do Novo Mundo", youtubeId: "cJA8371FeOA", duration: 0, category: 'NERD HITS', anime: "Death Note", searchTerms: ["kira", "light", "death note", "deus", "yagami"] },
+  { id: "time-7", title: "Rap do Kakashi, Naruto, Sasuke e Sakura - Time 7", youtubeId: "SkdtL4OPzB0", duration: 0, category: 'NERD HITS', anime: "Naruto", searchTerms: ["kakashi", "naruto", "sasuke", "sakura", "time 7"] },
+  { id: "cavaleiros-zodiaco", title: "Rap dos Cavaleiros do Zodíaco - Por Atena", youtubeId: "5d2HD3AugAo", duration: 0, category: 'NERD HITS', anime: "Cavaleiros do Zodíaco", searchTerms: ["cavaleiros", "zodíaco", "atena", "saint seiya"] },
+  { id: "momentos-quem-se-foi-2", title: "Rap do Capitão América, Thor e Gavião Arqueiro - Momentos com Quem Se Foi 2", youtubeId: "lEqa9F-yg4k", duration: 0, category: 'NERD HITS', anime: "Marvel", searchTerms: ["capitão américa", "thor", "gavião", "momentos"] },
+  { id: "cruel-2", title: "Rap do Freeza, Cell e Majin Boo - O Quanto Eu Posso Ser Cruel 2", youtubeId: "P4SNlVBMGH8", duration: 0, category: 'NERD HITS', anime: "Dragon Ball Z", searchTerms: ["freeza", "cell", "majin boo", "cruel"] },
+  { id: "destruidor-mundos", title: "Rap da Kaguya, Bills e Galactus - Destruidor de Mundos", youtubeId: "cj2gAo1FruE", duration: 0, category: 'NERD HITS', searchTerms: ["kaguya", "bills", "galactus", "destruidor"] },
+  { id: "majin-boo", title: "Rap do Majin Boo (Dragon Ball Z) - Eu Sou um Caos", youtubeId: "6gl9NGD01eI", duration: 0, category: 'NERD HITS', anime: "Dragon Ball Z", searchTerms: ["majin boo", "dragon ball", "caos"] },
+  { id: "jiren", title: "Rap do Jiren (Dragon Ball Super) - Mais Forte que uma Divindade", youtubeId: "6QdRop70Sbo", duration: 0, category: 'NERD HITS', anime: "Dragon Ball Super", searchTerms: ["jiren", "dragon ball", "divindade"] },
+  { id: "thanos-ultimato", title: "Rap do Thanos (Vingadores: Ultimato) - Eu Sou Inevitável", youtubeId: "EiGeQ2dVdh8", duration: 0, category: 'NERD HITS', anime: "Vingadores: Ultimato", searchTerms: ["thanos", "vingadores", "ultimato", "inevitável"] },
+  { id: "shikamaru", title: "Rap do Shikamaru (Naruto) - Cuidado com as Sombras", youtubeId: "J52kqPXw4e0", duration: 0, category: 'NERD HITS', anime: "Naruto", searchTerms: ["shikamaru", "naruto", "sombras", "nara"] },
+  { id: "kakashi-obito-rin", title: "Rap do Kakashi, Obito e Rin (Naruto) - Ninjas Merecem Perdão", youtubeId: "SAhdAyMMB3o", duration: 0, category: 'NERD HITS', anime: "Naruto", searchTerms: ["kakashi", "obito", "rin", "naruto", "perdão"] },
+  { id: "akatsuki", title: "Rap da Akatsuki (Naruto) - Os Ninjas Mais Procurados do Mundo", youtubeId: "-oYMo8k22Vw", duration: 0, category: 'NERD HITS', anime: "Naruto", searchTerms: ["akatsuki", "naruto", "ninjas", "procurados"] },
+  { id: "deidara", title: "Rap do Deidara (Naruto) - A Arte É a Explosão", youtubeId: "y2LqIojs2wc", duration: 0, category: 'NERD HITS', anime: "Naruto", searchTerms: ["deidara", "naruto", "arte", "explosão", "akatsuki"] },
+  { id: "naruto-setimo", title: "Rap do Naruto - O Sétimo Hokage", youtubeId: "ObQMysW58NA", duration: 0, category: 'NERD HITS', anime: "Naruto", searchTerms: ["naruto", "sétimo", "hokage"] },
+  { id: "doutor-estranho", title: "Rap do Doutor Estranho - Mago Supremo do Universo", youtubeId: "AW7JllAXiBc", duration: 0, category: 'NERD HITS', anime: "Marvel", searchTerms: ["doutor estranho", "mago", "supremo", "strange"] },
+  { id: "deadpool", title: "Rap do Deadpool - O Mercenário Tagarela", youtubeId: "ZjEjCSvozHU", duration: 0, category: 'NERD HITS', anime: "Marvel", searchTerms: ["deadpool", "mercenário", "tagarela"] },
+  { id: "saitama-mais-forte", title: "Rap do Saitama (One Punch Man) - O Homem Mais Forte", youtubeId: "NlQpa0ifFy8", duration: 0, category: 'NERD HITS', anime: "One Punch Man", searchTerms: ["saitama", "one punch man", "mais forte"] },
+  { id: "goku-deus", title: "Rap do Goku (Dragon Ball Super) - Deus Super Saiyajin", youtubeId: "SoEp7GCsNvc", duration: 0, category: 'NERD HITS', anime: "Dragon Ball Super", searchTerms: ["goku", "dragon ball", "deus", "saiyajin"] },
+  { id: "gaara-caixao", title: "Rap do Gaara (Naruto) - Caixão de Areia", youtubeId: "56oSoyN-kTY", duration: 0, category: 'NERD HITS', anime: "Naruto", searchTerms: ["gaara", "naruto", "caixão", "areia"] },
+  { id: "coringas", title: "Rap dos Coringas - Circo dos Horrores", youtubeId: "qMNX3FJh4Z4", duration: 0, category: 'NERD HITS', anime: "DC Comics", searchTerms: ["coringas", "circo", "horrores", "coringa", "joker"] },
+  { id: "superman", title: "Rap do Superman - Homem de Aço", youtubeId: "M7Ood7SL5UI", duration: 0, category: 'NERD HITS', anime: "DC Comics", searchTerms: ["superman", "homem de aço"] },
+  { id: "batman-trevas", title: "Rap do Batman - Cavaleiro das Trevas", youtubeId: "cqXV6jYhlFY", duration: 0, category: 'NERD HITS', anime: "DC Comics", searchTerms: ["batman", "cavaleiro", "trevas"] },
+  { id: "flash", title: "Rap do Flash - O Homem Mais Rápido do Mundo", youtubeId: "tKtV1InzvWM", duration: 0, category: 'NERD HITS', anime: "DC Comics", searchTerms: ["flash", "rápido", "velocidade"] },
+  { id: "aquaman", title: "Rap do Aquaman - O Rei do Mar", youtubeId: "ce4EP8tj5es", duration: 0, category: 'NERD HITS', anime: "DC Comics", searchTerms: ["aquaman", "rei", "mar"] },
+  { id: "animal", title: "Rap do Gaara, Venom e Wolverine - Animal", youtubeId: "3v9lztbA5kM", duration: 0, category: 'NERD HITS', anime: "Marvel", searchTerms: ["gaara", "venom", "wolverine", "animal"] },
+  { id: "aranha-longe-casa", title: "Rap do Homem-Aranha (Longe de Casa) - Eu Te Amo Mil Milhões", youtubeId: "ZrYLl_NbUFM", duration: 0, category: 'NERD HITS', anime: "Longe de Casa", searchTerms: ["homem-aranha", "longe de casa", "mil milhões"] },
+  { id: "cap-ultimato", title: "Rap do Capitão América (Vingadores: Ultimato) - Eu Vou Me Vingar", youtubeId: "bQhpa6hYxQU", duration: 0, category: 'NERD HITS', anime: "Vingadores: Ultimato", searchTerms: ["capitão américa", "vingadores", "ultimato", "vingar"] },
+  { id: "thor-ultimato", title: "Rap do Thor (Vingadores: Ultimato) - Eu Ainda Sou Digno", youtubeId: "zWM4qq3MzFE", duration: 0, category: 'NERD HITS', anime: "Vingadores: Ultimato", searchTerms: ["thor", "vingadores", "ultimato", "digno"] },
+  { id: "iron-man-ultimato", title: "Rap do Homem de Ferro (Vingadores: Ultimato) - Eu Sou o Homem de Ferro", youtubeId: "R-9hB553mz4", duration: 0, category: 'NERD HITS', anime: "Vingadores: Ultimato", searchTerms: ["homem de ferro", "iron man", "vingadores", "ultimato"] },
+  { id: "luffy-natsu-ichigo", title: "Rap do Luffy, Natsu e Ichigo - É Isso Que Me Faz um Herói", youtubeId: "KjmEh-S2Rw0", duration: 0, category: 'NERD HITS', searchTerms: ["luffy", "natsu", "ichigo", "herói"] },
+  { id: "midoriya", title: "Rap do Midoriya (Boku no Hero) - Eu Sempre Fui um Herói", youtubeId: "1lxX51Awaic", duration: 0, category: 'NERD HITS', anime: "Boku no Hero Academia", searchTerms: ["midoriya", "deku", "boku no hero", "herói"] },
+  { id: "chucky", title: "Rap do Chucky (Brinquedo Assassino) - Vou Brincar Com Você", youtubeId: "Cdi1ycawK6c", duration: 0, category: 'NERD HITS', anime: "Brinquedo Assassino", searchTerms: ["chucky", "brinquedo assassino", "brincar"] },
+  { id: "jeff-killer", title: "Rap do Jeff The Killer (Creepypasta) - O Jeff Chegou", youtubeId: "6hmPOWq8SLg", duration: 0, category: 'NERD HITS', anime: "Creepypasta", searchTerms: ["jeff", "killer", "creepypasta"] },
+  { id: "freddy-krueger", title: "Rap do Freddy Krueger (Hora do Pesadelo) - O Senhor dos Pesadelos", youtubeId: "Gu0lKn1xFQw", duration: 0, category: 'NERD HITS', anime: "Hora do Pesadelo", searchTerms: ["freddy", "krueger", "pesadelo"] },
+  { id: "jason", title: "Rap do Jason (Sexta-Feira 13) - A Noite de Caça Começou", youtubeId: "Z_8PUABBX5c", duration: 0, category: 'NERD HITS', anime: "Sexta-Feira 13", searchTerms: ["jason", "sexta-feira 13", "caça"] },
+  { id: "shisui", title: "Rap do Shisui (Naruto) - Meu Sacrifício", youtubeId: "dET5ZzBSJv8", duration: 0, category: 'NERD HITS', anime: "Naruto", searchTerms: ["shisui", "naruto", "sacrifício", "uchiha"] },
+  { id: "tsunade", title: "Rap da Tsunade (Naruto) - Quinta Hokage", youtubeId: "XGUt6klmgp4", duration: 0, category: 'NERD HITS', anime: "Naruto", searchTerms: ["tsunade", "naruto", "quinta", "hokage"] },
+  { id: "hashirama", title: "Rap do Hashirama (Naruto) - O Primeiro Hokage", youtubeId: "S8iYNNpKvCw", duration: 0, category: 'NERD HITS', anime: "Naruto", searchTerms: ["hashirama", "naruto", "primeiro", "hokage", "senju"] },
+  { id: "madara", title: "Rap do Madara (Naruto) - Me Tornei um Deus", youtubeId: "fMut2esOT5w", duration: 0, category: 'NERD HITS', anime: "Naruto", searchTerms: ["madara", "naruto", "deus", "uchiha"] },
+  { id: "obito", title: "Rap do Obito (Naruto) - Mais Ninguém Vai Sofrer o Que Eu Sofri", youtubeId: "1mwTKq_6tCo", duration: 0, category: 'NERD HITS', anime: "Naruto", searchTerms: ["obito", "naruto", "sofrer", "uchiha", "tobi"] },
+  { id: "vegeta", title: "Rap do Vegeta (Dragon Ball Z) - Pura Maldade", youtubeId: "yDj-2M08Ky0", duration: 0, category: 'NERD HITS', anime: "Dragon Ball Z", searchTerms: ["vegeta", "dragon ball", "maldade", "príncipe", "saiyajin"] },
+  { id: "kratos", title: "Rap do Kratos (God of War) - Eu Sou um Deus", youtubeId: "y0z5OIatnyE", duration: 0, category: 'NERD HITS', anime: "God of War", searchTerms: ["kratos", "god of war", "deus"] },
+  { id: "meliodas-ban-escanor", title: "Rap do Meliodas, Ban e Escanor (Nanatsu no Taizai) - O Pecado Mais Forte", youtubeId: "yQh6NTeKEFo", duration: 0, category: 'NERD HITS', anime: "Nanatsu no Taizai", searchTerms: ["meliodas", "ban", "escanor", "nanatsu", "pecado"] },
+  { id: "diane", title: "Rap da Diane (Nanatsu no Taizai) - O Pecado da Inveja", youtubeId: "eW-lAKG6X_s", duration: 0, category: 'NERD HITS', anime: "Nanatsu no Taizai", searchTerms: ["diane", "nanatsu", "inveja", "pecado"] },
+  { id: "gowther", title: "Rap do Gowther (Nanatsu no Taizai) - Eu Não Tenho Coração", youtubeId: "r0uzxJrkUz4", duration: 0, category: 'NERD HITS', anime: "Nanatsu no Taizai", searchTerms: ["gowther", "nanatsu", "coração", "pecado"] },
+  { id: "zeldris", title: "Rap do Zeldris (Nanatsu no Taizai) - O Mandamento da Piedade", youtubeId: "kF39d4n-j-c", duration: 0, category: 'NERD HITS', anime: "Nanatsu no Taizai", searchTerms: ["zeldris", "nanatsu", "mandamento", "piedade"] },
+  { id: "vingadores-ultimato", title: "Rap dos Vingadores: Ultimato - Custe o Que Custar", youtubeId: "eePyfPp1Y9U", duration: 0, category: 'NERD HITS', anime: "Marvel", searchTerms: ["vingadores", "ultimato", "custe"] },
+  { id: "sasuke-maldicao", title: "Rap do Sasuke (Naruto) - Maldição do Ódio", youtubeId: "WYJ2hKTXKWA", duration: 0, category: 'NERD HITS', anime: "Naruto", searchTerms: ["sasuke", "naruto", "maldição", "ódio", "uchiha"] },
+  { id: "estarossa", title: "Rap do Estarossa (Nanatsu no Taizai) - O Mandamento do Amor", youtubeId: "h7rWDisgvK0", duration: 0, category: 'NERD HITS', anime: "Nanatsu no Taizai", searchTerms: ["estarossa", "nanatsu", "mandamento", "amor"] },
+  { id: "hulk", title: "Rap do Hulk - Tô Sempre com Raiva", youtubeId: "HyqqCuBtpvA", duration: 0, category: 'NERD HITS', anime: "Marvel", searchTerms: ["hulk", "raiva", "bruce banner"] },
+  { id: "iron-man", title: "Rap do Homem de Ferro - I Am Iron Man", youtubeId: "g6xTDPc6Hh0", duration: 0, category: 'NERD HITS', anime: "Marvel", searchTerms: ["homem de ferro", "iron man", "tony stark"] },
+  { id: "broly", title: "Rap do Broly (Dragon Ball Z) - Lendário Super Saiyajin", youtubeId: "vOCzCfPH5EQ", duration: 0, category: 'NERD HITS', anime: "Dragon Ball Z", searchTerms: ["broly", "dragon ball", "lendário", "saiyajin"] },
+  { id: "cap-america", title: "Rap do Capitão América - O Primeiro Vingador", youtubeId: "DWZwIMZmPNs", duration: 0, category: 'NERD HITS', anime: "Marvel", searchTerms: ["capitão américa", "primeiro vingador", "steve rogers"] },
+  { id: "thanos", title: "Rap do Thanos (Vingadores) - O Thanos Está Vindo", youtubeId: "1kwPr91Vs-A", duration: 0, category: 'NERD HITS', anime: "Vingadores", searchTerms: ["thanos", "vingadores", "vindo"] },
+  { id: "orochimaru", title: "Rap do Orochimaru (Naruto) - Eu Vou Viver pra Sempre", youtubeId: "kKoH-dKLIjU", duration: 0, category: 'NERD HITS', anime: "Naruto", searchTerms: ["orochimaru", "naruto", "viver", "sempre"] },
+  { id: "pain-shinra", title: "Rap do Nagato / Pain (Naruto) - Shinra Tensei", youtubeId: "KN4Tnp6XcGk", duration: 0, category: 'NERD HITS', anime: "Naruto", searchTerms: ["pain", "nagato", "shinra tensei", "naruto"] },
+  { id: "jiraiya", title: "Rap do Jiraiya (Naruto) - O Conto de um Ninja Destemido", youtubeId: "pdaSjP9DwXs", duration: 0, category: 'NERD HITS', anime: "Naruto", searchTerms: ["jiraiya", "naruto", "ninja", "destemido", "ero-sennin"] },
+  { id: "trunks-futuro", title: "Rap do Trunks do Futuro (Dragon Ball Z) - O Último Saiyajin", youtubeId: "5bCXfF_IYlU", duration: 0, category: 'NERD HITS', anime: "Dragon Ball Z", searchTerms: ["trunks", "futuro", "dragon ball", "último", "saiyajin"] },
+  { id: "gamora", title: "Rap da Gamora (Guardiões da Galáxia) - A Mulher Mais Temida da Galáxia", youtubeId: "d7d6_spCs_A", duration: 0, category: 'NERD HITS', anime: "Guardiões da Galáxia", searchTerms: ["gamora", "guardiões", "galáxia"] },
+  { id: "homem-formiga", title: "Rap do Homem-Formiga - Soldado Microscópico", youtubeId: "BNakihwBX_M", duration: 0, category: 'NERD HITS', anime: "Marvel", searchTerms: ["homem-formiga", "ant-man", "microscópico"] },
+  { id: "loki", title: "Rap do Loki (Thor) - O Deus da Mentira", youtubeId: "NiLIKstxk7U", duration: 0, category: 'NERD HITS', anime: "Thor", searchTerms: ["loki", "thor", "deus", "mentira"] },
+  { id: "thor", title: "Rap do Thor - A Ira de um Deus", youtubeId: "s0-gIEq5exs", duration: 0, category: 'NERD HITS', anime: "Marvel", searchTerms: ["thor", "ira", "deus", "mjolnir"] },
+  { id: "rock-lee", title: "Rap do Rock Lee (Naruto) - A Força da Motivação", youtubeId: "XwAzVXBjvNo", duration: 0, category: 'NERD HITS', anime: "Naruto", searchTerms: ["rock lee", "naruto", "motivação", "taijutsu"] },
+  { id: "hinata", title: "Rap da Hinata (Naruto) - Se For por Você...", youtubeId: "eWZ4V4IGcb4", duration: 0, category: 'NERD HITS', anime: "Naruto", searchTerms: ["hinata", "naruto", "hyuuga"] },
+  { id: "neji", title: "Rap do Neji (Naruto) - O Preço da Liberdade", youtubeId: "pQ5rO4dp3TQ", duration: 0, category: 'NERD HITS', anime: "Naruto", searchTerms: ["neji", "naruto", "liberdade", "hyuuga"] },
+  { id: "maito-gai", title: "Rap do Maito Gai (Naruto) - O Ninja Mais Forte", youtubeId: "i_NDEiPtnp8", duration: 0, category: 'NERD HITS', anime: "Naruto", searchTerms: ["gai", "maito", "naruto", "ninja", "forte"] },
+  { id: "batman-gotham", title: "Rap do Batman - Cavaleiro de Gotham", youtubeId: "PBmZknvybo8", duration: 0, category: 'NERD HITS', anime: "DC Comics", searchTerms: ["batman", "gotham", "cavaleiro"] },
+  { id: "goku-black", title: "Rap do Goku Black (Dragon Ball Super) - Eu Sou a Justiça", youtubeId: "gsW9IvgrR7s", duration: 0, category: 'NERD HITS', anime: "Dragon Ball Super", searchTerms: ["goku black", "dragon ball", "justiça", "zamasu"] },
+  { id: "freeza", title: "Rap do Freeza (Dragon Ball Super) - Imperador do Universo", youtubeId: "9LPhHsjOm7U", duration: 0, category: 'NERD HITS', anime: "Dragon Ball Super", searchTerms: ["freeza", "dragon ball", "imperador", "universo"] },
+  { id: "poder-ira", title: "Rap do Kratos, Meliodas e Naruto - O Poder da Minha Ira", youtubeId: "TnFG3olJwHA", duration: 0, category: 'NERD HITS', anime: "God of War", searchTerms: ["kratos", "meliodas", "naruto", "poder", "ira"] },
+  { id: "desculpe-partir", title: "Rap do Minato, Neji e Jiraiya (Naruto) - Me Desculpe por Partir...", youtubeId: "WZR1CE4o_uE", duration: 0, category: 'NERD HITS', anime: "Naruto", searchTerms: ["minato", "neji", "jiraiya", "naruto", "desculpe", "partir"] },
+  { id: "coringa-batman", title: "Rap do Coringa (Batman) - Por Que Está Tão Sério?", youtubeId: "9qhhY-YKLp0", duration: 0, category: 'NERD HITS', anime: "Batman", searchTerms: ["coringa", "batman", "sério", "joker"] },
+  { id: "eren", title: "Rap do Eren (Attack on Titan) - A Fúria de um Titã", youtubeId: "dMKTONbHRtg", duration: 0, category: 'NERD HITS', anime: "Attack on Titan", searchTerms: ["eren", "attack on titan", "titã", "fúria", "shingeki"] },
+  { id: "levi", title: "Rap do Capitão Levi (Attack on Titan) - O Mais Forte da Humanidade", youtubeId: "-cihN-wmo30", duration: 0, category: 'NERD HITS', anime: "Attack on Titan", searchTerms: ["levi", "attack on titan", "forte", "humanidade", "ackerman"] },
+  { id: "venom", title: "Rap do Venom (Homem-Aranha) - Nós Somos Venom", youtubeId: "QK6IWDm6vuQ", duration: 0, category: 'NERD HITS', anime: "Homem-Aranha", searchTerms: ["venom", "homem-aranha", "simbionte"] },
+  { id: "aranha-lar", title: "Rap do Homem-Aranha - Eu Tô de Volta ao Lar", youtubeId: "nFrfrU5C4Eo", duration: 0, category: 'NERD HITS', anime: "Marvel", searchTerms: ["homem-aranha", "volta", "lar", "peter parker"] },
+  { id: "gaara-monstro", title: "Rap do Gaara (Naruto) - Acho Que Eu Sou um Monstro...", youtubeId: "KWqngXyY6_w", duration: 0, category: 'NERD HITS', anime: "Naruto", searchTerms: ["gaara", "naruto", "monstro"] },
+  { id: "minato", title: "Rap do Minato (Naruto) - O Dever de um Pai", youtubeId: "ZHinw8orxM4", duration: 0, category: 'NERD HITS', anime: "Naruto", searchTerms: ["minato", "naruto", "pai", "namikaze"] },
+  { id: "todoroki-2", title: "Rap do Todoroki (Boku no Hero) - Obrigado por Me Libertar", youtubeId: "41uuesH-sAc", duration: 0, category: 'NERD HITS', anime: "Boku no Hero Academia", searchTerms: ["todoroki", "boku no hero", "libertar"] },
+  { id: "all-might", title: "Rap do All Might (Boku no Hero) - O Símbolo da Paz", youtubeId: "JhYqNZNGLMM", duration: 0, category: 'NERD HITS', anime: "Boku no Hero Academia", searchTerms: ["all might", "boku no hero", "símbolo", "paz"] },
+  { id: "kakashi", title: "Rap do Kakashi (Naruto) - Aquele Que Copia os 1.000 Jutsus", youtubeId: "b4K1P8uQOcM", duration: 0, category: 'NERD HITS', anime: "Naruto", searchTerms: ["kakashi", "naruto", "copia", "jutsus", "hatake"] },
+  { id: "itachi", title: "Rap do Itachi (Naruto) - Essa Dor Que Causei...", youtubeId: "zs_zpMnwNMs", duration: 0, category: 'NERD HITS', anime: "Naruto", searchTerms: ["itachi", "naruto", "dor", "uchiha"] },
+  { id: "king", title: "Rap do King (Nanatsu no Taizai) - Rei das Fadas", youtubeId: "-U8OdHA8elo", duration: 0, category: 'NERD HITS', anime: "Nanatsu no Taizai", searchTerms: ["king", "nanatsu", "fadas", "harlequin"] },
+  { id: "escanor", title: "Rap do Escanor (Nanatsu no Taizai) - Orgulhoso Como um Leão", youtubeId: "xAftKacljfo", duration: 0, category: 'NERD HITS', anime: "Nanatsu no Taizai", searchTerms: ["escanor", "nanatsu", "leão", "orgulhoso", "pecado"] },
+  { id: "slender-man", title: "Rap do Slender Man - O Homem Sem Face", youtubeId: "2AGZ3CfwNwc", duration: 0, category: 'NERD HITS', anime: "Creepypasta", searchTerms: ["slender man", "sem face"] },
+  { id: "pennywise", title: "Rap do Pennywise (IT: A Coisa) - O Palhaço", youtubeId: "UFDdhqQ3WE0", duration: 0, category: 'NERD HITS', anime: "IT: A Coisa", searchTerms: ["pennywise", "it", "palhaço", "coisa"] },
+  { id: "cruel", title: "Rap do Madara, Pain e Orochimaru - O Quanto Eu Posso Ser Cruel", youtubeId: "11vD3MUpOkM", duration: 0, category: 'NERD HITS', anime: "Naruto", searchTerms: ["madara", "pain", "orochimaru", "cruel"] },
+  { id: "momentos-quem-se-foi", title: "Rap do Homem-Aranha, Flash e Batman - Momentos com Quem Se Foi...", youtubeId: "sMhWUp3OQ00", duration: 0, category: 'NERD HITS', anime: "DC Comics", searchTerms: ["homem-aranha", "flash", "batman", "momentos"] },
+  { id: "ban", title: "Rap do Ban (Nanatsu no Taizai) - O Pecado da Ganância", youtubeId: "dUoWRyZiVaA", duration: 0, category: 'NERD HITS', anime: "Nanatsu no Taizai", searchTerms: ["ban", "nanatsu", "ganância", "pecado"] },
+  { id: "meliodas", title: "Rap do Meliodas (Nanatsu no Taizai) - Eu Sou o Capitão", youtubeId: "4A-2AmQ7Lvg", duration: 0, category: 'NERD HITS', anime: "Nanatsu no Taizai", searchTerms: ["meliodas", "nanatsu", "capitão"] },
+  { id: "vingadores-guerra", title: "Rap dos Vingadores: Guerra Infinita - Em Guerra pra Sempre", youtubeId: "8Ip_0POXqdA", duration: 0, category: 'NERD HITS', anime: "Marvel", searchTerms: ["vingadores", "guerra infinita", "guerra"] },
+  { id: "midoriya-2", title: "Rap do Midoriya (Boku no Hero) - Eu Tenho Que Acreditar", youtubeId: "f3pfiUgL-PU", duration: 0, category: 'NERD HITS', anime: "Boku no Hero Academia", searchTerms: ["midoriya", "deku", "boku no hero", "acreditar"] },
+  { id: "saitama", title: "Rap do Saitama (One Punch Man) - Um Só", youtubeId: "vtZPJ1X91fM", duration: 0, category: 'NERD HITS', anime: "One Punch Man", searchTerms: ["saitama", "one punch man", "um só"] },
+  { id: "sasuke-renegado", title: "Rap do Sasuke - O Renegado", youtubeId: "r1blNSgRD00", duration: 0, category: 'NERD HITS', anime: "Naruto", searchTerms: ["sasuke", "renegado", "naruto", "uchiha"] },
+  { id: "naruto-demonio", title: "Rap do Naruto - O Demônio Dentro de Mim", youtubeId: "kuhGR_VU3rk", duration: 0, category: 'NERD HITS', anime: "Naruto", searchTerms: ["naruto", "demônio", "kurama"] },
+  { id: "guardias-estelares", title: "Rap das Guardiãs Estelares (League of Legends) - Garotas Mágicas", youtubeId: "edvyy_EYPgs", duration: 0, category: 'NERD HITS', anime: "League of Legends", searchTerms: ["guardiãs", "estelares", "league of legends", "garotas", "mágicas"] },
+  { id: "xayah-rakan", title: "Rap da Xayah e Rakan (League of Legends) - Paixão Estelar", youtubeId: "zI9N7-mvmj8", duration: 0, category: 'NERD HITS', anime: "League of Legends", searchTerms: ["xayah", "rakan", "league of legends", "paixão"] },
+  { id: "luffy-chapeu", title: "Rap do Luffy (One Piece) - Chapéu de Palha", youtubeId: "ivGBhIg-zK4", duration: 0, category: 'NERD HITS', anime: "One Piece", searchTerms: ["luffy", "one piece", "chapéu", "palha"] },
+  { id: "chopper", title: "Rap do Chopper (One Piece) - Sou um Monstro", youtubeId: "ZJoHrBYg-iQ", duration: 0, category: 'NERD HITS', anime: "One Piece", searchTerms: ["chopper", "one piece", "monstro", "tony tony"] },
+  { id: "law", title: "Rap do Law (One Piece) - Cirurgião da Morte", youtubeId: "HHzIzkPhhaE", duration: 0, category: 'NERD HITS', anime: "One Piece", searchTerms: ["law", "one piece", "cirurgião", "morte", "trafalgar"] },
+  { id: "usopp", title: "Rap do Usopp (One Piece) - Um Bravo Guerreiro do Mar", youtubeId: "44wn0Huz6DA", duration: 0, category: 'NERD HITS', anime: "One Piece", searchTerms: ["usopp", "one piece", "guerreiro", "mar"] },
+  { id: "crocodile", title: "Rap do Crocodile (One Piece) - O Deserto Será Seu Cemitério", youtubeId: "kTl1SWtMvz8", duration: 0, category: 'NERD HITS', anime: "One Piece", searchTerms: ["crocodile", "one piece", "deserto", "cemitério"] },
+  { id: "denji", title: "Rap do Denji (Chainsaw Man) - O Maldito Demônio da Motosserra", youtubeId: "Z6AH55TOiQA", duration: 0, category: 'NERD HITS', anime: "Chainsaw Man", searchTerms: ["denji", "chainsaw man", "motosserra", "demônio"] },
+  { id: "kratos-atreus", title: "Rap do Kratos e Atreus (God of War) - Nós Somos Deuses", youtubeId: "CFjxhsoR278", duration: 0, category: 'NERD HITS', anime: "God of War", searchTerms: ["kratos", "atreus", "god of war", "deuses"] },
+  { id: "david-martinez", title: "Rap do David Martinez (Cyberpunk: Edgerunners) - Mercenários", youtubeId: "qfdcnPdIlCk", duration: 0, category: 'NERD HITS', anime: "Cyberpunk Edgerunners", searchTerms: ["david", "martinez", "cyberpunk", "edgerunners", "mercenários"] },
+  { id: "nagato", title: "Rap do Nagato (Naruto) - Minha Dor", youtubeId: "iUM3YdqwgPg", duration: 0, category: 'NERD HITS', anime: "Naruto", searchTerms: ["nagato", "naruto", "dor", "pain"] },
+  { id: "zetsu", title: "Rap do Zetsu (Naruto) - Branco e Preto", youtubeId: "RPeGVtkSEPU", duration: 0, category: 'NERD HITS', anime: "Naruto", searchTerms: ["zetsu", "naruto", "branco", "preto", "akatsuki"] },
+  { id: "gato-preto", title: "Gato Preto - Game Over Squad Soundtrack", youtubeId: "FEPDoKofKlw", duration: 0, category: '7MZ RECORDS', anime: "Game Over Squad", searchTerms: ["gato preto", "game over squad"] },
+  { id: "sasori", title: "Rap do Sasori (Naruto) - Manipulando Marionetes", youtubeId: "Wh9bif_Qm3I", duration: 0, category: 'NERD HITS', anime: "Naruto", searchTerms: ["sasori", "naruto", "marionetes", "akatsuki"] },
+  { id: "eren-estrondo", title: "Eren (Attack on Titan) - Ao Som do Estrondo", youtubeId: "cd6HIQ5LY7o", duration: 0, category: 'NERD HITS', anime: "Attack on Titan", searchTerms: ["eren", "attack on titan", "estrondo", "shingeki"] },
+  { id: "zeke", title: "Zeke (Attack on Titan) - Salvação", youtubeId: "hWKz75h_Uf8", duration: 0, category: 'NERD HITS', anime: "Attack on Titan", searchTerms: ["zeke", "attack on titan", "salvação", "yeager"] },
+  { id: "armin", title: "Armin (Attack on Titan) - Além das Muralhas", youtubeId: "koK9EOEANIc", duration: 0, category: 'NERD HITS', anime: "Attack on Titan", searchTerms: ["armin", "attack on titan", "muralhas", "arlert"] },
+  { id: "capitao-patria", title: "Capitão Pátria (The Boys) - O Que Eu Quiser", youtubeId: "MB7_IuMWXlo", duration: 0, category: 'NERD HITS', anime: "The Boys", searchTerms: ["capitão pátria", "the boys", "homelander"] },
+  { id: "deadpool-wolverine", title: "Deadpool e Wolverine - Balas e Garras", youtubeId: "6Q8svKIi2N4", duration: 0, category: '7MZ RECORDS', anime: "Marvel", searchTerms: ["deadpool", "wolverine", "balas", "garras"] },
+  { id: "coringa-arlequina", title: "Coringa e Arlequina ft. Amanda Areia e Anny", youtubeId: "bq7m7Yzq_2c", duration: 0, category: 'NERD HITS', anime: "DC Comics", searchTerms: ["coringa", "arlequina", "amanda", "anny"] },
+  { id: "vi-jinx", title: "Vi e Jinx", youtubeId: "H2JqC7zH2No", duration: 0, category: 'NERD HITS', anime: "League of Legends", searchTerms: ["vi", "jinx", "arcane", "league of legends"] },
+  { id: "itadori", title: "Itadori ft. M4rkim", youtubeId: "tTAOA8POclQ", duration: 0, category: 'NERD HITS', anime: "Jujutsu Kaisen", searchTerms: ["itadori", "m4rkim", "jujutsu kaisen"] },
+  { id: "satoru-gojo", title: "Satoru Gojo ft. Henrique Mendonça", youtubeId: "fu9dCuPRFHY", duration: 0, category: '7MZ RECORDS', anime: "Jujutsu Kaisen", searchTerms: ["gojo", "satoru", "jujutsu kaisen", "henrique"] },
+  { id: "mahito", title: "Mahito ft. Small (Novatroop)", youtubeId: "ayIn3hFDFYg", duration: 0, category: 'NERD HITS', anime: "Jujutsu Kaisen", searchTerms: ["mahito", "jujutsu kaisen", "novatroop", "small"] },
+  { id: "radioativo", title: "Radioativo", youtubeId: "ICpw2v83Eiw", duration: 0, category: '7MZ RECORDS', anime: "Original 7MZ", searchTerms: ["radioativo", "lucas art"] },
+  { id: "hollow", title: "Hollow", youtubeId: "4rti11ZN8d0", duration: 0, category: '7MZ RECORDS', searchTerms: ["hollow", "pedro alvez"] },
+  { id: "velha-estrada", title: "Velha Estrada", youtubeId: "HFH4z7S4OS4", duration: 0, category: '7MZ RECORDS', anime: "Original 7MZ", searchTerms: ["velha estrada"] },
+  { id: "asta-lucas", title: "Asta", youtubeId: "-dkNV505w5A", duration: 0, category: '7MZ RECORDS', anime: "Black Clover", searchTerms: ["asta", "lucas art", "black clover"] },
+  { id: "sukuna", title: "Sukuna ft. Basara", youtubeId: "wViRL-63XJk", duration: 0, category: '7MZ RECORDS', anime: "Jujutsu Kaisen", searchTerms: ["sukuna", "basara", "jujutsu kaisen", "rei das maldições"] },
+  { id: "geto", title: "Suguru Geto ft. Onni", youtubeId: "4SANmrgyl8E", duration: 0, category: 'NERD HITS', anime: "Jujutsu Kaisen", searchTerms: ["geto", "suguru", "jujutsu kaisen", "onni"] },
+  { id: "rei-sangue", title: "Rei do Sangue", youtubeId: "riCdGzJrMGk", duration: 0, category: '7MZ RECORDS', anime: "Original 7MZ", searchTerms: ["rei", "sangue", "lucas art"] },
+  { id: "avada-kedavra", title: "Avada Kedavra", youtubeId: "0rYLz5EjemI", duration: 0, category: '7MZ RECORDS', searchTerms: ["avada kedavra", "harry potter", "lucas art"] },
+  { id: "ragnarok", title: "Ragnarok", youtubeId: "gkkAQM1TPsY", duration: 0, category: '7MZ RECORDS', searchTerms: ["ragnarok"] },
+  { id: "gachiakuta", title: "Rudo Surebrec (Gachiakuta) - Do Paraíso ao Inferno", youtubeId: "qeZCx2u_Uz0", duration: 0, category: 'NERD HITS', anime: "Gachiakuta", searchTerms: ["gachiakuta", "rudo", "surebrec", "paraíso", "inferno"] },
 ];
 
-export function getRandomSong(excludeIds: string[] = []): Song {
-  const available = songs.filter(s => !excludeIds.includes(s.id));
+export function getRandomSong(excludeIds: string[] = [], category?: SongCategory): Song {
+  let pool = songs;
+  if (category) {
+    pool = songs.filter(s => s.category === category);
+  }
+  const available = pool.filter(s => !excludeIds.includes(s.id));
   if (available.length === 0) {
     // Reset if all songs used
-    return songs[Math.floor(Math.random() * songs.length)];
+    return pool[Math.floor(Math.random() * pool.length)];
   }
   return available[Math.floor(Math.random() * available.length)];
 }

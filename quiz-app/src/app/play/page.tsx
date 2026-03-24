@@ -3,12 +3,13 @@
 import { useEffect, useCallback, useRef, useState } from 'react';
 import { useYouTubePlayer } from '@/hooks/useYouTubePlayer';
 import { useGameState } from '@/hooks/useGameState';
-import { getAudioDuration } from '@/lib/game-logic';
+import { getAudioDuration, generateRandomTimestamp } from '@/lib/game-logic';
 import SearchBar from '@/components/game/SearchBar';
-import { Song } from '@/data/songs';
+import { Song, SongCategory, songs } from '@/data/songs';
 import styles from './play.module.css';
 import Link from 'next/link';
 import Image from 'next/image';
+import { motion } from 'framer-motion';
 
 export default function PlayPage() {
   const {
@@ -24,7 +25,7 @@ export default function PlayPage() {
 
   const skipSongRef = useRef<() => void>(() => {});
 
-  const { isReady, isPlaying, volume, changeVolume, loadAndPlay, replay, stop } = useYouTubePlayer('yt-player', {
+  const { isReady, isPlaying, volume, changeVolume, loadAndPlay, getRealDuration, replay, stop } = useYouTubePlayer('yt-player', {
     onError: (errorCode: number) => {
       console.warn(`YouTube error ${errorCode}, skipping to next song...`);
       if (errorCode === 150 || errorCode === 101 || errorCode === 2) {
@@ -37,15 +38,29 @@ export default function PlayPage() {
   const [showWrongFeedback, setShowWrongFeedback] = useState(false);
   const [pointsEarned, setPointsEarned] = useState(0);
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<SongCategory | 'ALL' | null>(null);
   const nextSongDataRef = useRef<{ song: Song; timestamp: number; duration: number } | null>(null);
   const hasStartedRef = useRef(false);
+  const categoryRef = useRef<SongCategory | undefined>(undefined);
 
-  // Start new round: load song and play
-  const startNewRound = useCallback(() => {
-    const data = loadNextSong();
-    nextSongDataRef.current = data;
-    loadAndPlay(data.song.youtubeId, data.timestamp, data.duration);
-  }, [loadNextSong, loadAndPlay]);
+  // Start new round: get real duration from YT, generate safe timestamp, then play
+  const startNewRound = useCallback(async () => {
+    const cat = categoryRef.current;
+    const data = loadNextSong(cat);
+    
+    // Get the REAL video duration from YouTube API
+    const realDuration = await getRealDuration(data.song.youtubeId);
+    
+    // Override the song duration with the real one for timestamp generation
+    const songWithRealDuration = { ...data.song, duration: realDuration };
+    const safeTimestamp = generateRandomTimestamp(songWithRealDuration, data.duration);
+    
+    const fixedData = { ...data, timestamp: safeTimestamp };
+    nextSongDataRef.current = fixedData;
+    
+    console.log('[7MZ DEBUG] Playing:', data.song.title, '| realDuration:', realDuration, 's | startAt:', safeTimestamp, 's | snippet:', data.duration, 's');
+    loadAndPlay(data.song.youtubeId, safeTimestamp, data.duration);
+  }, [loadNextSong, getRealDuration, loadAndPlay]);
 
   // Keep skipSongRef updated so error handler can call it
   useEffect(() => {
@@ -60,8 +75,9 @@ export default function PlayPage() {
   }, [state.phase, isReady, startNewRound]);
 
   const handleStart = () => {
-    if (hasStartedRef.current) return;
+    if (hasStartedRef.current || !selectedCategory) return;
     hasStartedRef.current = true;
+    categoryRef.current = selectedCategory === 'ALL' ? undefined : selectedCategory;
     startGame();
   };
 
@@ -79,7 +95,7 @@ export default function PlayPage() {
       setTimeout(() => {
         setShowCorrectFeedback(false);
         nextRound();
-      }, 1500);
+      }, 2500);
     } else {
       setShowWrongFeedback(true);
       setTimeout(() => setShowWrongFeedback(false), 500);
@@ -89,9 +105,11 @@ export default function PlayPage() {
   const handleHint = useCallback(() => {
     const hintData = useHint();
     if (hintData && nextSongDataRef.current) {
+      // Use the REAL timestamp from the ref (which was generated with getRealDuration),
+      // NOT hintData.timestamp which comes from state and may be wrong (duration:0 fallback)
       replay(
         nextSongDataRef.current.song.youtubeId,
-        hintData.timestamp,
+        nextSongDataRef.current.timestamp,
         hintData.duration
       );
     }
@@ -102,11 +120,11 @@ export default function PlayPage() {
       const duration = getAudioDuration(state.hintLevel);
       replay(
         nextSongDataRef.current.song.youtubeId,
-        state.timestamp,
+        nextSongDataRef.current.timestamp,
         duration
       );
     }
-  }, [state.hintLevel, state.timestamp, replay]);
+  }, [state.hintLevel, replay]);
 
   const handlePlayAgain = () => {
     hasStartedRef.current = false;
@@ -117,15 +135,28 @@ export default function PlayPage() {
     }, 100);
   };
 
-  // Generate stable bar heights
-  const barHeights = useRef(
-    Array.from({ length: 28 }, () => 12 + Math.random() * 40)
-  ).current;
+  // Dynamic fake visualizer
+  const [activeBarHeights, setActiveBarHeights] = useState<number[]>(
+    Array.from({ length: 28 }, () => 10)
+  );
+
+  useEffect(() => {
+    if (!isPlaying) return;
+    
+    // Rapidly update heights to simulate real audio frequencies
+    const interval = setInterval(() => {
+      setActiveBarHeights(prev => 
+        prev.map(() => 15 + Math.random() * 45) // random heights between 15px and 60px
+      );
+    }, 120); // Update every 120ms for a snappy, realistic analyzer feel
+    
+    return () => clearInterval(interval);
+  }, [isPlaying]);
 
   return (
     <div className={styles.page}>
       {/* Hidden YouTube Player */}
-      <div id="yt-player" style={{ position: 'absolute', opacity: 0, pointerEvents: 'none' }} />
+      <div id="yt-player" style={{ position: 'absolute', top: 0, left: 0, width: 0, height: 0, overflow: 'hidden', opacity: 0, pointerEvents: 'none' }} />
 
       {/* Background orbs */}
       <div className={styles.orbOrange} />
@@ -158,15 +189,73 @@ export default function PlayPage() {
 
       {/* Main Game Area */}
       <main className={styles.main}>
-        {/* IDLE - Start Screen */}
+        {/* IDLE - Category Selection Screen */}
         {state.phase === 'IDLE' && (
           <div className={styles.startScreen}>
             <div className={styles.modeIcon}>🎵</div>
-            <h2 className={styles.modeTitle}>Adivinhe a Música pelo Áudio</h2>
+            <h2 className={styles.modeTitle}>Escolha a Categoria</h2>
             <p className={styles.modeDesc}>
               Ouça um trecho e adivinhe qual música do 7 Minutoz está tocando.
-              <br />Um erro e o jogo acaba!
             </p>
+
+            {/* Category Cards */}
+            <motion.div 
+              className={styles.categoryGrid}
+              initial="hidden"
+              animate="visible"
+              variants={{
+                hidden: {},
+                visible: {
+                  transition: { staggerChildren: 0.1 }
+                }
+              }}
+            >
+              <motion.button
+                variants={{
+                  hidden: { y: 20, opacity: 0 },
+                  visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 300 } }
+                }}
+                whileHover={{ scale: 1.05, y: -5 }}
+                whileTap={{ scale: 0.95 }}
+                className={`${styles.categoryCard} ${selectedCategory === 'NERD HITS' ? styles.categoryCardActive : ''}`}
+                onClick={() => setSelectedCategory('NERD HITS')}
+              >
+                <span className={styles.categoryEmoji}>⚡</span>
+                <span className={styles.categoryName}>NERD HITS</span>
+                <span className={styles.categoryCount}>{songs.filter(s => s.category === 'NERD HITS').length} músicas</span>
+              </motion.button>
+              
+              <motion.button
+                variants={{
+                  hidden: { y: 20, opacity: 0 },
+                  visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 300 } }
+                }}
+                whileHover={{ scale: 1.05, y: -5 }}
+                whileTap={{ scale: 0.95 }}
+                className={`${styles.categoryCard} ${selectedCategory === '7MZ RECORDS' ? styles.categoryCardActive : ''}`}
+                onClick={() => setSelectedCategory('7MZ RECORDS')}
+              >
+                <span className={styles.categoryEmoji}>🎤</span>
+                <span className={styles.categoryName}>7MZ RECORDS</span>
+                <span className={styles.categoryCount}>{songs.filter(s => s.category === '7MZ RECORDS').length} músicas</span>
+              </motion.button>
+              
+              <motion.button
+                variants={{
+                  hidden: { y: 20, opacity: 0 },
+                  visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 300 } }
+                }}
+                whileHover={{ scale: 1.05, y: -5 }}
+                whileTap={{ scale: 0.95 }}
+                className={`${styles.categoryCard} ${selectedCategory === 'ALL' ? styles.categoryCardActive : ''}`}
+                onClick={() => setSelectedCategory('ALL')}
+              >
+                <span className={styles.categoryEmoji}>🔥</span>
+                <span className={styles.categoryName}>AMBOS</span>
+                <span className={styles.categoryCount}>{songs.length} músicas</span>
+              </motion.button>
+            </motion.div>
+
             <div className={styles.rules}>
               <div className={styles.rule}>
                 <span className={styles.ruleIcon}>🎧</span>
@@ -181,13 +270,15 @@ export default function PlayPage() {
                 <span>Dica 2 → 15s • 30 pts</span>
               </div>
             </div>
-            <button
+            <motion.button
+              whileHover={{ scale: !selectedCategory || !isReady ? 1 : 1.05 }}
+              whileTap={{ scale: !selectedCategory || !isReady ? 1 : 0.95 }}
               className={styles.startBtn}
               onClick={handleStart}
-              disabled={!isReady}
+              disabled={!isReady || !selectedCategory}
             >
-              {isReady ? 'COMEÇAR' : 'Carregando...'}
-            </button>
+              {!selectedCategory ? 'SELECIONE UMA CATEGORIA' : (!isReady ? 'CARREGANDO...' : 'COMEÇAR')}
+            </motion.button>
           </div>
         )}
 
@@ -222,15 +313,14 @@ export default function PlayPage() {
                 {isPlaying ? '♪ TOCANDO...' : '♪ PAUSADO'}
               </div>
               <div className={styles.visualizer}>
-                {barHeights.map((h, i) => (
+                {activeBarHeights.map((h, i) => (
                   <div
                     key={i}
-                    className={`${styles.bar} ${isPlaying ? styles.barActive : styles.barIdle}`}
+                    className={styles.bar}
                     style={{ 
-                      animationDelay: `${i * 0.04}s`,
-                      '--wave-height': `${h}px`,
-                      '--idle-height': `${3 + (i % 3) * 2}px`,
-                    } as React.CSSProperties}
+                      height: isPlaying ? `${h}px` : `${3 + (i % 3) * 2}px`,
+                      opacity: isPlaying ? 1 : 0.3,
+                    }}
                   />
                 ))}
               </div>
@@ -325,14 +415,35 @@ export default function PlayPage() {
             />
 
             {/* Correct feedback overlay */}
-            {showCorrectFeedback && (
+            {showCorrectFeedback && state.currentSong && (
               <div className={styles.feedbackOverlay}>
-                <div className={styles.correctBanner}>
-                  <span className={styles.correctEmoji}>✅</span>
-                  <span className={styles.correctText}>Correto!</span>
-                  <span className={styles.earnedPoints}>+{pointsEarned} pts</span>
+                <div 
+                  className={styles.feedbackBg} 
+                  style={{ backgroundImage: `url(https://img.youtube.com/vi/${state.currentSong.youtubeId}/maxresdefault.jpg)` }} 
+                />
+                <div className={styles.feedbackCard}>
+                  <div className={styles.feedbackThumbWrap}>
+                    <img
+                      src={`https://img.youtube.com/vi/${state.currentSong.youtubeId}/hqdefault.jpg`}
+                      alt={state.currentSong.title}
+                      className={styles.feedbackThumb}
+                    />
+                    <div className={styles.feedbackThumbGlow} />
+                  </div>
+                  <div className={styles.feedbackInfo}>
+                    <div className={styles.feedbackBadgeRow}>
+                      <span className={styles.correctEmoji}>✅</span>
+                      <span className={styles.earnedPoints}>+{pointsEarned} pts</span>
+                    </div>
+                    <h3 className={styles.feedbackSongTitle}>{state.currentSong.title}</h3>
+                    <div className={styles.feedbackMeta}>
+                      {state.currentSong.anime && (
+                        <span className={styles.feedbackAnime}>{state.currentSong.anime}</span>
+                      )}
+                      <span className={styles.feedbackCategory}>{state.currentSong.category}</span>
+                    </div>
+                  </div>
                 </div>
-                <p className={styles.correctSong}>{state.currentSong?.title}</p>
               </div>
             )}
           </div>
@@ -341,39 +452,59 @@ export default function PlayPage() {
         {/* GAME OVER */}
         {state.phase === 'GAME_OVER' && (
           <div className={styles.gameOverScreen}>
-            <div className={styles.gameOverIcon}>💀</div>
-            <h2 className={styles.gameOverTitle}>GAME OVER</h2>
-            
-            <div className={styles.correctAnswer}>
-              <p className={styles.correctAnswerLabel}>A música era:</p>
-              <p className={styles.correctAnswerTitle}>{state.currentSong?.title}</p>
-              {state.currentSong?.anime && (
-                <p className={styles.correctAnswerMeta}>{state.currentSong.anime}</p>
-              )}
-            </div>
+            {state.currentSong && (
+              <div 
+                className={styles.feedbackBg} 
+                style={{ backgroundImage: `url(https://img.youtube.com/vi/${state.currentSong.youtubeId}/maxresdefault.jpg)` }} 
+              />
+            )}
+            <div className={styles.gameOverContent}>
+              <div className={styles.gameOverIcon}>💀</div>
+              <h2 className={styles.gameOverTitle}>GAME OVER</h2>
+              
+              <div className={styles.correctAnswer}>
+                {state.currentSong && (
+                  <img
+                    src={`https://img.youtube.com/vi/${state.currentSong.youtubeId}/hqdefault.jpg`}
+                    alt={state.currentSong.title}
+                    className={styles.gameOverThumb}
+                  />
+                )}
+                <p className={styles.correctAnswerLabel}>A música era:</p>
+                <p className={styles.correctAnswerTitle}>{state.currentSong?.title}</p>
+                <div className={styles.gameOverMeta}>
+                  {state.currentSong?.anime && (
+                    <span className={styles.feedbackAnime}>{state.currentSong.anime}</span>
+                  )}
+                  {state.currentSong?.category && (
+                    <span className={styles.feedbackCategory}>{state.currentSong.category}</span>
+                  )}
+                </div>
+              </div>
 
-            <div className={styles.statsGrid}>
-              <div className={styles.statCard}>
-                <span className={styles.statValue}>{state.score}</span>
-                <span className={styles.statLabel}>Pontos</span>
+              <div className={styles.statsGrid}>
+                <div className={styles.statCard}>
+                  <span className={styles.statValue}>{state.score}</span>
+                  <span className={styles.statLabel}>Pontos</span>
+                </div>
+                <div className={styles.statCard}>
+                  <span className={styles.statValue}>{state.streak}</span>
+                  <span className={styles.statLabel}>Rodadas</span>
+                </div>
+                <div className={styles.statCard}>
+                  <span className={styles.statValue}>{state.totalHintsUsed}</span>
+                  <span className={styles.statLabel}>Dicas Usadas</span>
+                </div>
               </div>
-              <div className={styles.statCard}>
-                <span className={styles.statValue}>{state.streak}</span>
-                <span className={styles.statLabel}>Rodadas</span>
-              </div>
-              <div className={styles.statCard}>
-                <span className={styles.statValue}>{state.totalHintsUsed}</span>
-                <span className={styles.statLabel}>Dicas Usadas</span>
-              </div>
-            </div>
 
-            <div className={styles.gameOverActions}>
-              <button className={styles.playAgainBtn} onClick={handlePlayAgain}>
-                JOGAR NOVAMENTE
-              </button>
-              <Link href="/" className={styles.homeBtn}>
-                Voltar ao Início
-              </Link>
+              <div className={styles.gameOverActions}>
+                <button className={styles.playAgainBtn} onClick={handlePlayAgain}>
+                  JOGAR NOVAMENTE
+                </button>
+                <Link href="/" className={styles.homeBtn}>
+                  Voltar ao Início
+                </Link>
+              </div>
             </div>
           </div>
         )}

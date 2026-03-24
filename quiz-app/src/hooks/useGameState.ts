@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useReducer } from 'react';
-import { Song, getRandomSong } from '@/data/songs';
+import { Song, SongCategory, getRandomSong } from '@/data/songs';
 import {
   getPointsForHintLevel,
   getAudioDuration,
@@ -126,8 +126,8 @@ export function useGameState() {
     dispatch({ type: 'START_GAME' });
   }, []);
 
-  const loadNextSong = useCallback(() => {
-    const song = getRandomSong(state.playedSongIds);
+  const loadNextSong = useCallback((category?: SongCategory) => {
+    const song = getRandomSong(state.playedSongIds, category);
     const duration = getAudioDuration(0);
     const timestamp = generateRandomTimestamp(song, duration);
     dispatch({ type: 'SONG_LOADED', song, timestamp });
