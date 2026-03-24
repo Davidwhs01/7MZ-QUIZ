@@ -1,0 +1,616 @@
+/* ===========================
+   HOME PAGE — Grunge Neon Arena
+   =========================== */
+
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ============== BACKGROUND LAYER ============== */
+.bgLayer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+/* Paint splatters — 7MZ brand colors */
+.splatter {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.12;
+  animation: splashFloat 20s ease-in-out infinite;
+}
+
+.splatterOrange {
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, var(--accent-orange) 0%, transparent 70%);
+  top: -15%;
+  right: -10%;
+  animation-delay: 0s;
+}
+
+.splatterBlue {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, var(--accent-blue) 0%, transparent 70%);
+  bottom: -10%;
+  left: -8%;
+  animation-delay: -7s;
+}
+
+.splatterGreen {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, var(--accent-green) 0%, transparent 70%);
+  top: 50%;
+  left: 60%;
+  opacity: 0.06;
+  animation-delay: -13s;
+}
+
+/* Neon grid floor */
+.gridFloor {
+  position: absolute;
+  bottom: -50%;
+  left: -20%;
+  right: -20%;
+  height: 100%;
+  background-image:
+    linear-gradient(rgba(255, 107, 43, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(59, 130, 246, 0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  transform: perspective(500px) rotateX(55deg);
+  animation: gridMove 8s linear infinite;
+  mask-image: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 60%);
+  -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 60%);
+}
+
+/* Diagonal accent lines */
+.diagonalLine {
+  position: absolute;
+  width: 200%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 107, 43, 0.08), transparent);
+  top: 30%;
+  left: -50%;
+  transform: rotate(-15deg);
+}
+
+.diagonalLine2 {
+  top: 70%;
+  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.06), transparent);
+  transform: rotate(12deg);
+}
+
+/* ============== HERO SECTION ============== */
+.hero {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 80px 24px 40px;
+  gap: 24px;
+}
+
+/* Logo with rotating energy rings */
+.logoContainer {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.energyRing {
+  position: absolute;
+  inset: -12px;
+  border-radius: 50%;
+  border: 1.5px solid transparent;
+  border-top-color: var(--accent-orange);
+  border-right-color: rgba(255, 107, 43, 0.3);
+  animation: rotateRing 4s linear infinite;
+  filter: drop-shadow(0 0 6px rgba(255, 107, 43, 0.4));
+}
+
+.energyRing2 {
+  position: absolute;
+  inset: -20px;
+  border-radius: 50%;
+  border: 1px solid transparent;
+  border-bottom-color: var(--accent-blue);
+  border-left-color: rgba(59, 130, 246, 0.2);
+  animation: rotateRing 6s linear infinite reverse;
+  filter: drop-shadow(0 0 6px rgba(59, 130, 246, 0.3));
+}
+
+.logoImage {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  box-shadow:
+    0 0 40px rgba(255, 107, 43, 0.2),
+    0 0 80px rgba(59, 130, 246, 0.1),
+    inset 0 0 30px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 800ms ease;
+}
+
+.logoImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Title block */
+.titleBlock {
+  text-align: center;
+  animation: fadeInUp 600ms ease 200ms both;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 5rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  line-height: 1;
+}
+
+.titleQuiz {
+  background: linear-gradient(180deg, var(--accent-blue-bright), var(--accent-blue));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 30px rgba(59, 130, 246, 0.4));
+  animation: neonFlicker 5s ease-in-out infinite;
+}
+
+.subtitleLine {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.subtitleDecor {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-medium), transparent);
+  max-width: 80px;
+}
+
+.subtitle {
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.25em;
+  color: var(--text-secondary);
+}
+
+/* Stats bar */
+.statsBar {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 14px 32px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  backdrop-filter: blur(16px);
+  animation: fadeInUp 600ms ease 400ms both;
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 24px;
+}
+
+.statNumber {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--accent-orange);
+  line-height: 1;
+}
+
+.statLabel {
+  font-family: var(--font-ui);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.statDivider {
+  width: 1px;
+  height: 32px;
+  background: var(--border-medium);
+}
+
+/* ============== MODES SECTION ============== */
+.modesSection {
+  position: relative;
+  z-index: 2;
+  padding: 20px 24px 40px;
+  max-width: 700px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.sectionHeader {
+  margin-bottom: 20px;
+  animation: fadeInUp 600ms ease 500ms both;
+}
+
+.sectionTag {
+  font-family: var(--font-ui);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  color: var(--accent-orange);
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.sectionTitle {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--text-primary);
+}
+
+.modesGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* === Mode Cards === */
+.modeCard {
+  position: relative;
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: transform var(--transition-base), box-shadow var(--transition-slow);
+  animation: fadeInUp 500ms ease calc(600ms + var(--i, 0) * 100ms) both;
+  cursor: pointer;
+}
+
+.modeCard:nth-child(1) { --i: 0; }
+.modeCard:nth-child(2) { --i: 1; }
+.modeCard:nth-child(3) { --i: 2; }
+
+/* Animated border via gradient */
+.modeCardBorder {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-lg);
+  padding: 1.5px;
+  background: linear-gradient(135deg, var(--accent-orange), var(--accent-blue), var(--accent-orange));
+  background-size: 300% 300%;
+  animation: gradientShift 4s ease infinite;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask-composite: xor;
+  opacity: 0.5;
+  transition: opacity var(--transition-base);
+}
+
+/* Shine sweep on hover */
+.modeCardShine {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.03) 45%,
+    rgba(255, 255, 255, 0.06) 50%,
+    rgba(255, 255, 255, 0.03) 55%,
+    transparent 60%
+  );
+  transform: translateX(-100%);
+  transition: transform 600ms ease;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.modeCard:hover .modeCardShine {
+  transform: translateX(100%);
+}
+
+.modeCard:hover .modeCardBorder {
+  opacity: 1;
+}
+
+.modeCard:hover {
+  transform: translateY(-3px) scale(1.01);
+  box-shadow:
+    0 8px 32px rgba(255, 107, 43, 0.12),
+    0 0 0 1px rgba(255, 107, 43, 0.15);
+}
+
+.modeCardInner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px;
+  background: var(--bg-card);
+  backdrop-filter: blur(12px);
+  border-radius: var(--radius-lg);
+}
+
+.modeIconWrap {
+  position: relative;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 107, 43, 0.06);
+  border: 1px solid rgba(255, 107, 43, 0.12);
+  border-radius: var(--radius-md);
+}
+
+.modeIcon {
+  font-size: 1.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.modeIconGlow {
+  position: absolute;
+  inset: -4px;
+  border-radius: var(--radius-md);
+  background: radial-gradient(circle, rgba(255, 107, 43, 0.15) 0%, transparent 70%);
+  animation: pulse 3s ease-in-out infinite;
+}
+
+.modeInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.modeName {
+  font-family: var(--font-ui);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.modeDesc {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.modeRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.modeStatus {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  color: var(--accent-orange);
+  padding: 6px 16px;
+  border: 1px solid var(--accent-orange);
+  border-radius: var(--radius-sm);
+  animation: borderGlow 3s ease-in-out infinite;
+  transition: all var(--transition-base);
+}
+
+.modeCard:hover .modeStatus {
+  background: var(--accent-orange);
+  color: #fff;
+  box-shadow: var(--glow-orange);
+}
+
+.modeArrow {
+  color: var(--accent-orange);
+  transition: transform var(--transition-base);
+}
+
+.modeCard:hover .modeArrow {
+  transform: translateX(4px);
+}
+
+.modeLock {
+  font-family: var(--font-ui);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--text-muted);
+  padding: 5px 12px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+}
+
+/* Locked state */
+.modeCardLocked {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.modeCardLocked .modeCardInner {
+  background: rgba(8, 8, 16, 0.7);
+}
+
+.modeCardLocked:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* ============== FOOTER ============== */
+.footer {
+  position: relative;
+  z-index: 2;
+  margin-top: auto;
+  padding: 32px 24px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.footerInner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.footerText {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.footerHeart {
+  color: var(--accent-orange);
+}
+
+.footerLink {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color var(--transition-base);
+}
+
+.footerLink:hover {
+  color: var(--accent-orange);
+}
+
+/* ============== RESPONSIVE ============== */
+@media (max-width: 768px) {
+  .hero {
+    padding: 60px 20px 30px;
+  }
+
+  .logoContainer {
+    width: 160px;
+    height: 160px;
+  }
+
+  .logoImage {
+    width: 140px;
+    height: 140px;
+  }
+
+  .title {
+    font-size: 3.5rem;
+  }
+
+  .subtitle {
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+  }
+
+  .statsBar {
+    padding: 12px 20px;
+  }
+
+  .statItem {
+    padding: 0 16px;
+  }
+
+  .statNumber {
+    font-size: 1.5rem;
+  }
+
+  .modesSection {
+    padding: 16px 16px 30px;
+  }
+
+  .sectionTitle {
+    font-size: 1.8rem;
+  }
+
+  .modeCardInner {
+    padding: 16px 18px;
+  }
+
+  .footerInner {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    padding: 40px 16px 24px;
+    gap: 16px;
+  }
+
+  .logoContainer {
+    width: 130px;
+    height: 130px;
+  }
+
+  .logoImage {
+    width: 110px;
+    height: 110px;
+  }
+
+  .energyRing { inset: -8px; }
+  .energyRing2 { inset: -14px; }
+
+  .title {
+    font-size: 2.8rem;
+  }
+
+  .subtitleDecor {
+    display: none;
+  }
+
+  .statsBar {
+    padding: 10px 12px;
+    border-radius: var(--radius-lg);
+  }
+
+  .statItem {
+    padding: 0 12px;
+  }
+
+  .statNumber {
+    font-size: 1.3rem;
+  }
+
+  .statLabel {
+    font-size: 0.6rem;
+  }
+
+  .modeStatus {
+    padding: 4px 10px;
+    font-size: 0.85rem;
+  }
+}
