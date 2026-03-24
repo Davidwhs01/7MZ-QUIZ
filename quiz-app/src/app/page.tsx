@@ -7,136 +7,177 @@ export default function Home() {
     <div className={styles.page}>
       {/* === Background Layer === */}
       <div className={styles.bgLayer}>
-        {/* Animated splatter blobs — 7MZ brand colors */}
         <div className={`${styles.splatter} ${styles.splatterOrange}`} />
         <div className={`${styles.splatter} ${styles.splatterBlue}`} />
         <div className={`${styles.splatter} ${styles.splatterGreen}`} />
-
-        {/* Neon grid floor */}
         <div className={styles.gridFloor} />
-
-        {/* Diagonal accent lines */}
         <div className={styles.diagonalLine} />
         <div className={`${styles.diagonalLine} ${styles.diagonalLine2}`} />
       </div>
 
-      {/* === Hero Section === */}
-      <section className={styles.hero}>
-        {/* Logo with energy ring */}
-        <div className={styles.logoContainer}>
-          <div className={styles.energyRing} />
-          <div className={styles.energyRing2} />
-          <div className={styles.logoImage}>
-            <Image
-              src="/7mz-logo.jpg"
-              alt="7 Minutoz"
-              width={200}
-              height={200}
-              priority
-            />
-          </div>
-        </div>
-
-        {/* Title */}
-        <div className={styles.titleBlock}>
-          <h1 className={styles.title}>
-            <span className={styles.titleQuiz}>QUIZ</span>
-          </h1>
-          <div className={styles.subtitleLine}>
-            <span className={styles.subtitleDecor} />
-            <p className={styles.subtitle}>O QUIZ DEFINITIVO DE RAP GEEK</p>
-            <span className={styles.subtitleDecor} />
-          </div>
-        </div>
-
-        {/* Stats bar */}
-        <div className={styles.statsBar}>
-          <div className={styles.statItem}>
-            <span className={styles.statNumber}>20+</span>
-            <span className={styles.statLabel}>Músicas</span>
-          </div>
-          <div className={styles.statDivider} />
-          <div className={styles.statItem}>
-            <span className={styles.statNumber}>∞</span>
-            <span className={styles.statLabel}>Rodadas</span>
-          </div>
-          <div className={styles.statDivider} />
-          <div className={styles.statItem}>
-            <span className={styles.statNumber}>3</span>
-            <span className={styles.statLabel}>Modos</span>
-          </div>
-        </div>
-      </section>
-
-      {/* === Modes Section === */}
-      <section className={styles.modesSection}>
-        <div className={styles.sectionHeader}>
-          <span className={styles.sectionTag}>SELECIONE</span>
-          <h2 className={styles.sectionTitle}>MODOS DE JOGO</h2>
-        </div>
-
-        <div className={styles.modesGrid}>
-          {/* Active Mode - Audio */}
-          <Link href="/play" className={styles.modeCard}>
-            <div className={styles.modeCardShine} />
-            <div className={styles.modeCardBorder} />
-            <div className={styles.modeCardInner}>
-              <div className={styles.modeIconWrap}>
-                <span className={styles.modeIcon}>🎵</span>
-                <div className={styles.modeIconGlow} />
+      <div className={styles.lobbyContainer}>
+        {/* === LEFT SIDEBAR: Payer Profile / Login === */}
+        <aside className={styles.sidebarLeft}>
+          <div className={styles.sidebarCard}>
+            <div className={styles.sidebarHeader}>
+              <span className={styles.sidebarIcon}>👤</span>
+              <h3 className={styles.sidebarTitle}>SEU PERFIL</h3>
+            </div>
+            <div className={styles.loginContent}>
+              <div className={styles.avatarPlaceholder}>
+                <Image src="/7mz-logo.jpg" alt="Avatar" width={64} height={64} className={styles.avatarImg} />
+                <div className={styles.avatarRing} />
               </div>
-              <div className={styles.modeInfo}>
-                <h3 className={styles.modeName}>Adivinhe a Música pelo Áudio</h3>
-                <p className={styles.modeDesc}>
-                  Ouça um trecho aleatório e descubra qual música está tocando
-                </p>
-              </div>
-              <div className={styles.modeRight}>
-                <span className={styles.modeStatus}>JOGAR</span>
-                <svg className={styles.modeArrow} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="20" height="20">
-                  <path d="m9 18 6-6-6-6" />
+              <h4 className={styles.loginPromptTitle}>Acesse sua conta</h4>
+              <p className={styles.loginPromptDesc}>Salve sua pontuação e participe do ranking global</p>
+              
+              <button className={styles.loginBtn}>
+                <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+                  <path d="M12 2C6.48 2 2 6.48 2 12c0 5.52 4.48 10 10 10s10-4.48 10-10c0-5.52-4.48-10-10-10zm-1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
                 </svg>
-              </div>
-            </div>
-          </Link>
-
-          {/* Locked Mode - Lyrics */}
-          <div className={`${styles.modeCard} ${styles.modeCardLocked}`}>
-            <div className={styles.modeCardInner}>
-              <div className={styles.modeIconWrap}>
-                <span className={styles.modeIcon}>✍️</span>
-              </div>
-              <div className={styles.modeInfo}>
-                <h3 className={styles.modeName}>Complete a Letra</h3>
-                <p className={styles.modeDesc}>
-                  Complete os versos que faltam na letra da música
-                </p>
-              </div>
-              <div className={styles.modeRight}>
-                <span className={styles.modeLock}>EM BREVE</span>
-              </div>
+                ENTRAR COM DISCORD
+              </button>
             </div>
           </div>
+        </aside>
 
-          {/* Locked Mode - Character */}
-          <div className={`${styles.modeCard} ${styles.modeCardLocked}`}>
-            <div className={styles.modeCardInner}>
-              <div className={styles.modeIconWrap}>
-                <span className={styles.modeIcon}>🎭</span>
-              </div>
-              <div className={styles.modeInfo}>
-                <h3 className={styles.modeName}>Adivinhe o Personagem</h3>
-                <p className={styles.modeDesc}>
-                  Descubra sobre qual personagem é a música
-                </p>
-              </div>
-              <div className={styles.modeRight}>
-                <span className={styles.modeLock}>EM BREVE</span>
+        {/* === CENTER: Main Content === */}
+        <main className={styles.centerContent}>
+          <section className={styles.hero}>
+            <div className={styles.logoContainer}>
+              <div className={styles.energyRing} />
+              <div className={styles.energyRing2} />
+              <div className={styles.logoImage}>
+                <Image
+                  src="/7mz-logo.jpg"
+                  alt="7 Minutoz"
+                  width={200}
+                  height={200}
+                  priority
+                />
               </div>
             </div>
+
+            <div className={styles.titleBlock}>
+              <h1 className={styles.title}>
+                <span className={styles.titleQuiz}>ARENA</span>
+              </h1>
+              <div className={styles.subtitleLine}>
+                <span className={styles.subtitleDecor} />
+                <p className={styles.subtitle}>O QUIZ DEFINITIVO DE RAP GEEK</p>
+                <span className={styles.subtitleDecor} />
+              </div>
+            </div>
+
+            <div className={styles.statsBar}>
+              <div className={styles.statItem}>
+                <span className={styles.statNumber}>172+</span>
+                <span className={styles.statLabel}>Músicas</span>
+              </div>
+              <div className={styles.statDivider} />
+              <div className={styles.statItem}>
+                <span className={styles.statNumber}>∞</span>
+                <span className={styles.statLabel}>Rodadas</span>
+              </div>
+              <div className={styles.statDivider} />
+              <div className={styles.statItem}>
+                <span className={styles.statNumber}>3</span>
+                <span className={styles.statLabel}>Modos</span>
+              </div>
+            </div>
+          </section>
+
+          <section className={styles.modesSection}>
+            <div className={styles.sectionHeader}>
+              <span className={styles.sectionTag}>SELECIONE</span>
+              <h2 className={styles.sectionTitle}>MODOS DE JOGO</h2>
+            </div>
+
+            <div className={styles.modesGrid}>
+              <Link href="/play" className={styles.modeCard}>
+                <div className={styles.modeCardShine} />
+                <div className={styles.modeCardBorder} />
+                <div className={styles.modeCardInner}>
+                  <div className={styles.modeIconWrap}>
+                    <span className={styles.modeIcon}>🎵</span>
+                    <div className={styles.modeIconGlow} />
+                  </div>
+                  <div className={styles.modeInfo}>
+                    <h3 className={styles.modeName}>Adivinhe a Música pelo Áudio</h3>
+                    <p className={styles.modeDesc}>Ouça um trecho aleatório e lute para descobrir qual música está tocando</p>
+                  </div>
+                  <div className={styles.modeRight}>
+                    <span className={styles.modeStatus}>JOGAR</span>
+                    <svg className={styles.modeArrow} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="20" height="20">
+                      <path d="m9 18 6-6-6-6" />
+                    </svg>
+                  </div>
+                </div>
+              </Link>
+
+              <div className={`${styles.modeCard} ${styles.modeCardLocked}`}>
+                <div className={styles.modeCardInner}>
+                  <div className={styles.modeIconWrap}>
+                    <span className={styles.modeIcon}>✍️</span>
+                  </div>
+                  <div className={styles.modeInfo}>
+                    <h3 className={styles.modeName}>Complete a Letra</h3>
+                    <p className={styles.modeDesc}>Complete os versos de rap geek que faltam na música para pontuar</p>
+                  </div>
+                  <div className={styles.modeRight}>
+                    <span className={styles.modeLock}>EM BREVE</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className={`${styles.modeCard} ${styles.modeCardLocked}`}>
+                <div className={styles.modeCardInner}>
+                  <div className={styles.modeIconWrap}>
+                    <span className={styles.modeIcon}>🎭</span>
+                  </div>
+                  <div className={styles.modeInfo}>
+                    <h3 className={styles.modeName}>Adivinhe o Personagem</h3>
+                    <p className={styles.modeDesc}>Descubra sobre qual figura geek a música está retratando</p>
+                  </div>
+                  <div className={styles.modeRight}>
+                    <span className={styles.modeLock}>EM BREVE</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </main>
+
+        {/* === RIGHT SIDEBAR: Global Ranking === */}
+        <aside className={styles.sidebarRight}>
+          <div className={styles.sidebarCard}>
+            <div className={styles.sidebarHeader}>
+              <span className={styles.sidebarIcon}>🏆</span>
+              <h3 className={styles.sidebarTitle}>RANKING GLOBAL</h3>
+            </div>
+            
+            <div className={styles.rankingList}>
+              {[
+                { rank: 1, name: "Lucas A.R.T.", points: "9,999", color: "var(--accent-orange)" },
+                { rank: 2, name: "Gabriel Rodrigues", points: "8,540", color: "var(--accent-blue)" },
+                { rank: 3, name: "Pablo Mattheus", points: "7,210", color: "#a855f7" },
+                { rank: 4, name: "Nerd Hits Fan", points: "5,120", color: "var(--text-muted)" },
+                { rank: 5, name: "Otaku Sniper", points: "4,600", color: "var(--text-muted)" },
+              ].map((player, idx) => (
+                <div key={idx} className={styles.rankItem}>
+                  <span className={styles.rankNumber} style={{ color: player.color }}>#{player.rank}</span>
+                  <span className={styles.rankName}>{player.name}</span>
+                  <span className={styles.rankPoints}>{player.points} pts</span>
+                </div>
+              ))}
+            </div>
+            
+            <div className={styles.rankingFooter}>
+              Faça login para ver sua posição
+            </div>
           </div>
-        </div>
-      </section>
+        </aside>
+      </div>
 
       {/* === Footer === */}
       <footer className={styles.footer}>

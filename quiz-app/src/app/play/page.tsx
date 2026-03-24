@@ -171,7 +171,7 @@ export default function PlayPage() {
         </Link>
         <div className={styles.logoHeader}>
           <Image src="/7mz-logo.jpg" alt="7MZ" width={36} height={36} className={styles.logoHeaderImg} />
-          <h1 className={styles.logo}>7MZ <span>QUIZ</span></h1>
+          <h1 className={styles.logo}>7MZ <span>ARENA</span></h1>
         </div>
         {state.phase !== 'IDLE' && state.phase !== 'GAME_OVER' && (
           <div className={styles.headerStats}>
