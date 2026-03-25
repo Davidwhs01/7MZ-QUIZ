@@ -77,10 +77,11 @@
 }
 
 html {
-  font-size: 16px;
+  font-size: clamp(14px, 3.5vw, 16px);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -88,9 +89,18 @@ body {
   background: var(--bg-primary);
   color: var(--text-primary);
   min-height: 100vh;
+  min-height: 100dvh;
   overflow-x: hidden;
   line-height: 1.6;
   position: relative;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Mobile-friendly interactive elements */
+@media (max-width: 768px) {
+  button, a, input, select, textarea {
+    font-size: 16px; /* Prevents iOS zoom on focus */
+  }
 }
 
 /* === Grain/Noise Overlay — film texture === */

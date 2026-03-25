@@ -1023,45 +1023,258 @@
 }
 
 /* ============== RESPONSIVE ============== */
-@media (max-width: 600px) {
-  .header {
-    padding: 12px 16px;
+
+/* --- Tablet (≤1024px) --- */
+@media (max-width: 1024px) {
+  .main {
+    padding: 20px 20px 40px;
   }
 
-  .logo { font-size: 1.2rem; }
+  .playingScreen {
+    max-width: 600px;
+    padding: 32px 24px;
+    gap: 20px;
+  }
+
+  .startScreen {
+    max-width: 480px;
+  }
+}
+
+/* --- Mobile (≤768px) --- */
+@media (max-width: 768px) {
+  .header {
+    padding: 12px 16px;
+    gap: 8px;
+  }
+
+  .logo { font-size: 1.3rem; }
   .logoHeaderImg { width: 28px; height: 28px; }
 
   .scoreBadge { padding: 4px 12px; }
   .scoreValue { font-size: 1.2rem; }
+  .scoreLabel { font-size: 0.5rem; }
 
-  .modeTitle { font-size: 1.8rem; }
+  .streakBadge { padding: 6px 10px; }
+  .streakFire { font-size: 0.95rem; }
+  .streakValue { font-size: 1.1rem; }
+
+  .main {
+    padding: 16px 16px 32px;
+  }
+
+  .modeIcon { font-size: 2.8rem; }
+  .modeTitle { font-size: 2rem; }
+  .modeDesc { font-size: 0.88rem; }
+
+  .rules { padding: 16px 18px; }
+  .rule { font-size: 0.82rem; gap: 10px; }
+
+  .categoryGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .categoryCard { padding: 16px 10px; }
+  .categoryEmoji { font-size: 1.6rem; }
+  .categoryName { font-size: 0.9rem; }
+  .categoryCount { font-size: 0.65rem; }
 
   .startBtn {
-    padding: 16px 40px;
-    font-size: 1.4rem;
+    width: 100%;
+    padding: 16px 24px;
+    font-size: 1.5rem;
   }
 
   .playingScreen {
-    padding: 20px 16px;
+    padding: 24px 18px;
+    gap: 18px;
+    border-radius: var(--radius-lg);
   }
 
-  .gameOverTitle { font-size: 2.8rem; }
+  .roundNumber { font-size: 1.3rem; }
+  .visualizer { height: 60px; gap: 3px; }
+  .bar { width: 3px; }
+  .visualizerLabel { font-size: 0.6rem; }
+
+  .controlsRow { gap: 8px; }
+  .replayBtn { padding: 10px 16px; font-size: 0.8rem; gap: 6px; }
+  .hintBtn { padding: 10px 16px; font-size: 0.8rem; gap: 6px; }
+  .volumeBtn { width: 38px; height: 38px; }
+
+  .infoBar { padding: 0 2px; }
+  .durationIndicator { font-size: 0.7rem; }
+  .pointsIndicator { font-size: 0.75rem; }
+  .pointsValue { font-size: 0.88rem; }
+
+  .feedbackCard {
+    padding: 24px 20px;
+    max-width: 380px;
+    gap: 16px;
+  }
+
+  .feedbackSongTitle { font-size: 1.1rem; }
+  .correctEmoji { font-size: 1.8rem; }
+  .earnedPoints { font-size: 1.5rem; }
+
+  .feedbackAnime, .feedbackCategory {
+    font-size: 0.68rem;
+    padding: 3px 10px;
+  }
+
+  .gameOverContent {
+    padding: 28px 20px;
+    gap: 20px;
+  }
+
+  .gameOverIcon { font-size: 3.5rem; }
+  .gameOverTitle { font-size: 3rem; }
+  .gameOverThumb { width: 180px; }
 
   .statsGrid {
     grid-template-columns: repeat(3, 1fr);
     gap: 8px;
   }
 
-  .statValue { font-size: 1.6rem; }
+  .statCard { padding: 14px 8px; }
+  .statValue { font-size: 1.8rem; }
+  .statLabel { font-size: 0.6rem; }
 
-  .visualizer { gap: 3px; }
-  .bar { width: 3px; }
-  .controls { gap: 8px; }
+  .playAgainBtn {
+    font-size: 1.3rem;
+    padding: 16px;
+  }
 
   .milestoneToast {
     left: 16px;
     right: 16px;
     transform: none;
     bottom: 20px;
+    padding: 14px 20px;
   }
+
+  .milestoneTitle { font-size: 1rem; }
+  .milestoneDesc { font-size: 0.72rem; }
+  .milestoneEmoji { font-size: 1.8rem; }
+}
+
+/* --- Mobile SM (≤480px) --- */
+@media (max-width: 480px) {
+  .header {
+    padding: 10px 12px;
+    gap: 6px;
+  }
+
+  .logo { font-size: 1.1rem; }
+  .logoHeaderImg { width: 24px; height: 24px; }
+  .logoHeader { gap: 6px; }
+
+  .headerStats { gap: 6px; }
+  .scoreBadge { padding: 3px 8px; }
+  .scoreValue { font-size: 1rem; }
+  .streakBadge { padding: 4px 8px; }
+  .streakFire { font-size: 0.85rem; }
+  .streakValue { font-size: 1rem; }
+
+  .main { padding: 12px 10px 24px; }
+
+  .startScreen { gap: 18px; }
+  .modeIcon { font-size: 2.2rem; }
+  .modeTitle { font-size: 1.6rem; }
+  .modeDesc { font-size: 0.82rem; line-height: 1.5; }
+
+  .rules { padding: 14px 14px; gap: 8px; }
+  .rule { font-size: 0.78rem; gap: 8px; }
+  .ruleIcon { font-size: 1rem; }
+
+  .categoryGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .categoryCard { padding: 12px 8px; gap: 6px; }
+  .categoryEmoji { font-size: 1.4rem; }
+  .categoryName { font-size: 0.82rem; }
+  .categoryCount { font-size: 0.6rem; }
+
+  .startBtn {
+    font-size: 1.3rem;
+    padding: 14px 20px;
+  }
+
+  .playingScreen {
+    padding: 18px 14px;
+    gap: 14px;
+    border-radius: var(--radius-md);
+    box-shadow: 0 16px 50px rgba(0, 0, 0, 0.7), inset 0 1px 10px rgba(255, 255, 255, 0.02);
+  }
+
+  .roundNumber { font-size: 1.1rem; }
+  .hintDot { width: 8px; height: 8px; }
+
+  .visualizerContainer { padding: 12px 0; gap: 4px; }
+  .visualizer { height: 50px; gap: 2px; }
+  .bar { width: 2.5px; }
+  .visualizerLabel { font-size: 0.55rem; }
+
+  .controlsRow { gap: 6px; }
+  .replayBtn { padding: 8px 12px; font-size: 0.75rem; }
+  .hintBtn { padding: 8px 12px; font-size: 0.75rem; }
+  .hintIcon { font-size: 0.95rem; }
+  .hintCost { font-size: 0.65rem; }
+  .volumeBtn { width: 34px; height: 34px; }
+
+  .durationIndicator { font-size: 0.65rem; gap: 4px; }
+  .pointsIndicator { font-size: 0.68rem; }
+  .pointsValue { font-size: 0.82rem; }
+
+  .feedbackCard {
+    padding: 20px 16px;
+    gap: 14px;
+    max-width: 340px;
+    width: 95%;
+  }
+
+  .feedbackSongTitle { font-size: 0.95rem; }
+  .correctEmoji { font-size: 1.5rem; }
+  .earnedPoints { font-size: 1.3rem; }
+  .feedbackAnime, .feedbackCategory {
+    font-size: 0.62rem;
+    padding: 3px 8px;
+  }
+
+  .gameOverContent {
+    padding: 24px 16px;
+    gap: 16px;
+    width: 95%;
+  }
+
+  .gameOverIcon { font-size: 3rem; }
+  .gameOverTitle { font-size: 2.4rem; }
+  .gameOverThumb { width: 140px; }
+
+  .correctAnswer { padding: 16px 14px; gap: 10px; }
+  .correctAnswerLabel { font-size: 0.62rem; }
+  .correctAnswerTitle { font-size: 1rem; }
+
+  .statsGrid { gap: 6px; }
+  .statCard { padding: 12px 6px; gap: 4px; }
+  .statValue { font-size: 1.5rem; }
+  .statLabel { font-size: 0.55rem; letter-spacing: 0.08em; }
+
+  .gameOverActions { gap: 10px; }
+  .playAgainBtn { font-size: 1.2rem; padding: 14px; }
+  .homeBtn { font-size: 0.78rem; }
+
+  .milestoneToast {
+    left: 10px;
+    right: 10px;
+    bottom: 12px;
+    padding: 12px 16px;
+    gap: 10px;
+  }
+
+  .milestoneEmoji { font-size: 1.5rem; }
+  .milestoneTitle { font-size: 0.95rem; }
+  .milestoneDesc { font-size: 0.68rem; }
 }

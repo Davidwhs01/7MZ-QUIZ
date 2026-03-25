@@ -721,22 +721,135 @@
 }
 
 /* ============== RESPONSIVE ============== */
+
+/* --- Tablet (768px – 1279px) --- */
 @media (max-width: 1279px) {
   .lobbyContainer {
-    padding: 20px 24px;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 24px 60px;
+    gap: 32px;
   }
-  .sidebarLeft, .sidebarRight { display: none; }
+
+  .centerContent {
+    max-width: 640px;
+    width: 100%;
+    gap: 40px;
+  }
+
+  /* Show sidebars inline, stacked below center */
+  .sidebarLeft, .sidebarRight {
+    display: flex;
+    width: 100%;
+    max-width: 640px;
+  }
+
+  .title { font-size: 4.2rem; }
+
+  .splatterOrange { width: 400px; height: 400px; }
+  .splatterBlue { width: 350px; height: 350px; }
+  .splatterGreen { width: 280px; height: 280px; }
 }
 
-@media (max-width: 600px) {
-  .lobbyContainer { padding: 30px 16px; gap: 40px; }
-  .title { font-size: 3.5rem; }
-  .subtitle { font-size: 0.7rem; }
-  .modeCardInner { padding: 16px; gap: 12px; }
+/* --- Mobile (481px – 767px) --- */
+@media (max-width: 767px) {
+  .lobbyContainer {
+    padding: 24px 16px 48px;
+    gap: 28px;
+  }
+
+  .centerContent { gap: 32px; }
+
+  .logoContainer { width: 160px; height: 160px; }
+  .logoImage { width: 140px; height: 140px; }
+
+  .title { font-size: 3.8rem; }
+  .subtitle { font-size: 0.75rem; letter-spacing: 0.2em; }
+
+  .statsBar {
+    padding: 12px 16px;
+    max-width: 100%;
+  }
+  .statNumber { font-size: 1.5rem; }
+  .statLabel { font-size: 0.6rem; }
+  .statDivider { height: 24px; }
+
+  .sectionTitle { font-size: 1.8rem; }
+
+  .modeCardInner { padding: 18px; gap: 14px; }
+  .modeIconWrap { width: 48px; height: 48px; }
+  .modeIcon { font-size: 1.5rem; }
+  .modeName { font-size: 1.05rem; }
+  .modeDesc { font-size: 0.8rem; }
+  .modeStatus { font-size: 0.95rem; padding: 8px 16px; }
+
+  .sidebarCard { padding: 20px; gap: 20px; }
+  .sidebarTitle { font-size: 1.2rem; }
+  .rankItem { padding: 10px; gap: 10px; }
+  .rankNumber { font-size: 1.1rem; }
+
+  .footerInner { flex-direction: column; gap: 12px; text-align: center; }
+
+  .splatterOrange { width: 300px; height: 300px; }
+  .splatterBlue { width: 250px; height: 250px; }
+  .splatterGreen { width: 200px; height: 200px; }
+}
+
+/* --- Mobile SM (≤480px) --- */
+@media (max-width: 480px) {
+  .lobbyContainer {
+    padding: 20px 12px 40px;
+    gap: 24px;
+  }
+
+  .centerContent { gap: 24px; }
+
+  .logoContainer { width: 130px; height: 130px; }
+  .logoImage { width: 110px; height: 110px; }
+  .energyRing { inset: -8px; }
+  .energyRing2 { inset: -14px; }
+
+  .title { font-size: 3rem; }
+  .subtitle { font-size: 0.65rem; letter-spacing: 0.15em; }
+  .subtitleDecor { max-width: 40px; }
+
+  .statsBar {
+    padding: 10px 12px;
+    border-radius: var(--radius-md);
+  }
+  .statNumber { font-size: 1.3rem; }
+  .statLabel { font-size: 0.55rem; }
+  .statDivider { height: 20px; }
+
+  .sectionTag { font-size: 0.6rem; }
+  .sectionTitle { font-size: 1.6rem; }
+
+  .modesGrid { gap: 12px; }
+  .modeCardInner { padding: 14px; gap: 10px; }
   .modeIconWrap { width: 40px; height: 40px; }
   .modeIcon { font-size: 1.2rem; }
-  .modeName { font-size: 1rem; }
-  .modeDesc { font-size: 0.75rem; }
-  .modeStatus { font-size: 0.9rem; padding: 6px 12px; }
-  .footerInner { flex-direction: column; gap: 16px; text-align: center; }
+  .modeName { font-size: 0.95rem; }
+  .modeDesc { font-size: 0.72rem; }
+  .modeStatus { font-size: 0.85rem; padding: 6px 12px; }
+  .modeArrow { display: none; }
+
+  .sidebarCard { padding: 16px; gap: 16px; }
+  .sidebarTitle { font-size: 1.1rem; }
+  .loginBtn { padding: 12px; font-size: 0.8rem; }
+  .avatarPlaceholder { width: 64px; height: 64px; }
+  .loginPromptTitle { font-size: 1rem; }
+  .loginPromptDesc { font-size: 0.75rem; }
+
+  .rankItem { padding: 8px; gap: 8px; }
+  .rankNumber { font-size: 1rem; min-width: 28px; }
+  .rankName { font-size: 0.82rem; }
+  .rankPoints { font-size: 0.72rem; }
+
+  .footer { padding: 24px 12px; }
+  .footerText { font-size: 0.72rem; }
+  .footerLink { font-size: 0.72rem; }
+
+  .splatterOrange { width: 200px; height: 200px; filter: blur(80px); }
+  .splatterBlue { width: 180px; height: 180px; filter: blur(80px); }
+  .splatterGreen { display: none; }
 }
