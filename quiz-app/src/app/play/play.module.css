@@ -1060,7 +1060,14 @@
   .streakValue { font-size: 1.1rem; }
 
   .main {
-    padding: 16px 16px 32px;
+    padding: 24px 16px 32px;
+    justify-content: flex-start;
+    align-items: stretch;
+  }
+
+  .startScreen {
+    max-width: 100%;
+    width: 100%;
   }
 
   .modeIcon { font-size: 2.8rem; }
@@ -1176,9 +1183,9 @@
   .streakFire { font-size: 0.85rem; }
   .streakValue { font-size: 1rem; }
 
-  .main { padding: 12px 10px 24px; }
+  .main { padding: 16px 12px 24px; }
 
-  .startScreen { gap: 18px; }
+  .startScreen { gap: 16px; }
   .modeIcon { font-size: 2.2rem; }
   .modeTitle { font-size: 1.6rem; }
   .modeDesc { font-size: 0.82rem; line-height: 1.5; }
