@@ -722,33 +722,24 @@
 
 /* ============== RESPONSIVE ============== */
 
-/* --- Tablet (768px – 1279px) --- */
+/* --- Tablet & Mobile (<1280px): Hide sidebars, use BottomDrawer instead --- */
 @media (max-width: 1279px) {
   .lobbyContainer {
     flex-direction: column;
-    align-items: stretch;
-    padding: 32px 24px 60px;
+    align-items: center;
+    padding: 32px 24px 80px;
     gap: 32px;
   }
-
-  /* Reorder: center content first, sidebars below */
-  .centerContent { order: 1; }
-  .sidebarLeft { order: 2; }
-  .sidebarRight { order: 3; }
 
   .centerContent {
     max-width: 640px;
     width: 100%;
     gap: 40px;
-    align-self: center;
   }
 
-  /* Sidebars fill width */
+  /* Sidebars hidden — BottomDrawer component handles this on mobile */
   .sidebarLeft, .sidebarRight {
-    display: flex;
-    width: 100%;
-    max-width: 640px;
-    align-self: center;
+    display: none;
   }
 
   .title { font-size: 4.2rem; }
@@ -789,13 +780,6 @@
   .modeName { font-size: 1.05rem; }
   .modeDesc { font-size: 0.8rem; }
   .modeStatus { font-size: 0.95rem; padding: 8px 16px; }
-
-  /* Compact sidebars on mobile */
-  .sidebarLeft { display: none; }
-  .sidebarCard { padding: 20px; gap: 16px; }
-  .sidebarTitle { font-size: 1.2rem; }
-  .rankItem { padding: 10px; gap: 10px; }
-  .rankNumber { font-size: 1.1rem; }
 
   .footerInner { flex-direction: column; gap: 12px; text-align: center; }
 
@@ -843,20 +827,7 @@
   .modeLock { font-size: 0.65rem; padding: 5px 10px; }
   .modeArrow { display: none; }
 
-  .sidebarCard { padding: 16px; gap: 16px; }
-  .sidebarTitle { font-size: 1.1rem; }
-  .loginBtn { padding: 12px; font-size: 0.8rem; }
-  .avatarPlaceholder { width: 64px; height: 64px; }
-  .loginPromptTitle { font-size: 1rem; }
-  .loginPromptDesc { font-size: 0.75rem; }
 
-  /* Hide login sidebar on small mobile */
-  .sidebarLeft { display: none; }
-
-  .rankItem { padding: 8px; gap: 8px; }
-  .rankNumber { font-size: 1rem; min-width: 28px; }
-  .rankName { font-size: 0.82rem; }
-  .rankPoints { font-size: 0.72rem; }
 
   .footer { padding: 24px 12px; }
   .footerText { font-size: 0.72rem; }

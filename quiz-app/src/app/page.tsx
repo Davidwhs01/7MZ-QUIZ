@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import styles from './page.module.css';
+import BottomDrawer from '@/components/home/BottomDrawer';
 
 export default function Home() {
   return (
@@ -198,6 +199,8 @@ export default function Home() {
           </a>
         </div>
       </footer>
+      {/* === Bottom Drawer (Mobile only) === */}
+      <BottomDrawer />
     </div>
   );
 }
