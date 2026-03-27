@@ -2,6 +2,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import styles from './page.module.css';
 import BottomDrawer from '@/components/home/BottomDrawer';
+import LoginProfileCard from '@/components/home/LoginProfileCard';
+import GlobalRankingCard from '@/components/home/GlobalRankingCard';
 
 export default function Home() {
   return (
@@ -24,21 +26,7 @@ export default function Home() {
               <span className={styles.sidebarIcon}>👤</span>
               <h3 className={styles.sidebarTitle}>SEU PERFIL</h3>
             </div>
-            <div className={styles.loginContent}>
-              <div className={styles.avatarPlaceholder}>
-                <Image src="/7mz-logo.jpg" alt="Avatar" width={64} height={64} className={styles.avatarImg} />
-                <div className={styles.avatarRing} />
-              </div>
-              <h4 className={styles.loginPromptTitle}>Acesse sua conta</h4>
-              <p className={styles.loginPromptDesc}>Salve sua pontuação e participe do ranking global</p>
-              
-              <button className={styles.loginBtn}>
-                <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
-                  <path d="M12 2C6.48 2 2 6.48 2 12c0 5.52 4.48 10 10 10s10-4.48 10-10c0-5.52-4.48-10-10-10zm-1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
-                </svg>
-                ENTRAR COM DISCORD
-              </button>
-            </div>
+            <LoginProfileCard />
           </div>
         </aside>
 

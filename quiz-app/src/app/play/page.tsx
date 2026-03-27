@@ -4,6 +4,7 @@ import { useEffect, useCallback, useRef, useState } from 'react';
 import { useYouTubePlayer } from '@/hooks/useYouTubePlayer';
 import { useGameState } from '@/hooks/useGameState';
 import { getAudioDuration, generateRandomTimestamp } from '@/lib/game-logic';
+import { saveGameScore } from '@/utils/supabase/gameActions';
 import SearchBar from '@/components/game/SearchBar';
 import { Song, SongCategory, songs } from '@/data/songs';
 import styles from './play.module.css';
@@ -41,6 +42,7 @@ export default function PlayPage() {
   const [selectedCategory, setSelectedCategory] = useState<SongCategory | 'ALL' | null>(null);
   const nextSongDataRef = useRef<{ song: Song; timestamp: number; duration: number } | null>(null);
   const hasStartedRef = useRef(false);
+  const scoreSubmittedRef = useRef(false);
   const categoryRef = useRef<SongCategory | undefined>(undefined);
 
   // Start new round: get real duration from YT, generate safe timestamp, then play
@@ -77,6 +79,7 @@ export default function PlayPage() {
   const handleStart = () => {
     if (hasStartedRef.current || !selectedCategory) return;
     hasStartedRef.current = true;
+    scoreSubmittedRef.current = false;
     categoryRef.current = selectedCategory === 'ALL' ? undefined : selectedCategory;
     startGame();
   };
@@ -128,6 +131,7 @@ export default function PlayPage() {
 
   const handlePlayAgain = () => {
     hasStartedRef.current = false;
+    scoreSubmittedRef.current = false;
     resetGame();
     setTimeout(() => {
       hasStartedRef.current = true;
@@ -139,6 +143,14 @@ export default function PlayPage() {
   const [activeBarHeights, setActiveBarHeights] = useState<number[]>(
     Array.from({ length: 28 }, () => 10)
   );
+
+  // Submit score on game over
+  useEffect(() => {
+    if (state.phase === 'GAME_OVER' && state.score > 0 && !scoreSubmittedRef.current) {
+      scoreSubmittedRef.current = true;
+      saveGameScore(state.score, selectedCategory || 'ALL');
+    }
+  }, [state.phase, state.score, selectedCategory]);
 
   useEffect(() => {
     if (!isPlaying) return;
