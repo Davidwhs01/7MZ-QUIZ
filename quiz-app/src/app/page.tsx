@@ -145,25 +145,7 @@ export default function Home() {
               <h3 className={styles.sidebarTitle}>RANKING GLOBAL</h3>
             </div>
             
-            <div className={styles.rankingList}>
-              {[
-                { rank: 1, name: "Lucas A.R.T.", points: "9,999", color: "var(--accent-orange)" },
-                { rank: 2, name: "Gabriel Rodrigues", points: "8,540", color: "var(--accent-blue)" },
-                { rank: 3, name: "Pablo Mattheus", points: "7,210", color: "#a855f7" },
-                { rank: 4, name: "Nerd Hits Fan", points: "5,120", color: "var(--text-muted)" },
-                { rank: 5, name: "Otaku Sniper", points: "4,600", color: "var(--text-muted)" },
-              ].map((player, idx) => (
-                <div key={idx} className={styles.rankItem}>
-                  <span className={styles.rankNumber} style={{ color: player.color }}>#{player.rank}</span>
-                  <span className={styles.rankName}>{player.name}</span>
-                  <span className={styles.rankPoints}>{player.points} pts</span>
-                </div>
-              ))}
-            </div>
-            
-            <div className={styles.rankingFooter}>
-              Faça login para ver sua posição
-            </div>
+            <GlobalRankingCard />
           </div>
         </aside>
       </div>
