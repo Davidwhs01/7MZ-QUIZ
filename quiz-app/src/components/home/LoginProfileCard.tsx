@@ -13,6 +13,7 @@ export default function LoginProfileCard() {
   const supabase = createClient();
 
   useEffect(() => {
+    
     // Check current session
     const getSession = async () => {
       try {
@@ -67,7 +68,7 @@ export default function LoginProfileCard() {
     );
 
     return () => subscription.unsubscribe();
-  }, [supabase]);
+  }, []);
 
   const handleLogin = async (provider: 'discord' | 'google') => {
     // Redirects to OAuth provider
