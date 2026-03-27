@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { createClient } from '@/utils/supabase/client';
+import Link from 'next/link';
 
 type LeaderboardEntry = {
   id: string;
@@ -116,6 +117,21 @@ export default function GlobalRankingCard() {
           </div>
         );
       })}
+
+      <div style={{ marginTop: '16px', width: '100%', display: 'flex', justifyContent: 'center' }}>
+        <Link 
+          href="/ranking"
+          style={{ 
+            display: 'inline-flex', alignItems: 'center', padding: '10px 20px', 
+            background: 'rgba(255, 136, 0, 0.1)', color: 'var(--accent-orange)', 
+            fontFamily: 'var(--font-ui)', fontSize: '0.8rem', fontWeight: 700, 
+            borderRadius: '100px', cursor: 'pointer', border: '1px solid rgba(255, 136, 0, 0.2)', textDecoration: 'none',
+            letterSpacing: '0.02em', transition: 'all 0.2s'
+          }}
+        >
+          VER RANKING COMPLETO
+        </Link>
+      </div>
     </div>
   );
 }

@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { createClient } from '@/utils/supabase/client';
+import { User } from '@supabase/supabase-js';
 
 export default function LoginProfileCard() {
   const [user, setUser] = useState<any>(null);
@@ -86,7 +88,7 @@ export default function LoginProfileCard() {
   if (user) {
     return (
       <div className="loginContent" style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-        <div className="avatarWrap" style={{ position: 'relative', width: 56, height: 56, flexShrink: 0 }}>
+        <Link href="/profile" className="avatarWrap" style={{ position: 'relative', width: 56, height: 56, flexShrink: 0, textDecoration: 'none' }}>
           <Image 
             src={user.user_metadata.avatar_url || '/7mz-logo.jpg'} 
             alt={user.user_metadata.full_name || 'Usuário'} 
@@ -95,11 +97,13 @@ export default function LoginProfileCard() {
             style={{ borderRadius: '50%', objectFit: 'cover' }} 
           />
           <div className="avatarRing" style={{ position: 'absolute', inset: -4, borderRadius: '50%', border: '1.5px solid var(--accent-orange)' }} />
-        </div>
+        </Link>
         <div className="loginText" style={{ flex: 1, minWidth: 0 }}>
-          <h4 className="loginPrompt" style={{ margin: 0, fontFamily: 'var(--font-ui)', fontSize: '1rem', fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-            {user.user_metadata.full_name}
-          </h4>
+          <Link href="/profile" style={{ textDecoration: 'none', color: 'inherit' }}>
+            <h4 className="loginPrompt" style={{ margin: 0, fontFamily: 'var(--font-ui)', fontSize: '1rem', fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {user.user_metadata.full_name}
+            </h4>
+          </Link>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4 }}>
             <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--accent-orange)' }}>
               {stats ? `${stats.score.toLocaleString()} pts` : '0 pts'}
