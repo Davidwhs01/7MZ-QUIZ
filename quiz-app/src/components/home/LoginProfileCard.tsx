@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { createClient } from '@/utils/supabase/client';
@@ -9,10 +9,9 @@ export default function LoginProfileCard() {
   const [user, setUser] = useState<any>(null);
   const [stats, setStats] = useState<{ score: number, games_played: number } | null>(null);
   const [loading, setLoading] = useState(true);
-  const supabaseRef = useRef(createClient());
+  const supabase = useMemo(() => createClient(), []);
 
   useEffect(() => {
-    const supabase = supabaseRef.current;
     let cancelled = false;
 
     const getSession = async () => {
@@ -28,7 +27,7 @@ export default function LoginProfileCard() {
             .from('leaderboard')
             .select('score, games_played')
             .eq('id', session.user.id)
-            .single();
+            .maybeSingle();
             
           if (!cancelled && statData) setStats(statData as any);
         } else {
@@ -53,7 +52,7 @@ export default function LoginProfileCard() {
               .from('leaderboard')
               .select('score, games_played')
               .eq('id', session.user.id)
-              .single();
+              .maybeSingle();
             if (statData) setStats(statData as any);
           } else {
             setUser(null);
@@ -74,7 +73,7 @@ export default function LoginProfileCard() {
   }, []);
 
   const handleLogin = async (provider: 'discord' | 'google') => {
-    await supabaseRef.current.auth.signInWithOAuth({
+    await supabase.auth.signInWithOAuth({
       provider: provider,
       options: {
         redirectTo: `${window.location.origin}/auth/callback`,
@@ -83,7 +82,7 @@ export default function LoginProfileCard() {
   };
 
   const handleLogout = async () => {
-    await supabaseRef.current.auth.signOut();
+    await supabase.auth.signOut();
   };
 
   if (loading) {
