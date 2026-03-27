@@ -1,35 +1,36 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { createClient } from '@/utils/supabase/client';
-import { User } from '@supabase/supabase-js';
 
 export default function LoginProfileCard() {
   const [user, setUser] = useState<any>(null);
   const [stats, setStats] = useState<{ score: number, games_played: number } | null>(null);
   const [loading, setLoading] = useState(true);
-  const supabase = createClient();
+  const supabaseRef = useRef(createClient());
 
   useEffect(() => {
-    
-    // Check current session
+    const supabase = supabaseRef.current;
+    let cancelled = false;
+
     const getSession = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
         
+        if (cancelled) return;
+
         if (session?.user) {
           setUser(session.user);
           
-          // Fetch user stats
           const { data: statData } = await supabase
             .from('leaderboard')
             .select('score, games_played')
             .eq('id', session.user.id)
             .single();
             
-          if (statData) setStats(statData as any);
+          if (!cancelled && statData) setStats(statData as any);
         } else {
           setUser(null);
           setStats(null);
@@ -37,13 +38,12 @@ export default function LoginProfileCard() {
       } catch (e) {
         console.error("Session fetch error:", e);
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
 
     getSession();
 
-    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (_event, session) => {
         try {
@@ -67,12 +67,14 @@ export default function LoginProfileCard() {
       }
     );
 
-    return () => subscription.unsubscribe();
+    return () => {
+      cancelled = true;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const handleLogin = async (provider: 'discord' | 'google') => {
-    // Redirects to OAuth provider
-    await supabase.auth.signInWithOAuth({
+    await supabaseRef.current.auth.signInWithOAuth({
       provider: provider,
       options: {
         redirectTo: `${window.location.origin}/auth/callback`,
@@ -81,7 +83,7 @@ export default function LoginProfileCard() {
   };
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    await supabaseRef.current.auth.signOut();
   };
 
   if (loading) {

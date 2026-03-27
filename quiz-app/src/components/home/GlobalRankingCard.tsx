@@ -19,11 +19,12 @@ export default function GlobalRankingCard() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    let cancelled = false;
+
     const fetchRanking = async () => {
       try {
         const supabase = createClient();
         
-        // Fetch top 5 from leaderboard joined with profiles
         const { data, error } = await supabase
           .from('leaderboard')
           .select(`
@@ -38,35 +39,20 @@ export default function GlobalRankingCard() {
           .limit(5);
 
         if (error) throw error;
-        
-        // Use type assertion since Supabase types are not fully generated yet
-        setRanking(data as unknown as LeaderboardEntry[]);
+        if (!cancelled) {
+          setRanking(data as unknown as LeaderboardEntry[]);
+        }
       } catch (err: any) {
         console.error('Error fetching leaderboard:', err);
-        setError(err.message);
+        if (!cancelled) setError(err.message);
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
 
     fetchRanking();
 
-    // Subscribe to realtime updates on the leaderboard table
-    const supabase = createClient();
-    const channel = supabase
-      .channel('public:leaderboard')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'leaderboard' },
-        () => {
-          fetchRanking(); // refetch on any change
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
+    return () => { cancelled = true; };
   }, []);
 
   const getRankColor = (rank: number) => {
