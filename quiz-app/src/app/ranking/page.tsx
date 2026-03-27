@@ -39,7 +39,7 @@ export default function RankingPage() {
             
           if (error) throw error;
           
-          setRanking(data.map(d => ({
+          setRanking(data.map((d: any) => ({
             id: d.id,
             score: d.score,
             games_played: d.games_played,

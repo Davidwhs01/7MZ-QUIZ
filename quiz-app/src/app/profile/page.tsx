@@ -55,7 +55,7 @@ export default function ProfilePage() {
       // 1. Get user identities (connected accounts)
       const { data: idData, error: idError } = await supabase.auth.getUserIdentities();
       if (!idError && idData) {
-        setIdentities(idData.identities.map(i => ({ id: i.id, provider: i.provider })));
+        setIdentities(idData.identities.map((i: any) => ({ id: i.id, provider: i.provider })));
       }
 
       // 2. Get leaderboard stats

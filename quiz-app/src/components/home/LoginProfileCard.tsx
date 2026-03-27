@@ -44,7 +44,7 @@ export default function LoginProfileCard() {
     getSession();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
+      async (_event: any, session: any) => {
         try {
           if (session?.user) {
             setUser(session.user);
