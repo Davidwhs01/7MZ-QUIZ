@@ -15,25 +15,29 @@ export default function LoginProfileCard() {
   useEffect(() => {
     // Check current session
     const getSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (session?.user) {
-        setUser(session.user);
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
         
-        // Fetch user stats
-        const { data: statData } = await supabase
-          .from('leaderboard')
-          .select('score, games_played')
-          .eq('id', session.user.id)
-          .single();
+        if (session?.user) {
+          setUser(session.user);
           
-        if (statData) setStats(statData as any);
-      } else {
-        setUser(null);
-        setStats(null);
+          // Fetch user stats
+          const { data: statData } = await supabase
+            .from('leaderboard')
+            .select('score, games_played')
+            .eq('id', session.user.id)
+            .single();
+            
+          if (statData) setStats(statData as any);
+        } else {
+          setUser(null);
+          setStats(null);
+        }
+      } catch (e) {
+        console.error("Session fetch error:", e);
+      } finally {
+        setLoading(false);
       }
-      
-      setLoading(false);
     };
 
     getSession();
@@ -41,17 +45,23 @@ export default function LoginProfileCard() {
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (_event, session) => {
-        if (session?.user) {
-          setUser(session.user);
-          const { data: statData } = await supabase
-            .from('leaderboard')
-            .select('score, games_played')
-            .eq('id', session.user.id)
-            .single();
-          if (statData) setStats(statData as any);
-        } else {
-          setUser(null);
-          setStats(null);
+        try {
+          if (session?.user) {
+            setUser(session.user);
+            const { data: statData } = await supabase
+              .from('leaderboard')
+              .select('score, games_played')
+              .eq('id', session.user.id)
+              .single();
+            if (statData) setStats(statData as any);
+          } else {
+            setUser(null);
+            setStats(null);
+          }
+        } catch (e) {
+          console.error("Auth change error:", e);
+        } finally {
+          setLoading(false);
         }
       }
     );
