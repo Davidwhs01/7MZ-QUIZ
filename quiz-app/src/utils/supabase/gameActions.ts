@@ -50,10 +50,12 @@ export async function saveGameScore(score: number, mode: string) {
       if (insertLeadError) throw insertLeadError;
     } else {
       // Update existing
+      const newHighScore = Math.max(currentLeaderboard.score, score);
+      
       const { error: updateLeadError } = await supabase
         .from('leaderboard')
         .update({
-          score: currentLeaderboard.score + score, // Cumulative score
+          score: newHighScore, // Top Score
           games_played: currentLeaderboard.games_played + 1,
           updated_at: new Date().toISOString()
         })

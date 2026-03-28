@@ -9,6 +9,7 @@ export default function LoginProfileCard() {
   const [user, setUser] = useState<any>(null);
   const [stats, setStats] = useState<{ score: number, games_played: number } | null>(null);
   const [loading, setLoading] = useState(true);
+  const [profileInfo, setProfileInfo] = useState<{username: string, avatar_url: string} | null>(null);
   const supabase = useMemo(() => createClient(), []);
 
   useEffect(() => {
@@ -22,6 +23,14 @@ export default function LoginProfileCard() {
 
         if (session?.user) {
           setUser(session.user);
+          const { data: publicProfile } = await supabase
+            .from('profiles')
+            .select('username, avatar_url')
+            .eq('id', session.user.id)
+            .single();
+
+          if (!cancelled && publicProfile) setProfileInfo(publicProfile as any);
+
           const { data: statData } = await supabase
             .from('leaderboard')
             .select('score, games_played')
@@ -32,6 +41,7 @@ export default function LoginProfileCard() {
         } else {
           setUser(null);
           setStats(null);
+          setProfileInfo(null);
         }
       } catch (e) {
         console.error("Session fetch error:", e);
@@ -50,6 +60,7 @@ export default function LoginProfileCard() {
         if (event === 'SIGNED_OUT') {
            setUser(null);
            setStats(null);
+           setProfileInfo(null);
         } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
            fetchSessionData();
         }
@@ -92,7 +103,7 @@ export default function LoginProfileCard() {
       <div className="loginContent" style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
         <Link href="/profile" className="avatarWrap" style={{ position: 'relative', width: 56, height: 56, flexShrink: 0, textDecoration: 'none' }}>
           <Image 
-            src={user.user_metadata.avatar_url || '/7mz-logo.jpg'} 
+            src={profileInfo?.avatar_url || user.user_metadata.avatar_url || user.user_metadata.picture || '/7mz-logo.jpg'} 
             alt={user.user_metadata.full_name || 'Usuário'} 
             width={56} 
             height={56} 
@@ -103,7 +114,7 @@ export default function LoginProfileCard() {
         <div className="loginText" style={{ flex: 1, minWidth: 0 }}>
           <Link href="/profile" style={{ textDecoration: 'none', color: 'inherit' }}>
             <h4 className="loginPrompt" style={{ margin: 0, fontFamily: 'var(--font-ui)', fontSize: '1rem', fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-              {user.user_metadata.full_name}
+              {profileInfo?.username || user.user_metadata.custom_claims?.global_name || user.user_metadata.full_name || 'Jogador'}
             </h4>
           </Link>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4 }}>

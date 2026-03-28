@@ -33,6 +33,9 @@ export default function ProfilePage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [linking, setLinking] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editUsername, setEditUsername] = useState('');
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
   
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [history, setHistory] = useState<MatchHistory[]>([]);
@@ -58,21 +61,31 @@ export default function ProfilePage() {
         setIdentities(idData.identities.map((i: any) => ({ id: i.id, provider: i.provider })));
       }
 
-      // 2. Get leaderboard stats
+      // 2. Get user public profile stats and username/avatar
+      const { data: publicProfile } = await supabase
+        .from('profiles')
+        .select('username, avatar_url')
+        .eq('id', user.id)
+        .single();
+
+      // 3. Get leaderboard stats
       const { data: leaderData } = await supabase
         .from('leaderboard')
         .select('score, games_played')
         .eq('id', user.id)
         .single();
         
+      const userName = publicProfile?.username || metadata.custom_claims?.global_name || metadata.full_name || metadata.name || 'Jogador';
+      
       setProfile({
         id: user.id,
         email: user.email,
-        username: metadata.custom_claims?.global_name || metadata.full_name || metadata.name || 'Jogador',
-        avatar_url: metadata.avatar_url || metadata.picture || '/7mz-logo.jpg',
+        username: userName,
+        avatar_url: publicProfile?.avatar_url || metadata.avatar_url || metadata.picture || '/7mz-logo.jpg',
         score: leaderData?.score || 0,
         games_played: leaderData?.games_played || 0
       });
+      setEditUsername(userName);
 
       // 3. Get recent match history
       const { data: historyData } = await supabase
@@ -108,6 +121,65 @@ export default function ProfilePage() {
     } catch (e) {
       console.error("Link error:", e);
       setLinking(false);
+    }
+  };
+
+  const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      setUploadingAvatar(true);
+      
+      if (!event.target.files || event.target.files.length === 0) {
+        throw new Error('Você precisa selecionar uma imagem.');
+      }
+
+      const file = event.target.files[0];
+      if (file.size > 2 * 1024 * 1024) {
+        throw new Error('Imagem deve ter menos de 2MB!');
+      }
+
+      const fileExt = file.name.split('.').pop();
+      const filePath = `${profile?.id}-${Math.random()}.${fileExt}`;
+
+      const supabase = createClient();
+      
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: publicUrlData } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(filePath);
+
+      setProfile(prev => prev ? { ...prev, avatar_url: publicUrlData.publicUrl } : null);
+    } catch (error: any) {
+      console.error(error);
+      alert(error.message);
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
+
+  const handleSaveProfile = async () => {
+    if (!profile) return;
+    try {
+      const supabase = createClient();
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          username: editUsername,
+          avatar_url: profile.avatar_url
+        })
+        .eq('id', profile.id);
+
+      if (error) throw error;
+      
+      setProfile(prev => prev ? { ...prev, username: editUsername } : null);
+      setIsEditing(false);
+      alert("Perfil atualizado com sucesso!");
+    } catch (error: any) {
+      alert("Erro ao salvar: " + error.message);
     }
   };
 
@@ -153,8 +225,45 @@ export default function ProfilePage() {
               height={100} 
               className={styles.avatar} 
             />
+            {isEditing && (
+              <label style={{position:'absolute', bottom:-10, background:'var(--primary)', color:'#fff', padding:'5px 10px', borderRadius:'15px', cursor:'pointer', fontSize:'0.8rem', fontWeight:'bold', border:'2px solid var(--background)'}}>
+                {uploadingAvatar ? '...' : 'Trocar'}
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  onChange={handleAvatarUpload}
+                  disabled={uploadingAvatar}
+                  style={{display:'none'}}
+                />
+              </label>
+            )}
           </div>
-          <h1 className={styles.username}>{profile.username}</h1>
+          
+          {isEditing ? (
+            <input 
+               type="text" 
+               value={editUsername} 
+               onChange={(e) => setEditUsername(e.target.value)} 
+               className={styles.username}
+               style={{background:'var(--surface-color)', color:'#fff', border:'none', filter:'drop-shadow(0 0 5px var(--primary))', padding:'10px', textAlign:'center', marginTop:'10px', borderRadius:'10px'}}
+               autoFocus
+               maxLength={20}
+            />
+          ) : (
+            <h1 className={styles.username}>{profile.username}</h1>
+          )}
+
+          <div style={{marginTop: '15px'}}>
+            {isEditing ? (
+               <div style={{display:'flex', gap:'10px'}}>
+                 <button onClick={handleSaveProfile} style={{background: 'var(--primary)', color: '#000', fontWeight: 'bold', padding: '10px 20px', borderRadius: '10px', border:'none', cursor:'pointer'}}>Salvar</button>
+                 <button onClick={() => setIsEditing(false)} style={{background: 'var(--surface-color)', color: '#fff', padding: '10px 20px', borderRadius: '10px', border:'none', cursor:'pointer'}}>Cancelar</button>
+               </div>
+            ) : (
+               <button onClick={() => setIsEditing(true)} style={{background: 'transparent', color: 'var(--text-muted)', fontSize: '0.9rem', padding: '5px 15px', borderRadius: '20px', border:'1px solid var(--text-muted)', cursor:'pointer'}}>✏️ Editar Perfil</button>
+            )}
+          </div>
+
           <div className={styles.statsGrid}>
             <div className={styles.statBox}>
               <div className={styles.statValue}>{profile.score.toLocaleString()}</div>
