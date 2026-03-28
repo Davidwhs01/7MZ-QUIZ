@@ -21,6 +21,21 @@ export const MILESTONES: Milestone[] = [
   { threshold: 50, title: "Hokage do 7MZ", emoji: "👑", description: "Lenda absoluta!" },
 ];
 
+export const MAX_TRUE_STREAK_BONUS = 20; // Maximum multiplier (cap at +500 pts bonus)
+export const POINTS_PER_TRUE_STREAK = 25; // Points per successive zero-hint win
+
+export function calculateRoundScore(hintLevel: number, trueStreak: number): { base: number, bonus: number } {
+  const base = getPointsForHintLevel(hintLevel);
+  let bonus = 0;
+
+  if (hintLevel === 0 && trueStreak > 0) {
+    const effectiveStreakBonus = Math.min(trueStreak, MAX_TRUE_STREAK_BONUS);
+    bonus = effectiveStreakBonus * POINTS_PER_TRUE_STREAK;
+  }
+
+  return { base, bonus };
+}
+
 export function getPointsForHintLevel(hintLevel: number): number {
   switch (hintLevel) {
     case 0: return POINTS_NO_HINT;

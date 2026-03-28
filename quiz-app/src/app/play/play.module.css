@@ -151,6 +151,29 @@
   letter-spacing: 0.05em;
 }
 
+/* Combo UI */
+.comboBadge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: rgba(255, 68, 0, 0.15);
+  border: 1px solid rgba(255, 68, 0, 0.3);
+  border-radius: var(--radius-md);
+  box-shadow: 0 0 15px rgba(255, 68, 0, 0.2);
+}
+
+.comboFire { font-size: 1.2rem; }
+
+.comboValue {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  color: var(--accent-orange);
+  letter-spacing: 0.05em;
+  font-weight: 800;
+  text-shadow: 0 0 10px rgba(255, 68, 0, 0.4);
+}
+
 /* ============== MAIN ============== */
 .main {
   flex: 1;
@@ -765,6 +788,21 @@
   letter-spacing: 0.05em;
   text-shadow: 0 0 20px var(--color-success-glow);
   animation: slideInRight 500ms ease 100ms both;
+}
+
+.bonusPointsWrap {
+  margin-top: -6px;
+  margin-bottom: 4px;
+}
+
+.bonusPoints {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  color: #ffd700;
+  font-weight: 800;
+  text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+  letter-spacing: 0.1em;
+  animation: bounceIn 400ms ease 300ms both;
 }
 
 .feedbackSongTitle {

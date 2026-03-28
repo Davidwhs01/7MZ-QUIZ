@@ -3,7 +3,7 @@
 import { useEffect, useCallback, useRef, useState } from 'react';
 import { useYouTubePlayer } from '@/hooks/useYouTubePlayer';
 import { useGameState } from '@/hooks/useGameState';
-import { getAudioDuration, generateRandomTimestamp } from '@/lib/game-logic';
+import { getAudioDuration, generateRandomTimestamp, calculateRoundScore } from '@/lib/game-logic';
 import { saveGameScore } from '@/utils/supabase/gameActions';
 import SearchBar from '@/components/game/SearchBar';
 import { Song, SongCategory, songs } from '@/data/songs';
@@ -38,6 +38,7 @@ export default function PlayPage() {
   const [showCorrectFeedback, setShowCorrectFeedback] = useState(false);
   const [showWrongFeedback, setShowWrongFeedback] = useState(false);
   const [pointsEarned, setPointsEarned] = useState(0);
+  const [bonusEarned, setBonusEarned] = useState(0);
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<SongCategory | 'ALL' | null>(null);
   const nextSongDataRef = useRef<{ song: Song; timestamp: number; duration: number } | null>(null);
@@ -91,8 +92,9 @@ export default function PlayPage() {
     const isCorrect = submitAnswer(song.id);
     
     if (isCorrect) {
-      const pts = state.hintLevel === 0 ? 100 : state.hintLevel === 1 ? 60 : 30;
-      setPointsEarned(pts);
+      const { base, bonus } = calculateRoundScore(state.hintLevel, state.trueStreak);
+      setPointsEarned(base);
+      setBonusEarned(bonus);
       setShowCorrectFeedback(true);
       
       setTimeout(() => {
@@ -192,9 +194,21 @@ export default function PlayPage() {
               <span className={styles.scoreValue}>{state.score}</span>
             </div>
             <div className={styles.streakBadge}>
-              <span className={styles.streakFire}>🔥</span>
+              <span className={styles.streakFire} title="Sequência Total">✅</span>
               <span className={styles.streakValue}>{state.streak}</span>
             </div>
+            
+            {state.trueStreak >= 2 && (
+              <motion.div 
+                className={styles.comboBadge}
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                key={state.trueStreak} // forces re-animation on streak up
+              >
+                <span className={styles.comboFire}>🔥</span>
+                <span className={styles.comboValue}>{state.trueStreak}x COMBO</span>
+              </motion.div>
+            )}
           </div>
         )}
       </header>
@@ -447,6 +461,16 @@ export default function PlayPage() {
                       <span className={styles.correctEmoji}>✅</span>
                       <span className={styles.earnedPoints}>+{pointsEarned} pts</span>
                     </div>
+                    {bonusEarned > 0 && (
+                      <motion.div 
+                        initial={{ opacity: 0, y: 5 }} 
+                        animate={{ opacity: 1, y: 0 }} 
+                        transition={{ delay: 0.3 }}
+                        className={styles.bonusPointsWrap}
+                      >
+                        <span className={styles.bonusPoints}>+{bonusEarned} COMBO 🔥</span>
+                      </motion.div>
+                    )}
                     <h3 className={styles.feedbackSongTitle}>{state.currentSong.title}</h3>
                     <div className={styles.feedbackMeta}>
                       {state.currentSong.anime && (

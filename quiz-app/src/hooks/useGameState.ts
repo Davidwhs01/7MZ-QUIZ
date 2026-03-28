@@ -3,10 +3,10 @@
 import { useCallback, useReducer } from 'react';
 import { Song, SongCategory, getRandomSong } from '@/data/songs';
 import {
-  getPointsForHintLevel,
   getAudioDuration,
   generateRandomTimestamp,
   checkMilestone,
+  calculateRoundScore,
   Milestone,
 } from '@/lib/game-logic';
 
@@ -18,7 +18,8 @@ export interface GameState {
   timestamp: number;
   hintLevel: number; // 0, 1, or 2
   score: number;
-  streak: number; // consecutive correct answers
+  streak: number; // general consecutive correct answers
+  trueStreak: number; // consecutive correct answers without hints
   bestStreak: number;
   round: number;
   playedSongIds: string[];
@@ -43,6 +44,7 @@ const initialState: GameState = {
   hintLevel: 0,
   score: 0,
   streak: 0,
+  trueStreak: 0,
   bestStreak: 0,
   round: 0,
   playedSongIds: [],
@@ -68,17 +70,34 @@ function gameReducer(state: GameState, action: GameAction): GameState {
 
     case 'USE_HINT': {
       if (state.hintLevel >= 2) return state;
+      
+      const newHintLevel = state.hintLevel + 1;
+      let penalizedTrueStreak = state.trueStreak;
+      
+      if (newHintLevel === 1) {
+        // Punish by halving the streak on first hint
+        penalizedTrueStreak = Math.floor(state.trueStreak / 2);
+      } else if (newHintLevel === 2) {
+        // Completely reset streak on second hint
+        penalizedTrueStreak = 0;
+      }
+
       return {
         ...state,
-        hintLevel: state.hintLevel + 1,
+        hintLevel: newHintLevel,
         totalHintsUsed: state.totalHintsUsed + 1,
+        trueStreak: penalizedTrueStreak,
       };
     }
 
     case 'CORRECT_ANSWER': {
-      const points = getPointsForHintLevel(state.hintLevel);
-      const newScore = state.score + points;
+      const { base, bonus } = calculateRoundScore(state.hintLevel, state.trueStreak);
+      const newScore = state.score + base + bonus;
       const newStreak = state.streak + 1;
+      
+      // True streak increases only if no hints were used
+      const newTrueStreak = state.hintLevel === 0 ? state.trueStreak + 1 : state.trueStreak;
+      
       const milestone = checkMilestone(newStreak, state.streak);
       
       return {
@@ -86,6 +105,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         phase: 'CORRECT',
         score: newScore,
         streak: newStreak,
+        trueStreak: newTrueStreak,
         bestStreak: Math.max(state.bestStreak, newStreak),
         milestone,
       };

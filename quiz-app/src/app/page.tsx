@@ -4,6 +4,7 @@ import styles from './page.module.css';
 import BottomDrawer from '@/components/home/BottomDrawer';
 import LoginProfileCard from '@/components/home/LoginProfileCard';
 import GlobalRankingCard from '@/components/home/GlobalRankingCard';
+import { songs } from '@/data/songs';
 
 export default function Home() {
   return (
@@ -60,7 +61,7 @@ export default function Home() {
 
             <div className={styles.statsBar}>
               <div className={styles.statItem}>
-                <span className={styles.statNumber}>172+</span>
+                <span className={styles.statNumber}>{songs.length}+</span>
                 <span className={styles.statLabel}>Músicas</span>
               </div>
               <div className={styles.statDivider} />

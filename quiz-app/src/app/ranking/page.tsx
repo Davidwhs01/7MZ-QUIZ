@@ -82,8 +82,12 @@ export default function RankingPage() {
   const top3 = ranking.slice(0, 3);
   const others = ranking.slice(3);
 
-  // Reorder Top 3 for visual centered podium: 2nd, 1st, 3rd
-  const podiumOrder = top3.length === 3 ? [top3[1], top3[0], top3[2]] : top3;
+  // Always force [2nd, 1st, 3rd] structure to keep visual layout balanced even if missing players
+  const podiumArray = [
+    { player: top3[1], rankPos: 2, spotClass: styles.second },
+    { player: top3[0], rankPos: 1, spotClass: styles.first },
+    { player: top3[2], rankPos: 3, spotClass: styles.third },
+  ];
 
   return (
     <div className={styles.page}>
@@ -143,10 +147,13 @@ export default function RankingPage() {
           <>
             {/* Podium (Top 3) */}
             <div className={styles.podiumContainer}>
-              {podiumOrder.map((player) => {
-                const rankPos = top3.findIndex(p => p.id === player.id) + 1;
-                const spotClass = rankPos === 1 ? styles.first : rankPos === 2 ? styles.second : styles.third;
+              {podiumArray.map((spot, idx) => {
+                const { player, rankPos, spotClass } = spot;
                 
+                if (!player) {
+                  return <div key={`empty-${rankPos}`} className={`${styles.podiumSpot} ${spotClass}`} />;
+                }
+
                 return (
                   <motion.div 
                     key={player.id}
@@ -166,8 +173,10 @@ export default function RankingPage() {
                       />
                       <div className={styles.podiumRing} />
                     </div>
-                    <div className={styles.podiumName}>{player.username}</div>
-                    <div className={styles.podiumScore}>{player.score.toLocaleString()} pts</div>
+                    <div className={styles.podiumStep}>
+                      <div className={styles.podiumName}>{player.username}</div>
+                      <div className={styles.podiumScore}>{player.score.toLocaleString()}</div>
+                    </div>
                   </motion.div>
                 );
               })}
