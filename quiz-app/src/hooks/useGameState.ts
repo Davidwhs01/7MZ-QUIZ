@@ -148,6 +148,12 @@ export function useGameState() {
 
   const loadNextSong = useCallback((category?: SongCategory) => {
     const song = getRandomSong(state.playedSongIds, category);
+    
+    if (!song) {
+      dispatch({ type: 'WRONG_ANSWER' }); // Ends the game
+      return null;
+    }
+
     const duration = getAudioDuration(0);
     const timestamp = generateRandomTimestamp(song, duration);
     dispatch({ type: 'SONG_LOADED', song, timestamp });

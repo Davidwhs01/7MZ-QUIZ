@@ -264,15 +264,15 @@ export const songs: Song[] = [
   { id: "goku-vegeta", title: "Rap do Goku e Vegeta (Dragon Ball Super) - O HOMEM MAIS FORTE DO UNIVERSO | NERD HITS", youtubeId: "KRXrDOtta10", duration: 0, category: 'NERD HITS', searchTerms: ["goku", "vegeta", "dragon", "ball", "homem", "forte", "universo"] },
 ];
 
-export function getRandomSong(excludeIds: string[] = [], category?: SongCategory): Song {
+export function getRandomSong(excludeIds: string[] = [], category?: SongCategory): Song | null {
   let pool = songs;
   if (category) {
     pool = songs.filter(s => s.category === category);
   }
   const available = pool.filter(s => !excludeIds.includes(s.id));
   if (available.length === 0) {
-    // Reset if all songs used
-    return pool[Math.floor(Math.random() * pool.length)];
+    // Game completed - all songs used!
+    return null;
   }
   return available[Math.floor(Math.random() * available.length)];
 }

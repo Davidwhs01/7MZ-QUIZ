@@ -51,6 +51,11 @@ export default function PlayPage() {
     const cat = categoryRef.current;
     const data = loadNextSong(cat);
     
+    if (!data) {
+      console.log('[7MZ DEBUG] Game complete! No more songs.');
+      return;
+    }
+    
     // Get the REAL video duration from YouTube API
     const realDuration = await getRealDuration(data.song.youtubeId);
     
@@ -449,12 +454,18 @@ export default function PlayPage() {
                 />
                 <div className={styles.feedbackCard}>
                   <div className={styles.feedbackThumbWrap}>
+                    {/* Glowing background using same image for a dominant color glow */}
+                    <img
+                      src={`https://img.youtube.com/vi/${state.currentSong.youtubeId}/hqdefault.jpg`}
+                      alt=""
+                      aria-hidden="true"
+                      className={styles.feedbackThumbGlow}
+                    />
                     <img
                       src={`https://img.youtube.com/vi/${state.currentSong.youtubeId}/hqdefault.jpg`}
                       alt={state.currentSong.title}
                       className={styles.feedbackThumb}
                     />
-                    <div className={styles.feedbackThumbGlow} />
                   </div>
                   <div className={styles.feedbackInfo}>
                     <div className={styles.feedbackBadgeRow}>
