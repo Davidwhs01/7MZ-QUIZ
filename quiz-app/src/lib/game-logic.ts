@@ -14,11 +14,11 @@ export interface Milestone {
 }
 
 export const MILESTONES: Milestone[] = [
-  { threshold: 5, title: "Genin Musical", emoji: "🎵", description: "Primeiros passos no mundo do 7MZ!" },
+  { threshold: 5, title: "Genin Musical", emoji: "🎵", description: "Primeiros passos no mundo da Geek Arena!" },
   { threshold: 10, title: "Chunin do Beat", emoji: "🎧", description: "Você conhece as batidas!" },
-  { threshold: 15, title: "Jounin do Rap", emoji: "🔥", description: "Mestre das rimas geek!" },
-  { threshold: 25, title: "Kage do 7MZ", emoji: "⚡", description: "Líder supremo do quiz!" },
-  { threshold: 50, title: "Hokage do 7MZ", emoji: "👑", description: "Lenda absoluta!" },
+  { threshold: 15, title: "Jounin do Rap", emoji: "🔥", description: "Mestre das rimas nerd!" },
+  { threshold: 25, title: "Kage Músico", emoji: "⚡", description: "Líder supremo do quiz!" },
+  { threshold: 50, title: "Hokage do Geek", emoji: "👑", description: "Lenda absoluta das rimas!" },
 ];
 
 export const MAX_TRUE_STREAK_BONUS = 20; // Maximum multiplier (cap at +500 pts bonus)

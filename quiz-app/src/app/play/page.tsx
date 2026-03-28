@@ -275,8 +275,8 @@ export default function PlayPage() {
           </svg>
         </Link>
         <div className={styles.logoHeader}>
-          <Image src="/7mz-logo.jpg" alt="7MZ" width={36} height={36} className={styles.logoHeaderImg} />
-          <h1 className={styles.logo}>7MZ <span>ARENA</span></h1>
+          <Image src="/geek-logo.png" alt="Geek Arena Logo" width={36} height={36} className={styles.logoHeaderImg} />
+          <h1 className={styles.logo}>GEEK <span>ARENA</span></h1>
         </div>
         {state.phase !== 'IDLE' && state.phase !== 'GAME_OVER' && (
           <div className={styles.headerStats}>
@@ -300,7 +300,7 @@ export default function PlayPage() {
             <div className={styles.modeIcon}>🎵</div>
             <h2 className={styles.modeTitle}>Escolha a Categoria</h2>
             <p className={styles.modeDesc}>
-              Ouça um trecho e adivinhe qual música do 7 Minutoz está tocando.
+              Ouça um trecho e adivinhe qual música geek está tocando.
             </p>
 
             {/* Category Cards */}
@@ -352,11 +352,26 @@ export default function PlayPage() {
                 }}
                 whileHover={{ scale: 1.05, y: -5 }}
                 whileTap={{ scale: 0.95 }}
+                className={`${styles.categoryCard} ${selectedCategory === 'ENYGMA' ? styles.categoryCardActive : ''}`}
+                onClick={() => setSelectedCategory('ENYGMA')}
+              >
+                <span className={styles.categoryEmoji}>🔮</span>
+                <span className={styles.categoryName}>ENYGMA</span>
+                <span className={styles.categoryCount}>{songs.filter(s => s.category === 'ENYGMA').length} músicas</span>
+              </motion.button>
+              
+              <motion.button
+                variants={{
+                  hidden: { y: 20, opacity: 0 },
+                  visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 300 } }
+                }}
+                whileHover={{ scale: 1.05, y: -5 }}
+                whileTap={{ scale: 0.95 }}
                 className={`${styles.categoryCard} ${selectedCategory === 'ALL' ? styles.categoryCardActive : ''}`}
                 onClick={() => setSelectedCategory('ALL')}
               >
-                <span className={styles.categoryEmoji}>🔥</span>
-                <span className={styles.categoryName}>AMBOS</span>
+                <span className={styles.categoryEmoji}>🌌</span>
+                <span className={styles.categoryName}>TODOS</span>
                 <span className={styles.categoryCount}>{songs.length} músicas</span>
               </motion.button>
             </motion.div>

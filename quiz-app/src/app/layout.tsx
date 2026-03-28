@@ -10,9 +10,9 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "7MZ Arena — O Quiz Definitivo de Rap Geek",
-  description: "Teste seus conhecimentos sobre as músicas do 7 Minutoz! Adivinhe a música pelo áudio, complete a letra e muito mais.",
-  keywords: ["7 Minutoz", "7MZ", "quiz", "rap geek", "anime", "música"],
+  title: "Geek Arena — O Quiz Definitivo de Rap Geek",
+  description: "Teste seus conhecimentos sobre as músicas de rap geek e anime! Adivinhe a música pelo áudio, envolvendo artistas como 7 Minutoz, Enygma e mais.",
+  keywords: ["Geek Arena", "7 Minutoz", "7MZ", "Enygma", "quiz", "rap geek", "anime", "música nerd"],
   icons: {
     icon: "/geek-logo.png",
     apple: "/geek-logo.png",

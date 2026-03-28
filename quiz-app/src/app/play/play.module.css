@@ -246,10 +246,11 @@
 /* ============== CATEGORY SELECTION ============== */
 .categoryGrid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 16px;
   width: 100%;
-  margin-bottom: 12px;
+  max-width: 600px;
+  margin: 0 auto 12px auto;
 }
 
 .categoryCard {

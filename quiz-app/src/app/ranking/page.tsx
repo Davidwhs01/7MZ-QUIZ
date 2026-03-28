@@ -102,8 +102,8 @@ export default function RankingPage() {
           </svg>
         </Link>
         <div className={styles.logoHeader}>
-          <Image src="/7mz-logo.jpg" alt="7MZ" width={36} height={36} className={styles.logoHeaderImg} />
-          <h1 className={styles.logo}>7MZ <span>ARENA</span></h1>
+          <Image src="/geek-logo.png" alt="Geek Area Logo" width={36} height={36} className={styles.logoHeaderImg} />
+          <h1 className={styles.logo}>GEEK <span>ARENA</span></h1>
         </div>
       </header>
 

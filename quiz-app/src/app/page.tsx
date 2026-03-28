@@ -39,8 +39,8 @@ export default function Home() {
               <div className={styles.energyRing2} />
               <div className={styles.logoImage}>
                 <Image
-                  src="/7mz-logo.jpg"
-                  alt="7 Minutoz"
+                  src="/geek-logo.png"
+                  alt="Geek Arena Logo"
                   width={200}
                   height={200}
                   priority
@@ -50,7 +50,7 @@ export default function Home() {
 
             <div className={styles.titleBlock}>
               <h1 className={styles.title}>
-                <span className={styles.titleQuiz}>ARENA</span>
+                <span className={styles.titleQuiz}>GEEK ARENA</span>
               </h1>
               <div className={styles.subtitleLine}>
                 <span className={styles.subtitleDecor} />
