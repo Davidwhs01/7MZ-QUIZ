@@ -14,37 +14,10 @@ export default function LoginProfileCard() {
   useEffect(() => {
     let cancelled = false;
 
-    const getSession = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        
-        if (cancelled) return;
-
-        if (session?.user) {
-          setUser(session.user);
-          
-          const { data: statData } = await supabase
-            .from('leaderboard')
-            .select('score, games_played')
-            .eq('id', session.user.id)
-            .maybeSingle();
-            
-          if (!cancelled && statData) setStats(statData as any);
-        } else {
-          setUser(null);
-          setStats(null);
-        }
-      } catch (e) {
-        console.error("Session fetch error:", e);
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    };
-
-    getSession();
-
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event: any, session: any) => {
+      async (event: string, session: any) => {
+        if (cancelled) return;
+        
         try {
           if (session?.user) {
             setUser(session.user);
@@ -53,7 +26,8 @@ export default function LoginProfileCard() {
               .select('score, games_played')
               .eq('id', session.user.id)
               .maybeSingle();
-            if (statData) setStats(statData as any);
+              
+            if (!cancelled && statData) setStats(statData as any);
           } else {
             setUser(null);
             setStats(null);
@@ -61,7 +35,7 @@ export default function LoginProfileCard() {
         } catch (e) {
           console.error("Auth change error:", e);
         } finally {
-          setLoading(false);
+          if (!cancelled) setLoading(false);
         }
       }
     );
@@ -70,7 +44,7 @@ export default function LoginProfileCard() {
       cancelled = true;
       subscription.unsubscribe();
     };
-  }, []);
+  }, [supabase]);
 
   const handleLogin = async (provider: 'discord' | 'google') => {
     await supabase.auth.signInWithOAuth({

@@ -20,11 +20,12 @@ export default function GlobalRankingCard() {
 
   useEffect(() => {
     let cancelled = false;
+    const supabase = createClient();
 
     const fetchRanking = async () => {
+      if (cancelled) return;
+      
       try {
-        const supabase = createClient();
-        
         const { data, error } = await supabase
           .from('leaderboard')
           .select(`
@@ -50,9 +51,17 @@ export default function GlobalRankingCard() {
       }
     };
 
-    fetchRanking();
+    // Defer the fetch until Supabase has evaluated the auth state from local storage.
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event: string) => {
+       if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN') {
+          fetchRanking();
+       }
+    });
 
-    return () => { cancelled = true; };
+    return () => { 
+      cancelled = true; 
+      subscription.unsubscribe();
+    };
   }, []);
 
   const getRankColor = (rank: number) => {
