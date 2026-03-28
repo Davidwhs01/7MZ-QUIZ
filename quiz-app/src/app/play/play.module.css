@@ -740,6 +740,114 @@
   width: 100%;
   border-radius: var(--radius-lg);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.feedbackThumbLink {
+  text-decoration: none;
+  width: 100%;
+  display: block;
+  cursor: pointer;
+}
+
+.videoModalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000000;
+  background: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(15px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.3s ease;
+  pointer-events: auto;
+}
+
+.videoContainer {
+  position: relative;
+  z-index: 1000001;
+  width: 100%;
+  max-width: 1000px;
+  aspect-ratio: 16/9;
+  background: #000;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 50px 120px rgba(0, 0, 0, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  animation: scaleInBounce 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: auto;
+}
+
+.videoContainer iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  pointer-events: auto !important;
+}
+
+.closeVideoBtn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  z-index: 1000002;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.85);
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  color: #fff;
+  font-size: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.closeVideoBtn:hover {
+  background: var(--accent-orange);
+  border-color: var(--accent-orange);
+  transform: scale(1.1);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.feedbackThumbLink:hover .feedbackThumbWrap {
+  transform: scale(1.03);
+}
+
+.feedbackThumbLink:hover .playOverlay {
+  opacity: 1;
+}
+
+.playOverlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(2px);
+  color: #fff;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border-radius: var(--radius-lg);
+  gap: 8px;
+}
+
+.playOverlay span {
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.5);
 }
 
 .feedbackThumb {
@@ -934,6 +1042,24 @@
   margin-top: 4px;
 }
 
+.scoreLabel, .streakLabel, .comboValue {
+  font-family: var(--font-ui);
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+}
+
+.scoreValue, .streakValue {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
 .correctAnswerLabel {
   font-family: var(--font-ui);
   font-size: 0.7rem;
@@ -941,6 +1067,7 @@
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.15em;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
 }
 
 .correctAnswerTitle {
@@ -948,6 +1075,7 @@
   font-size: 1.15rem;
   font-weight: 700;
   color: var(--accent-orange);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
 }
 
 /* Stats Grid */
@@ -1329,4 +1457,76 @@
   .milestoneEmoji { font-size: 1.5rem; }
   .milestoneTitle { font-size: 0.95rem; }
   .milestoneDesc { font-size: 0.68rem; }
+}
+
+/* ============== ON FIRE / COMBO EFFECTS ============== */
+.onFire {
+  /* Thin border (0 to 1.5px) */
+  border: calc(var(--fire-intensity) * 1.5px) solid #ff4d00 !important;
+  background: rgba(30, 10, 5, calc(0.3 + var(--fire-intensity) * 0.4)) !important;
+  /* MINIMAL inset glow: Only 8px to avoid covering the UI (was 60px) */
+  box-shadow: 
+    inset 0 0 calc(var(--fire-intensity) * 8px) rgba(255, 80, 0, calc(var(--fire-intensity) * 0.4)),
+    0 0 calc(var(--fire-intensity) * 60px) rgba(255, 80, 0, calc(var(--fire-intensity) * 0.3)) !important;
+  /* Pulsing speed: 5s to 1s */
+  animation: burnContainer calc(5s - var(--fire-intensity) * 4s) infinite alternate !important;
+}
+
+.feedbackHot {
+  border: calc(var(--fire-intensity) * 2px) solid #ff4800 !important;
+  box-shadow: 
+    inset 0 0 calc(var(--fire-intensity) * 15px) rgba(255, 70, 0, calc(var(--fire-intensity) * 0.4)),
+    0 0 calc(var(--fire-intensity) * 120px) rgba(255, 50, 0, calc(var(--fire-intensity) * 0.4)) !important;
+  animation: burnFeedback calc(3s - var(--fire-intensity) * 2s) infinite alternate !important;
+}
+
+.streakHot {
+  background: rgba(255, 80, 0, calc(var(--fire-intensity) * 0.2)) !important;
+  border-color: #ff8c00 !important;
+  box-shadow: 0 0 calc(var(--fire-intensity) * 15px) rgba(255, 80, 0, calc(var(--fire-intensity) * 0.5)) !important;
+  animation: pulseHeat calc(2.5s - var(--fire-intensity) * 1.5s) infinite alternate !important;
+}
+
+.comboHot {
+  background: linear-gradient(135deg, #ff4d00, #ff0000) !important;
+  box-shadow: 0 0 calc(var(--fire-intensity) * 30px) rgba(255, 0, 0, calc(var(--fire-intensity) * 0.5)) !important;
+  /* Scale only very slightly (max 1.03) */
+  transform: scale(calc(1 + var(--fire-intensity) * 0.03)) !important;
+}
+
+.floatingPoints {
+  position: fixed;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: calc(2.5rem + var(--fire-intensity) * 1rem);
+  font-weight: 900;
+  color: #fbbf24;
+  text-shadow: 0 0 20px rgba(251, 191, 36, 0.8), 0 10px 40px rgba(0, 0, 0, 0.7);
+  pointer-events: none;
+  z-index: 2000000;
+  font-family: var(--font-display);
+  white-space: nowrap;
+  animation: floatUpPoints 1.2s cubic-bezier(0.17, 0.89, 0.32, 1.28) forwards;
+}
+
+@keyframes burnContainer {
+  from { border-color: #ff4d00; box-shadow: inset 0 0 60px rgba(255, 80, 0, 0.2), 0 0 40px rgba(255, 50, 0, 0.3); }
+  to { border-color: #ffaa00; box-shadow: inset 0 0 120px rgba(255, 100, 0, 0.5), 0 0 100px rgba(255, 50, 0, 0.6); }
+}
+
+@keyframes burnFeedback {
+  from { border-color: #ff4800; }
+  to { border-color: #ffd000; }
+}
+
+@keyframes pulseHeat {
+  from { box-shadow: 0 0 15px rgba(255, 80, 0, 0.4); }
+  to { box-shadow: 0 0 40px rgba(255, 80, 0, 0.8); }
+}
+
+@keyframes floatUpPoints {
+  0% { opacity: 0; transform: translate(-50%, 0px) scale(0.6); }
+  30% { opacity: 1; transform: translate(-50%, -60px) scale(1.1); }
+  100% { opacity: 0; transform: translate(-50%, -150px) scale(1.4); }
 }

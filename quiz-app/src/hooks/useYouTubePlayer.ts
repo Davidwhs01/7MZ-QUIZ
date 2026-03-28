@@ -68,6 +68,7 @@ export function useYouTubePlayer(containerId: string, options?: UseYouTubePlayer
         playsinline: 1,
         rel: 0,
         showinfo: 0,
+        origin: typeof window !== 'undefined' ? window.location.origin : '',
       },
       events: {
         onReady: () => {

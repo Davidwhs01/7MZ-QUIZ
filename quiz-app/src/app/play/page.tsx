@@ -5,6 +5,7 @@ import { useYouTubePlayer } from '@/hooks/useYouTubePlayer';
 import { useGameState } from '@/hooks/useGameState';
 import { getAudioDuration, generateRandomTimestamp, calculateRoundScore } from '@/lib/game-logic';
 import { saveGameScore } from '@/utils/supabase/gameActions';
+import { sfx } from '@/lib/audio-effects';
 import SearchBar from '@/components/game/SearchBar';
 import { Song, SongCategory, songs } from '@/data/songs';
 import styles from './play.module.css';
@@ -39,9 +40,14 @@ export default function PlayPage() {
   const [showWrongFeedback, setShowWrongFeedback] = useState(false);
   const [pointsEarned, setPointsEarned] = useState(0);
   const [bonusEarned, setBonusEarned] = useState(0);
+  const [floatingPoints, setFloatingPoints] = useState<{ id: number, val: number } | null>(null);
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<SongCategory | 'ALL' | null>(null);
+  const [isViewingVideo, setIsViewingVideo] = useState(false);
+  const [videoData, setVideoData] = useState<{ id: string; start: number } | null>(null);
+  
   const nextSongDataRef = useRef<{ song: Song; timestamp: number; duration: number } | null>(null);
+  const feedbackTimerRef = useRef<NodeJS.Timeout | null>(null);
   const hasStartedRef = useRef(false);
   const scoreSubmittedRef = useRef(false);
   const categoryRef = useRef<SongCategory | undefined>(undefined);
@@ -75,6 +81,54 @@ export default function PlayPage() {
     skipSongRef.current = startNewRound;
   }, [startNewRound]);
 
+  // Handle ESC key to close video modal
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') handleCloseVideo();
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, [state.phase]); // Dependency on phase to ensure nextRound is available if needed
+
+  const handleOpenVideo = useCallback(() => {
+    if (!state.currentSong) return;
+    
+    // Cancel the auto-transition timer
+    if (feedbackTimerRef.current) {
+      clearTimeout(feedbackTimerRef.current);
+      feedbackTimerRef.current = null;
+    }
+    
+    const playbackTime = nextSongDataRef.current?.timestamp ?? state.timestamp;
+    
+    console.log('[7MZ VIDEO] Opening with:', { 
+      id: state.currentSong.youtubeId, 
+      start: playbackTime,
+      source: nextSongDataRef.current ? 'nextSongDataRef' : 'state.timestamp'
+    });
+
+    setVideoData({
+      id: state.currentSong.youtubeId,
+      start: Math.floor(playbackTime)
+    });
+    
+    // Radical: turn off the feedback overlay so it doesn't stay behind/on top of the modal
+    setShowCorrectFeedback(false);
+    setIsViewingVideo(true);
+  }, [state.currentSong, state.timestamp]);
+
+  const handleCloseVideo = useCallback(() => {
+    setIsViewingVideo(false);
+    setVideoData(null);
+    
+    // Since we closed the feedback overlay above, we MUST trigger nextRound now
+    // We check for phase CORRECT specifically to avoid double-transitioning 
+    // if something else happened (though unlikely here)
+    if (state.phase === 'CORRECT') {
+      nextRound();
+    }
+  }, [state.phase, nextRound]);
+
   // When game phase changes to LOADING, load next song
   useEffect(() => {
     if (state.phase === 'LOADING' && isReady) {
@@ -102,15 +156,29 @@ export default function PlayPage() {
       setBonusEarned(bonus);
       setShowCorrectFeedback(true);
       
-      setTimeout(() => {
+      // Play SFX
+      if (state.trueStreak >= 4) {
+        sfx.playCombo();
+      } else {
+        sfx.playCorrect();
+      }
+
+      // Show floating points
+      const id = Date.now();
+      setFloatingPoints({ id, val: base + bonus });
+      setTimeout(() => setFloatingPoints(curr => curr?.id === id ? null : curr), 1500);
+      
+      // Auto-transition after 2.5s, but we store the ref to cancel it if video opens
+      feedbackTimerRef.current = setTimeout(() => {
         setShowCorrectFeedback(false);
         nextRound();
       }, 2500);
     } else {
+      sfx.playWrong();
       setShowWrongFeedback(true);
       setTimeout(() => setShowWrongFeedback(false), 500);
     }
-  }, [state.phase, state.hintLevel, submitAnswer, stop, nextRound]);
+  }, [state.phase, state.hintLevel, state.trueStreak, submitAnswer, stop, nextRound]);
 
   const handleHint = useCallback(() => {
     const hintData = useHint();
@@ -159,6 +227,13 @@ export default function PlayPage() {
     }
   }, [state.phase, state.score, selectedCategory]);
 
+  // Play Game Over sound
+  useEffect(() => {
+    if (state.phase === 'GAME_OVER') {
+      sfx.playGameOver();
+    }
+  }, [state.phase]);
+
   useEffect(() => {
     if (!isPlaying) return;
     
@@ -172,11 +247,22 @@ export default function PlayPage() {
     return () => clearInterval(interval);
   }, [isPlaying]);
 
-  return (
-    <div className={styles.page}>
-      {/* Hidden YouTube Player */}
-      <div id="yt-player" style={{ position: 'absolute', top: 0, left: 0, width: 0, height: 0, overflow: 'hidden', opacity: 0, pointerEvents: 'none' }} />
+  // Exponential growth for fire intensity: slower start (subtle at low streak), peak at 20.
+  const fireIntensity = Math.pow(Math.min(state.trueStreak / 20, 1), 2);
+  const isOnFire = state.trueStreak >= 4; // Subtly appears at streak 4, becomes real at 10+
 
+  return (
+    <div 
+      className={styles.page} 
+      suppressHydrationWarning
+      style={{ '--fire-intensity': fireIntensity } as any}
+    >
+      {/* Hidden YouTube Player for background audio — we only init once */}
+      <div 
+        id="yt-player" 
+        style={{ position: 'absolute', top: 0, left: 0, width: 0, height: 0, overflow: 'hidden', opacity: 0, pointerEvents: 'none' }} 
+        suppressHydrationWarning
+      />
       {/* Background orbs */}
       <div className={styles.orbOrange} />
       <div className={styles.orbBlue} />
@@ -198,22 +284,10 @@ export default function PlayPage() {
               <span className={styles.scoreLabel}>PONTOS</span>
               <span className={styles.scoreValue}>{state.score}</span>
             </div>
-            <div className={styles.streakBadge}>
-              <span className={styles.streakFire} title="Sequência Total">✅</span>
-              <span className={styles.streakValue}>{state.streak}</span>
+            <div className={`${styles.streakBadge} ${isOnFire ? styles.streakHot : ''}`}>
+              <span className={styles.streakIcon}>🔥</span>
+              <span className={styles.streakValue}>{state.trueStreak}</span>
             </div>
-            
-            {state.trueStreak >= 2 && (
-              <motion.div 
-                className={styles.comboBadge}
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                key={state.trueStreak} // forces re-animation on streak up
-              >
-                <span className={styles.comboFire}>🔥</span>
-                <span className={styles.comboValue}>{state.trueStreak}x COMBO</span>
-              </motion.div>
-            )}
           </div>
         )}
       </header>
@@ -222,7 +296,7 @@ export default function PlayPage() {
       <main className={styles.main}>
         {/* IDLE - Category Selection Screen */}
         {state.phase === 'IDLE' && (
-          <div className={styles.startScreen}>
+          <div className={styles.startScreen} suppressHydrationWarning>
             <div className={styles.modeIcon}>🎵</div>
             <h2 className={styles.modeTitle}>Escolha a Categoria</h2>
             <p className={styles.modeDesc}>
@@ -322,9 +396,8 @@ export default function PlayPage() {
         )}
 
         {/* PLAYING */}
-        {(state.phase === 'PLAYING' || state.phase === 'CORRECT') && (
-          <div className={`${styles.playingScreen} ${showCorrectFeedback ? styles.correctFlash : ''} ${showWrongFeedback ? styles.wrongFlash : ''}`}>
-            
+        {(state.phase === 'PLAYING' || state.phase === 'CORRECT' || state.phase === 'LOADING') && (
+          <div className={`${styles.playingScreen} ${isOnFire ? styles.onFire : ''} ${showCorrectFeedback ? styles.correctFlash : ''} ${showWrongFeedback ? styles.wrongFlash : ''}`}>
             {/* Round + hint level info */}
             <div className={styles.roundHeader}>
               <span className={styles.roundNumber}>RODADA {state.round}</span>
@@ -447,25 +520,39 @@ export default function PlayPage() {
 
             {/* Correct feedback overlay */}
             {showCorrectFeedback && state.currentSong && (
-              <div className={styles.feedbackOverlay}>
+              <div className={`${styles.feedbackOverlay} ${isOnFire ? styles.feedbackHot : ''}`}>
                 <div 
                   className={styles.feedbackBg} 
                   style={{ backgroundImage: `url(https://img.youtube.com/vi/${state.currentSong.youtubeId}/maxresdefault.jpg)` }} 
                 />
                 <div className={styles.feedbackCard}>
-                  <div className={styles.feedbackThumbWrap}>
-                    {/* Glowing background using same image for a dominant color glow */}
-                    <img
-                      src={`https://img.youtube.com/vi/${state.currentSong.youtubeId}/hqdefault.jpg`}
-                      alt=""
-                      aria-hidden="true"
-                      className={styles.feedbackThumbGlow}
-                    />
-                    <img
-                      src={`https://img.youtube.com/vi/${state.currentSong.youtubeId}/hqdefault.jpg`}
-                      alt={state.currentSong.title}
-                      className={styles.feedbackThumb}
-                    />
+                  <div 
+                    onClick={() => handleOpenVideo()}
+                    className={styles.feedbackThumbLink}
+                    role="button"
+                    tabIndex={0}
+                    title="Assistir clipe no YouTube"
+                  >
+                    <div className={styles.feedbackThumbWrap}>
+                      {/* Glowing background using same image for a dominant color glow */}
+                      <img
+                        src={`https://img.youtube.com/vi/${state.currentSong.youtubeId}/hqdefault.jpg`}
+                        alt=""
+                        aria-hidden="true"
+                        className={styles.feedbackThumbGlow}
+                      />
+                      <img
+                        src={`https://img.youtube.com/vi/${state.currentSong.youtubeId}/hqdefault.jpg`}
+                        alt={state.currentSong.title}
+                        className={styles.feedbackThumb}
+                      />
+                      <div className={styles.playOverlay}>
+                        <svg viewBox="0 0 24 24" fill="currentColor" width="48" height="48">
+                          <path d="M8 5v14l11-7z" />
+                        </svg>
+                        <span>ASSISTIR CLIPE</span>
+                      </div>
+                    </div>
                   </div>
                   <div className={styles.feedbackInfo}>
                     <div className={styles.feedbackBadgeRow}>
@@ -557,6 +644,13 @@ export default function PlayPage() {
         )}
       </main>
 
+      {/* Floating Points (Global Layer) */}
+      {floatingPoints && (
+        <div key={floatingPoints.id} className={styles.floatingPoints}>
+          +{floatingPoints.val} pts!
+        </div>
+      )}
+
       {/* Milestone Toast */}
       {state.milestone && (
         <div className={styles.milestoneToast} onAnimationEnd={clearMilestone}>
@@ -564,6 +658,35 @@ export default function PlayPage() {
           <div>
             <p className={styles.milestoneTitle}>{state.milestone.title}</p>
             <p className={styles.milestoneDesc}>{state.milestone.description}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Video Modal Overlay (Rendered at the bottom to ensure it's the top-most layer) */}
+      {isViewingVideo && videoData && (
+        <div 
+          className={styles.videoModalOverlay}
+          onClick={() => handleCloseVideo()}
+        >
+          <div 
+            className={styles.videoContainer}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button 
+              className={styles.closeVideoBtn}
+              onClick={() => handleCloseVideo()}
+            >
+              ×
+            </button>
+            <iframe 
+              width="100%" 
+              height="100%" 
+              src={`https://www.youtube.com/embed/${videoData.id}?start=${videoData.start}&autoplay=1&enablejsapi=1&controls=1&rel=0&modestbranding=1&origin=${typeof window !== 'undefined' ? window.location.origin : ''}`}
+              title="YouTube video player" 
+              frameBorder="0" 
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+              allowFullScreen
+            />
           </div>
         </div>
       )}
