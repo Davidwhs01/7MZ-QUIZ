@@ -89,8 +89,118 @@
   font-family: var(--font-display);
   font-size: 2rem;
   font-weight: 800;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
   text-align: center;
+}
+
+.editInput {
+  background: rgba(0, 0, 0, 0.4);
+  color: var(--text-primary);
+  border: 1px dashed var(--border-medium);
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 800;
+  text-align: center;
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  margin-bottom: 16px;
+  width: 100%;
+  max-width: 300px;
+  transition: all 0.2s;
+  outline: none;
+}
+.editInput:focus {
+  border-color: var(--accent-orange);
+  box-shadow: 0 0 15px rgba(255, 68, 0, 0.3);
+}
+
+.actionRow {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.btnAction {
+  background: var(--primary);
+  color: #000;
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  font-weight: 800;
+  padding: 10px 24px;
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 15px rgba(255, 68, 0, 0.3);
+}
+.btnAction:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 68, 0, 0.5);
+  background: var(--accent-orange);
+}
+.btnAction:disabled {
+  background: var(--border-medium);
+  color: var(--text-muted);
+  box-shadow: none;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btnCancel {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 10px 24px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-medium);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btnCancel:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--text-muted);
+}
+
+.btnEditInline {
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  padding: 8px 20px;
+  border-radius: 20px;
+  border: 1px solid var(--border-medium);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--font-ui);
+  margin-bottom: 24px;
+}
+.btnEditInline:hover {
+  color: var(--text-primary);
+  border-color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.avatarOverlay {
+  position: absolute;
+  top: 4px; left: 4px; right: 4px; bottom: 4px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 700;
+  font-family: var(--font-ui);
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px dashed var(--accent-orange);
+}
+.avatarOverlay:hover {
+  background: rgba(0, 0, 0, 0.8);
+  color: var(--accent-orange);
 }
 
 .statsGrid {

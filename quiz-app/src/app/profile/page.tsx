@@ -226,8 +226,13 @@ export default function ProfilePage() {
               className={styles.avatar} 
             />
             {isEditing && (
-              <label style={{position:'absolute', bottom:-10, background:'var(--primary)', color:'#fff', padding:'5px 10px', borderRadius:'15px', cursor:'pointer', fontSize:'0.8rem', fontWeight:'bold', border:'2px solid var(--background)'}}>
-                {uploadingAvatar ? '...' : 'Trocar'}
+              <label className={styles.avatarOverlay}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{marginBottom: '4px'}}>
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                {uploadingAvatar ? 'Upando...' : 'Trocar Foto'}
                 <input 
                   type="file" 
                   accept="image/*" 
@@ -244,25 +249,27 @@ export default function ProfilePage() {
                type="text" 
                value={editUsername} 
                onChange={(e) => setEditUsername(e.target.value)} 
-               className={styles.username}
-               style={{background:'var(--surface-color)', color:'#fff', border:'none', filter:'drop-shadow(0 0 5px var(--primary))', padding:'10px', textAlign:'center', marginTop:'10px', borderRadius:'10px'}}
+               className={styles.editInput}
                autoFocus
                maxLength={20}
+               placeholder="Seu Nickname"
             />
           ) : (
             <h1 className={styles.username}>{profile.username}</h1>
           )}
 
-          <div style={{marginTop: '15px'}}>
-            {isEditing ? (
-               <div style={{display:'flex', gap:'10px'}}>
-                 <button onClick={handleSaveProfile} style={{background: 'var(--primary)', color: '#000', fontWeight: 'bold', padding: '10px 20px', borderRadius: '10px', border:'none', cursor:'pointer'}}>Salvar</button>
-                 <button onClick={() => setIsEditing(false)} style={{background: 'var(--surface-color)', color: '#fff', padding: '10px 20px', borderRadius: '10px', border:'none', cursor:'pointer'}}>Cancelar</button>
-               </div>
-            ) : (
-               <button onClick={() => setIsEditing(true)} style={{background: 'transparent', color: 'var(--text-muted)', fontSize: '0.9rem', padding: '5px 15px', borderRadius: '20px', border:'1px solid var(--text-muted)', cursor:'pointer'}}>✏️ Editar Perfil</button>
-            )}
-          </div>
+          {isEditing ? (
+             <div className={styles.actionRow}>
+               <button onClick={() => setIsEditing(false)} className={styles.btnCancel}>Cancelar</button>
+               <button onClick={handleSaveProfile} className={styles.btnAction} disabled={uploadingAvatar}>
+                 Salvar Alterações
+               </button>
+             </div>
+          ) : (
+             <button onClick={() => setIsEditing(true)} className={styles.btnEditInline}>
+               ✏️ Editar Perfil
+             </button>
+          )}
 
           <div className={styles.statsGrid}>
             <div className={styles.statBox}>
