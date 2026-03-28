@@ -133,8 +133,8 @@ export default function ProfilePage() {
       }
 
       const file = event.target.files[0];
-      if (file.size > 2 * 1024 * 1024) {
-        throw new Error('Imagem deve ter menos de 2MB!');
+      if (file.size > 3 * 1024 * 1024) {
+        throw new Error('A imagem deve ter menos de 3MB!');
       }
 
       const fileExt = file.name.split('.').pop();
