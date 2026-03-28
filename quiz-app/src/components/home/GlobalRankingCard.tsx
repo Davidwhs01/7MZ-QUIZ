@@ -51,16 +51,10 @@ export default function GlobalRankingCard() {
       }
     };
 
-    // Defer the fetch until Supabase has evaluated the auth state from local storage.
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event: string) => {
-       if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN') {
-          fetchRanking();
-       }
-    });
+    fetchRanking();
 
     return () => { 
       cancelled = true; 
-      subscription.unsubscribe();
     };
   }, []);
 

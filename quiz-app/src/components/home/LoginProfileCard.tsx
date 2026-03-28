@@ -14,28 +14,44 @@ export default function LoginProfileCard() {
   useEffect(() => {
     let cancelled = false;
 
+    const fetchSessionData = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (cancelled) return;
+
+        if (session?.user) {
+          setUser(session.user);
+          const { data: statData } = await supabase
+            .from('leaderboard')
+            .select('score, games_played')
+            .eq('id', session.user.id)
+            .maybeSingle();
+            
+          if (!cancelled && statData) setStats(statData as any);
+        } else {
+          setUser(null);
+          setStats(null);
+        }
+      } catch (e) {
+        console.error("Session fetch error:", e);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
+    fetchSessionData();
+
+    // Only listen for subsequent changes, not initial load
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event: string, session: any) => {
-        if (cancelled) return;
+        if (event === 'INITIAL_SESSION') return;
         
-        try {
-          if (session?.user) {
-            setUser(session.user);
-            const { data: statData } = await supabase
-              .from('leaderboard')
-              .select('score, games_played')
-              .eq('id', session.user.id)
-              .maybeSingle();
-              
-            if (!cancelled && statData) setStats(statData as any);
-          } else {
-            setUser(null);
-            setStats(null);
-          }
-        } catch (e) {
-          console.error("Auth change error:", e);
-        } finally {
-          if (!cancelled) setLoading(false);
+        if (event === 'SIGNED_OUT') {
+           setUser(null);
+           setStats(null);
+        } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+           fetchSessionData();
         }
       }
     );
