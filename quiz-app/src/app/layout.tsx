@@ -19,6 +19,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { ChannelProvider } from "@/context/ChannelContext";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -27,7 +29,9 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body suppressHydrationWarning>
-        {children}
+        <ChannelProvider>
+          {children}
+        </ChannelProvider>
       </body>
     </html>
   );

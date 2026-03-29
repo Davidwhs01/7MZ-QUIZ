@@ -65,8 +65,8 @@
   right: -20%;
   height: 100%;
   background-image:
-    linear-gradient(rgba(255, 107, 43, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(59, 130, 246, 0.04) 1px, transparent 1px);
+    linear-gradient(var(--accent-orange-dim) 1px, transparent 1px),
+    linear-gradient(90deg, var(--accent-blue-dim) 1px, transparent 1px);
   background-size: 60px 60px;
   transform: perspective(500px) rotateX(55deg);
   animation: gridMove 8s linear infinite;
@@ -212,11 +212,11 @@
 }
 
 .titleQuiz {
-  background: linear-gradient(180deg, var(--accent-blue-bright), var(--accent-blue));
+  background: linear-gradient(180deg, var(--accent-orange-bright), var(--accent-orange));
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 0 30px rgba(59, 130, 246, 0.4));
+  filter: drop-shadow(0 0 30px var(--accent-orange-dim));
   animation: neonFlicker 5s ease-in-out infinite;
 }
 
@@ -711,13 +711,13 @@
 }
 
 @keyframes neonFlicker {
-  0%, 100% { opacity: 1; text-shadow: 0 0 10px rgba(59,130,246,0.3); }
-  50% { opacity: 0.8; text-shadow: 0 0 20px rgba(59,130,246,0.6); }
+  0%, 100% { opacity: 1; text-shadow: 0 0 10px rgba(var(--accent-orange-rgb), 0.3); }
+  50% { opacity: 0.8; text-shadow: 0 0 20px rgba(var(--accent-orange-rgb), 0.6); }
 }
 
 @keyframes borderGlowBlue {
-  0%, 100% { box-shadow: 0 0 5px rgba(59,130,246,0.1); }
-  50% { box-shadow: 0 0 15px rgba(59,130,246,0.3); }
+  0%, 100% { box-shadow: 0 0 5px rgba(var(--accent-blue-rgb), 0.1); }
+  50% { box-shadow: 0 0 15px rgba(var(--accent-blue-rgb), 0.3); }
 }
 
 /* ============== RESPONSIVE ============== */

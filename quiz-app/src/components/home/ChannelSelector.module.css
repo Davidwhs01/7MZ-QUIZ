@@ -1,0 +1,114 @@
+.selectorContainer {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.carousel {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 250px; /* Reduced to balance */
+}
+
+.channelItem {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.active {
+  color: var(--text-primary);
+}
+
+.inactive {
+  color: var(--text-secondary);
+}
+
+.avatarWrapper {
+  position: relative;
+  border-radius: 50%;
+  background: var(--bg-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  transition: width var(--transition-base), height var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base);
+  border: 3px solid transparent; /* default */
+}
+
+.active .avatarWrapper {
+  width: 180px; /* Reduzido de 250px para um gigante mais equilibrado */
+  height: 180px;
+  border-color: var(--accent-orange);
+  box-shadow: 0 0 35px rgba(var(--accent-orange-rgb), 0.5), inset 0 0 15px rgba(var(--accent-orange-rgb), 0.5);
+}
+
+.inactive .avatarWrapper {
+  width: 100px; /* Slightly larger small icon to match scale */
+  height: 100px;
+}
+
+.avatar {
+  border-radius: 50%; /* Clip image circular */
+}
+
+.glowRing {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 150%;
+  height: 150%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(var(--accent-orange-rgb), 0.4) 0%, transparent 60%);
+  filter: blur(20px);
+  z-index: -1;
+  pointer-events: none;
+  animation: pulseRotate 4s infinite linear;
+}
+
+.channelName {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent-orange);
+  text-shadow: 0 0 15px rgba(var(--accent-orange-rgb), 0.6);
+  margin-top: 8px;
+}
+
+/* Removed swipeHint from component, but keep rule just in case */
+.swipeHint {
+  position: absolute;
+  bottom: -40px;
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  color: var(--text-secondary);
+  font-weight: 600;
+  opacity: 0.7;
+  animation: float 2s infinite ease-in-out;
+}
+
+@keyframes pulseRotate {
+  0% { transform: translate(-50%, -50%) rotate(0deg) scale(0.9); opacity: 0.5; }
+  50% { transform: translate(-50%, -50%) rotate(180deg) scale(1.1); opacity: 0.8; }
+  100% { transform: translate(-50%, -50%) rotate(360deg) scale(0.9); opacity: 0.5; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(3px); }
+}

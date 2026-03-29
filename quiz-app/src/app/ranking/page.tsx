@@ -6,6 +6,7 @@ import Image from 'next/image';
 import styles from './page.module.css';
 import { createClient } from '@/utils/supabase/client';
 import { motion } from 'framer-motion';
+import { useChannel } from '@/context/ChannelContext';
 
 type RankedPlayer = {
   id: string;
@@ -16,9 +17,14 @@ type RankedPlayer = {
 };
 
 export default function RankingPage() {
-  const [activeTab, setActiveTab] = useState<'GERAL' | 'NERD HITS' | '7MZ RECORDS'>('GERAL');
+  const { activeChannel } = useChannel();
+  const [activeTab, setActiveTab] = useState<'GERAL' | 'NERD HITS' | '7MZ RECORDS' | 'ENYGMA'>('GERAL');
   const [ranking, setRanking] = useState<RankedPlayer[]>([]);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setActiveTab('GERAL');
+  }, [activeChannel]);
 
   useEffect(() => {
     const fetchRanking = async () => {
@@ -102,8 +108,14 @@ export default function RankingPage() {
           </svg>
         </Link>
         <div className={styles.logoHeader}>
-          <Image src="/geek-logo.png" alt="Geek Area Logo" width={36} height={36} className={styles.logoHeaderImg} />
-          <h1 className={styles.logo}>GEEK <span>ARENA</span></h1>
+          {activeChannel === '7MZ' ? (
+            <Image src="/7mz-logo.jpg" alt="7MZ Logo" width={36} height={36} className={styles.logoHeaderImg} />
+          ) : (
+            <Image src="/enygma-logo.png" alt="Enygma Logo" width={36} height={36} className={styles.logoHeaderImg} />
+          )}
+          <h1 className={styles.logo}>
+            {activeChannel === '7MZ' ? '7 MINUTOZ' : 'ENYGMA'} <span>ARENA</span>
+          </h1>
         </div>
       </header>
 
@@ -125,18 +137,32 @@ export default function RankingPage() {
           >
             GLOBAL
           </button>
-          <button 
-            className={`${styles.tabBtn} ${activeTab === 'NERD HITS' ? styles.tabBtnActive : ''}`}
-            onClick={() => setActiveTab('NERD HITS')}
-          >
-            Nerd Hits
-          </button>
-          <button 
-            className={`${styles.tabBtn} ${activeTab === '7MZ RECORDS' ? styles.tabBtnActive : ''}`}
-            onClick={() => setActiveTab('7MZ RECORDS')}
-          >
-            Records
-          </button>
+          
+          {activeChannel === '7MZ' && (
+            <>
+              <button 
+                className={`${styles.tabBtn} ${activeTab === 'NERD HITS' ? styles.tabBtnActive : ''}`}
+                onClick={() => setActiveTab('NERD HITS')}
+              >
+                Nerd Hits
+              </button>
+              <button 
+                className={`${styles.tabBtn} ${activeTab === '7MZ RECORDS' ? styles.tabBtnActive : ''}`}
+                onClick={() => setActiveTab('7MZ RECORDS')}
+              >
+                Records
+              </button>
+            </>
+          )}
+          
+          {activeChannel === 'ENYGMA' && (
+            <button 
+              className={`${styles.tabBtn} ${activeTab === 'ENYGMA' ? styles.tabBtnActive : ''}`}
+              onClick={() => setActiveTab('ENYGMA')}
+            >
+              Enygma
+            </button>
+          )}
         </div>
 
         {loading ? (

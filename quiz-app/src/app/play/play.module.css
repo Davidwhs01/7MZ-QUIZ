@@ -18,7 +18,7 @@
   width: 600px;
   height: 600px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 107, 43, 0.07) 0%, transparent 70%);
+  background: radial-gradient(circle, var(--accent-orange-dim) 0%, transparent 70%);
   top: -200px;
   right: -150px;
   pointer-events: none;
@@ -31,7 +31,7 @@
   width: 500px;
   height: 500px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(59, 130, 246, 0.05) 0%, transparent 70%);
+  background: radial-gradient(circle, var(--accent-blue-dim) 0%, transparent 70%);
   bottom: -150px;
   left: -100px;
   pointer-events: none;
@@ -98,6 +98,20 @@
   color: var(--accent-blue);
 }
 
+.enygmaHeaderLogo {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--accent-orange);
+  border-radius: 50%;
+  box-shadow: var(--glow-orange);
+  animation: pulse 2s infinite ease-in-out;
+}
+
 .headerStats {
   display: flex;
   align-items: center;
@@ -110,8 +124,8 @@
   flex-direction: column;
   align-items: center;
   padding: 4px 12px;
-  background: rgba(255, 107, 43, 0.05);
-  border: 1px solid rgba(255, 107, 43, 0.15);
+  background: rgba(var(--accent-orange-rgb, 255, 107, 43), 0.05);
+  border: 1px solid rgba(var(--accent-orange-rgb, 255, 107, 43), 0.15);
   border-radius: var(--radius-md);
 }
 
@@ -575,7 +589,7 @@
   border-radius: 50%;
   background: var(--accent-orange);
   cursor: pointer;
-  box-shadow: 0 0 8px rgba(255, 107, 43, 0.3);
+  box-shadow: 0 0 8px rgba(var(--accent-orange-rgb), 0.3);
   transition: transform var(--transition-fast);
 }
 
@@ -1079,6 +1093,11 @@
   text-shadow: 0 1px 2px rgba(0,0,0,0.5);
 }
 
+.energyRing, .energyRing2 {
+  border-color: var(--accent-orange-dim);
+  box-shadow: 0 0 30px var(--accent-orange-dim);
+}
+
 /* Stats Grid */
 .statsGrid {
   display: grid;
@@ -1414,6 +1433,9 @@
     gap: 14px;
     max-width: 340px;
     width: 95%;
+    background: rgba(var(--accent-orange-rgb), 0.08);
+    border: 1px solid rgba(var(--accent-orange-rgb), 0.2);
+    box-shadow: 0 0 30px rgba(var(--accent-orange-rgb), 0.1);
   }
 
   .feedbackSongTitle { font-size: 0.95rem; }
@@ -1463,34 +1485,34 @@
 /* ============== ON FIRE / COMBO EFFECTS ============== */
 .onFire {
   /* Thin border (0 to 1.5px) */
-  border: calc(var(--fire-intensity) * 1.5px) solid #ff4d00 !important;
-  background: rgba(30, 10, 5, calc(0.3 + var(--fire-intensity) * 0.4)) !important;
+  border: calc(var(--fire-intensity) * 1.5px) solid var(--accent-orange) !important;
+  background: rgba(var(--accent-orange-rgb), calc(0.1 + var(--fire-intensity) * 0.2)) !important;
   /* MINIMAL inset glow: Only 8px to avoid covering the UI (was 60px) */
   box-shadow: 
-    inset 0 0 calc(var(--fire-intensity) * 8px) rgba(255, 80, 0, calc(var(--fire-intensity) * 0.4)),
-    0 0 calc(var(--fire-intensity) * 60px) rgba(255, 80, 0, calc(var(--fire-intensity) * 0.3)) !important;
+    inset 0 0 calc(var(--fire-intensity) * 8px) rgba(var(--accent-orange-rgb), calc(var(--fire-intensity) * 0.4)),
+    0 0 calc(var(--fire-intensity) * 60px) rgba(var(--accent-orange-rgb), calc(var(--fire-intensity) * 0.3)) !important;
   /* Pulsing speed: 5s to 1s */
   animation: burnContainer calc(5s - var(--fire-intensity) * 4s) infinite alternate !important;
 }
 
 .feedbackHot {
-  border: calc(var(--fire-intensity) * 2px) solid #ff4800 !important;
+  border: calc(var(--fire-intensity) * 2px) solid var(--accent-neon) !important;
   box-shadow: 
-    inset 0 0 calc(var(--fire-intensity) * 15px) rgba(255, 70, 0, calc(var(--fire-intensity) * 0.4)),
-    0 0 calc(var(--fire-intensity) * 120px) rgba(255, 50, 0, calc(var(--fire-intensity) * 0.4)) !important;
+    inset 0 0 calc(var(--fire-intensity) * 15px) rgba(var(--accent-orange-rgb), calc(var(--fire-intensity) * 0.4)),
+    0 0 calc(var(--fire-intensity) * 120px) rgba(var(--accent-orange-rgb), calc(var(--fire-intensity) * 0.4)) !important;
   animation: burnFeedback calc(3s - var(--fire-intensity) * 2s) infinite alternate !important;
 }
 
 .streakHot {
-  background: rgba(255, 80, 0, calc(var(--fire-intensity) * 0.2)) !important;
-  border-color: #ff8c00 !important;
-  box-shadow: 0 0 calc(var(--fire-intensity) * 15px) rgba(255, 80, 0, calc(var(--fire-intensity) * 0.5)) !important;
+  background: rgba(var(--accent-orange-rgb), calc(var(--fire-intensity) * 0.2)) !important;
+  border-color: var(--accent-orange-bright) !important;
+  box-shadow: 0 0 calc(var(--fire-intensity) * 15px) rgba(var(--accent-orange-rgb), calc(var(--fire-intensity) * 0.5)) !important;
   animation: pulseHeat calc(2.5s - var(--fire-intensity) * 1.5s) infinite alternate !important;
 }
 
 .comboHot {
-  background: linear-gradient(135deg, #ff4d00, #ff0000) !important;
-  box-shadow: 0 0 calc(var(--fire-intensity) * 30px) rgba(255, 0, 0, calc(var(--fire-intensity) * 0.5)) !important;
+  background: linear-gradient(135deg, var(--accent-orange), var(--accent-neon)) !important;
+  box-shadow: 0 0 calc(var(--fire-intensity) * 30px) rgba(var(--accent-orange-rgb), calc(var(--fire-intensity) * 0.5)) !important;
   /* Scale only very slightly (max 1.03) */
   transform: scale(calc(1 + var(--fire-intensity) * 0.03)) !important;
 }

@@ -1,12 +1,17 @@
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
 import styles from './page.module.css';
 import BottomDrawer from '@/components/home/BottomDrawer';
 import LoginProfileCard from '@/components/home/LoginProfileCard';
 import GlobalRankingCard from '@/components/home/GlobalRankingCard';
+import ChannelSelector from '@/components/home/ChannelSelector';
 import { songs } from '@/data/songs';
+import { useChannel } from '@/context/ChannelContext';
 
 export default function Home() {
+  const { activeChannel } = useChannel();
   return (
     <div className={styles.page}>
       {/* === Background Layer === */}
@@ -34,27 +39,19 @@ export default function Home() {
         {/* === CENTER: Main Content === */}
         <main className={styles.centerContent}>
           <section className={styles.hero}>
-            <div className={styles.logoContainer}>
-              <div className={styles.energyRing} />
-              <div className={styles.energyRing2} />
-              <div className={styles.logoImage}>
-                <Image
-                  src="/geek-logo.png"
-                  alt="Geek Arena Logo"
-                  width={200}
-                  height={200}
-                  priority
-                />
-              </div>
-            </div>
+            <ChannelSelector />
 
             <div className={styles.titleBlock}>
               <h1 className={styles.title}>
-                <span className={styles.titleQuiz}>GEEK ARENA</span>
+                <span className={styles.titleQuiz}>
+                  GEEK <span>ARENA</span>
+                </span>
               </h1>
               <div className={styles.subtitleLine}>
                 <span className={styles.subtitleDecor} />
-                <p className={styles.subtitle}>O QUIZ DEFINITIVO DE RAP GEEK</p>
+                <p className={styles.subtitle}>
+                  O QUIZ DEFINITIVO DA MÚSICA GEEK
+                </p>
                 <span className={styles.subtitleDecor} />
               </div>
             </div>

@@ -12,8 +12,10 @@ import styles from './play.module.css';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
+import { useChannel } from '@/context/ChannelContext';
 
 export default function PlayPage() {
+  const { activeChannel } = useChannel();
   const {
     state,
     startGame,
@@ -46,6 +48,10 @@ export default function PlayPage() {
   const [isViewingVideo, setIsViewingVideo] = useState(false);
   const [videoData, setVideoData] = useState<{ id: string; start: number } | null>(null);
   
+  useEffect(() => {
+    setSelectedCategory(null);
+  }, [activeChannel]);
+
   const nextSongDataRef = useRef<{ song: Song; timestamp: number; duration: number } | null>(null);
   const feedbackTimerRef = useRef<NodeJS.Timeout | null>(null);
   const hasStartedRef = useRef(false);
@@ -275,8 +281,14 @@ export default function PlayPage() {
           </svg>
         </Link>
         <div className={styles.logoHeader}>
-          <Image src="/geek-logo.png" alt="Geek Arena Logo" width={36} height={36} className={styles.logoHeaderImg} />
-          <h1 className={styles.logo}>GEEK <span>ARENA</span></h1>
+          {activeChannel === '7MZ' ? (
+            <Image src="/7mz-logo.jpg" alt="7MZ Logo" width={36} height={36} className={styles.logoHeaderImg} />
+          ) : (
+            <Image src="/enygma-logo.png" alt="Enygma Logo" width={36} height={36} className={styles.logoHeaderImg} />
+          )}
+          <h1 className={styles.logo}>
+            {activeChannel === '7MZ' ? '7 MINUTOZ' : 'ENYGMA'} <span>ARENA</span>
+          </h1>
         </div>
         {state.phase !== 'IDLE' && state.phase !== 'GAME_OVER' && (
           <div className={styles.headerStats}>
@@ -315,50 +327,56 @@ export default function PlayPage() {
                 }
               }}
             >
-              <motion.button
-                variants={{
-                  hidden: { y: 20, opacity: 0 },
-                  visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 300 } }
-                }}
-                whileHover={{ scale: 1.05, y: -5 }}
-                whileTap={{ scale: 0.95 }}
-                className={`${styles.categoryCard} ${selectedCategory === 'NERD HITS' ? styles.categoryCardActive : ''}`}
-                onClick={() => setSelectedCategory('NERD HITS')}
-              >
-                <span className={styles.categoryEmoji}>⚡</span>
-                <span className={styles.categoryName}>NERD HITS</span>
-                <span className={styles.categoryCount}>{songs.filter(s => s.category === 'NERD HITS').length} músicas</span>
-              </motion.button>
+              {activeChannel === '7MZ' && (
+                <>
+                  <motion.button
+                    variants={{
+                      hidden: { y: 20, opacity: 0 },
+                      visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 300 } }
+                    }}
+                    whileHover={{ scale: 1.05, y: -5 }}
+                    whileTap={{ scale: 0.95 }}
+                    className={`${styles.categoryCard} ${selectedCategory === 'NERD HITS' ? styles.categoryCardActive : ''}`}
+                    onClick={() => setSelectedCategory('NERD HITS')}
+                  >
+                    <span className={styles.categoryEmoji}>⚡</span>
+                    <span className={styles.categoryName}>NERD HITS</span>
+                    <span className={styles.categoryCount}>{songs.filter(s => s.category === 'NERD HITS').length} músicas</span>
+                  </motion.button>
+                  
+                  <motion.button
+                    variants={{
+                      hidden: { y: 20, opacity: 0 },
+                      visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 300 } }
+                    }}
+                    whileHover={{ scale: 1.05, y: -5 }}
+                    whileTap={{ scale: 0.95 }}
+                    className={`${styles.categoryCard} ${selectedCategory === '7MZ RECORDS' ? styles.categoryCardActive : ''}`}
+                    onClick={() => setSelectedCategory('7MZ RECORDS')}
+                  >
+                    <span className={styles.categoryEmoji}>🎤</span>
+                    <span className={styles.categoryName}>7MZ RECORDS</span>
+                    <span className={styles.categoryCount}>{songs.filter(s => s.category === '7MZ RECORDS').length} músicas</span>
+                  </motion.button>
+                </>
+              )}
               
-              <motion.button
-                variants={{
-                  hidden: { y: 20, opacity: 0 },
-                  visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 300 } }
-                }}
-                whileHover={{ scale: 1.05, y: -5 }}
-                whileTap={{ scale: 0.95 }}
-                className={`${styles.categoryCard} ${selectedCategory === '7MZ RECORDS' ? styles.categoryCardActive : ''}`}
-                onClick={() => setSelectedCategory('7MZ RECORDS')}
-              >
-                <span className={styles.categoryEmoji}>🎤</span>
-                <span className={styles.categoryName}>7MZ RECORDS</span>
-                <span className={styles.categoryCount}>{songs.filter(s => s.category === '7MZ RECORDS').length} músicas</span>
-              </motion.button>
-              
-              <motion.button
-                variants={{
-                  hidden: { y: 20, opacity: 0 },
-                  visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 300 } }
-                }}
-                whileHover={{ scale: 1.05, y: -5 }}
-                whileTap={{ scale: 0.95 }}
-                className={`${styles.categoryCard} ${selectedCategory === 'ENYGMA' ? styles.categoryCardActive : ''}`}
-                onClick={() => setSelectedCategory('ENYGMA')}
-              >
-                <span className={styles.categoryEmoji}>🔮</span>
-                <span className={styles.categoryName}>ENYGMA</span>
-                <span className={styles.categoryCount}>{songs.filter(s => s.category === 'ENYGMA').length} músicas</span>
-              </motion.button>
+              {activeChannel === 'ENYGMA' && (
+                <motion.button
+                  variants={{
+                    hidden: { y: 20, opacity: 0 },
+                    visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 300 } }
+                  }}
+                  whileHover={{ scale: 1.05, y: -5 }}
+                  whileTap={{ scale: 0.95 }}
+                  className={`${styles.categoryCard} ${selectedCategory === 'ENYGMA' ? styles.categoryCardActive : ''}`}
+                  onClick={() => setSelectedCategory('ENYGMA')}
+                >
+                  <span className={styles.categoryEmoji}>🔮</span>
+                  <span className={styles.categoryName}>OFICIAL</span>
+                  <span className={styles.categoryCount}>{songs.filter(s => s.category === 'ENYGMA').length} músicas</span>
+                </motion.button>
+              )}
               
               <motion.button
                 variants={{
@@ -371,8 +389,8 @@ export default function PlayPage() {
                 onClick={() => setSelectedCategory('ALL')}
               >
                 <span className={styles.categoryEmoji}>🌌</span>
-                <span className={styles.categoryName}>TODOS</span>
-                <span className={styles.categoryCount}>{songs.length} músicas</span>
+                <span className={styles.categoryName}>TODOS (MULTIVERSO)</span>
+                <span className={styles.categoryCount}>{songs.length} músicas globais</span>
               </motion.button>
             </motion.div>
 
