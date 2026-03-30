@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
+import { createClient } from '@/utils/supabase/client';
 import { useBattle } from '@/hooks/useBattle';
 import { useYouTubePlayer } from '@/hooks/useYouTubePlayer';
 import { useChannel } from '@/context/ChannelContext';
@@ -29,6 +30,7 @@ export default function BattlePage() {
   const [wrongFlash, setWrongFlash] = useState(false);
   const [correctFlash, setCorrectFlash] = useState(false);
   const [hasGuessed, setHasGuessed] = useState(false);
+  const [playerNames, setPlayerNames] = useState<{ p1: string; p2: string }>({ p1: 'Jogador 1', p2: 'Jogador 2' });
   const [activeBarHeights, setActiveBarHeights] = useState<number[]>(
     Array.from({ length: 24 }, () => 4)
   );
@@ -43,6 +45,30 @@ export default function BattlePage() {
   });
 
   const skipRef = useRef<() => void>(() => {});
+
+  // Fetch player names
+  useEffect(() => {
+    if (!room) return;
+    const supabase = createClient();
+    const ids = [room.player1_id, room.player2_id].filter(Boolean) as string[];
+    if (ids.length === 0) return;
+
+    supabase
+      .from('profiles')
+      .select('id, username')
+      .in('id', ids)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .then((res: any) => {
+        const data = res.data as { id: string; username: string }[] | null;
+        if (!data) return;
+        const map: Record<string, string> = {};
+        for (const p of data) map[p.id] = p.username;
+        setPlayerNames({
+          p1: map[room.player1_id] || 'Jogador 1',
+          p2: map[room.player2_id || ''] || 'Aguardando...',
+        });
+      });
+  }, [room]);
 
   // Play audio when round starts
   useEffect(() => {
@@ -154,6 +180,9 @@ export default function BattlePage() {
   const canGuess = state.phase === 'playing' && !hasGuessed;
   const canUseHint = state.battleMode === 'normal' && hintLevel < 2 && state.phase === 'playing' && !hasGuessed;
 
+  const myName = playerNum === 1 ? playerNames.p1 : playerNames.p2;
+  const oppName = playerNum === 1 ? playerNames.p2 : playerNames.p1;
+
   return (
     <div className={styles.page} suppressHydrationWarning>
       <div id="bt-player" style={{ position: 'absolute', width: 0, height: 0, overflow: 'hidden' }} suppressHydrationWarning />
@@ -162,12 +191,17 @@ export default function BattlePage() {
 
       {/* Header: Players */}
       <header className={styles.header}>
+        <button onClick={handleLeave} className={styles.backBtn} title="Sair da batalha">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="18" height="18">
+            <path d="m15 18-6-6 6-6" />
+          </svg>
+        </button>
         <div className={styles.playersRow}>
           {/* Me */}
           <div className={`${styles.playerCard} ${styles.playerCardSelf}`}>
             <div className={styles.playerInfo}>
               <span className={styles.playerName}>
-                Você {isHost ? '👑' : ''}
+                {myName} {isHost ? '👑' : ''}
               </span>
               <div className={styles.playerStats}>
                 <span className={styles.playerScore}>{myScore} pts</span>
@@ -188,7 +222,7 @@ export default function BattlePage() {
           <div className={styles.playerCard}>
             <div className={styles.playerInfo}>
               <span className={styles.playerName}>
-                Oponente {!isHost ? '👑' : ''}
+                {oppName} {!isHost ? '👑' : ''}
                 {oppGotItRight && state.phase === 'playing' && ' ✅'}
               </span>
               <div className={styles.playerStats}>
@@ -376,13 +410,13 @@ export default function BattlePage() {
                 </h2>
                 <div className={styles.resultScores}>
                   <div className={styles.resultPlayer}>
-                    <span className={styles.resultPlayerLabel}>Você</span>
+                    <span className={styles.resultPlayerLabel}>{myName}</span>
                     <span className={styles.resultPlayerScore} style={{ color: 'var(--accent-orange)' }}>
                       {myScore}
                     </span>
                   </div>
                   <div className={styles.resultPlayer}>
-                    <span className={styles.resultPlayerLabel}>Oponente</span>
+                    <span className={styles.resultPlayerLabel}>{oppName}</span>
                     <span className={styles.resultPlayerScore} style={{ color: 'var(--accent-blue)' }}>
                       {oppScore}
                     </span>
