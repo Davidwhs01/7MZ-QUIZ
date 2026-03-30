@@ -109,9 +109,22 @@ export function useBattle(roomId: string | null) {
       const pNum = (roomData as RoomRow).player1_id === user.id ? 1 : 2;
       setPlayerNum(pNum);
 
-      const savedPhase = (roomData.current_state as Record<string, unknown>)?.phase as BattleState['phase'] | undefined;
+      // Determine initial phase
+      const isWaiting = roomData.status === 'waiting';
+      const bothConnected = roomData.status === 'playing' && roomData.player2_id;
+      let initPhase: BattleState['phase'];
+      if (isWaiting) {
+        initPhase = 'waiting';
+      } else if (bothConnected && roomData.current_round === 0) {
+        initPhase = pNum === 1 ? 'countdown' : 'waiting';
+      } else {
+        const savedPhase = (roomData.current_state as Record<string, unknown>)?.phase as BattleState['phase'] | undefined;
+        initPhase = savedPhase && ['countdown', 'playing', 'round_end', 'game_over'].includes(savedPhase) ? savedPhase : 'playing';
+      }
+
       update({
-        phase: roomData.status === 'waiting' ? 'waiting' : savedPhase || 'playing',
+        phase: initPhase,
+        message: initPhase === 'countdown' ? 'Oponente conectado!' : '',
         currentRound: roomData.current_round,
         totalRounds: roomData.total_rounds,
         player1Score: roomData.player1_score,
@@ -123,13 +136,70 @@ export function useBattle(roomId: string | null) {
         battleMode: roomData.battle_mode,
       });
 
-      // Subscribe to broadcast
+      // Subscribe to broadcast channel
       const channel = supabase.channel(`battle:${roomId}`, {
         config: { broadcast: { self: false } },
       });
 
-      channel.on('broadcast', { event: 'opponent_joined' }, () => {
-        update({ phase: 'countdown', message: 'Oponente conectado!' });
+      // Auto-start countdown and first round (host only)
+      const startCountdownAndRound = async () => {
+        for (let i = 3; i >= 1; i--) {
+          channel.send({ type: 'broadcast', event: 'countdown_tick', payload: { tick: i } });
+          update({ phase: 'countdown', message: `Começando em ${i}...` });
+          await new Promise(r => setTimeout(r, 1000));
+        }
+
+        const roundData = generateRound();
+        const payload = { ...roundData, round: 1 };
+
+        channel.send({ type: 'broadcast', event: 'round_start', payload });
+
+        await supabase.from('game_rooms').update({
+          current_round: 1,
+          p1_round_correct: false,
+          p2_round_correct: false,
+          speed_bonus_given: false,
+          round_start_time: roundData.roundStartTime as number,
+          current_state: { phase: 'playing', round: 1 },
+        }).eq('id', roomId);
+
+        update({
+          phase: 'playing',
+          currentRound: 1,
+          currentSong: roundData.song as Song,
+          timestamp: roundData.timestamp as number,
+          audioDuration: roundData.audioDuration as number,
+          roundStartTime: roundData.roundStartTime as number,
+          player1Correct: false,
+          player2Correct: false,
+          lastCorrectPlayer: null,
+          message: 'Rodada 1',
+        });
+      };
+
+      // Detect opponent joining via DB change (reliable fallback)
+      channel.on('postgres_changes', {
+        event: 'UPDATE',
+        schema: 'public',
+        table: 'game_rooms',
+        filter: `id=eq.${roomId}`,
+      }, (payload: { new: Record<string, unknown> }) => {
+        const newRow = payload.new;
+        if (newRow.player2_id && pNum === 1 && newRow.status === 'playing' && newRow.current_round === 0) {
+          // Opponent just joined — host auto-starts countdown
+          update({ phase: 'countdown', message: 'Oponente conectado!' });
+          // Auto-start game after short delay
+          setTimeout(() => {
+            startCountdownAndRound();
+          }, 1500);
+        }
+        // Sync scores/lives from DB
+        update({
+          player1Score: newRow.player1_score as number,
+          player2Score: newRow.player2_score as number,
+          player1Lives: newRow.player1_lives as number,
+          player2Lives: newRow.player2_lives as number,
+        });
       });
 
       channel.on('broadcast', { event: 'countdown_tick' }, (payload: { payload: Record<string, unknown> }) => {
