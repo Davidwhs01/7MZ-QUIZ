@@ -96,8 +96,9 @@ export function useBattle(roomId: string | null) {
       if (!user || cancelled) return;
       setUserId(user.id);
 
-      const { data: roomData } = await supabase
-        .from('game_rooms').select('*').eq('id', roomId).single();
+      const { data: roomArr } = await supabase
+        .from('game_rooms').select('*').eq('id', roomId).limit(1);
+      const roomData = roomArr?.[0];
 
       if (!roomData || cancelled) {
         setError('Sala não encontrada');

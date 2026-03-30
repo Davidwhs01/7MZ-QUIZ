@@ -39,18 +39,20 @@ export async function joinRoom(roomCode: string) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { room: null, error: 'Login necessário' };
 
-  const { data: room, error: findErr } = await supabase
+  const { data: rooms, error: findErr } = await supabase
     .from('game_rooms')
     .select('*')
     .eq('room_code', roomCode.toUpperCase().trim())
     .eq('status', 'waiting')
     .is('player2_id', null)
-    .single();
+    .limit(1);
 
-  if (findErr || !room) return { room: null, error: 'Sala não encontrada ou já cheia' };
+  if (findErr) return { room: null, error: findErr.message };
+  const room = rooms?.[0];
+  if (!room) return { room: null, error: 'Sala não encontrada ou já cheia' };
   if (room.player1_id === user.id) return { room: null, error: 'Você não pode entrar na sua própria sala' };
 
-  const { data: updated, error: updateErr } = await supabase
+  const { data: updatedArr, error: updateErr } = await supabase
     .from('game_rooms')
     .update({
       player2_id: user.id,
@@ -58,10 +60,11 @@ export async function joinRoom(roomCode: string) {
       current_state: { phase: 'starting', message: 'Ambos os jogadores conectados!' },
     })
     .eq('id', room.id)
-    .select()
-    .single();
+    .select();
 
   if (updateErr) return { room: null, error: updateErr.message };
+  const updated = updatedArr?.[0];
+  if (!updated) return { room: null, error: 'Falha ao entrar na sala (RLS?)' };
   return { room: updated, error: null };
 }
 
@@ -79,8 +82,8 @@ export async function getRoom(roomId: string) {
     .from('game_rooms')
     .select('*')
     .eq('id', roomId)
-    .single();
-  return data;
+    .limit(1);
+  return data?.[0] ?? null;
 }
 
 async function cleanupStaleRooms() {
