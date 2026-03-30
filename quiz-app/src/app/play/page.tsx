@@ -230,8 +230,7 @@ export default function PlayPage() {
     if (state.phase === 'GAME_OVER' && state.score > 0 && !scoreSubmittedRef.current) {
       scoreSubmittedRef.current = true;
       const cat = selectedCategory || 'ALL';
-      const art = cat === 'ENYGMA' ? 'ENYGMA' : cat === 'ALL' ? 'ALL' : '7MZ';
-      saveGameScore(state.score, cat, art);
+      saveGameScore(state.score, cat);
     }
   }, [state.phase, state.score, selectedCategory]);
 

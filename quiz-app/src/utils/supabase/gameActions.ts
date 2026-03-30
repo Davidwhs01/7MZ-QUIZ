@@ -1,6 +1,6 @@
 import { createClient } from './client';
 
-export async function saveGameScore(score: number, category: string, artist: string) {
+export async function saveGameScore(score: number, category: string) {
   const supabase = createClient();
 
   // 1. Get current logged in user
@@ -13,14 +13,13 @@ export async function saveGameScore(score: number, category: string, artist: str
   const userId = session.user.id;
 
   try {
-    // 2. Insert into match_history with artist info
+    // 2. Insert into match_history
     const { error: matchError } = await supabase
       .from('match_history')
       .insert({
         user_id: userId,
         score: score,
-        mode: category,
-        artist: artist
+        mode: category
       });
 
     if (matchError) throw matchError;

@@ -487,15 +487,18 @@ export function useBattle(roomId: string | null) {
     const p1Done = state.player1Correct || (state.player1Lives < 3 && !state.player1Correct);
     const p2Done = state.player2Correct || (state.player2Lives < 3 && !state.player2Correct);
 
-    if (bothAnswered || (state.player1Correct && !state.player2Correct) || (!state.player1Correct && state.player2Correct)) {
-      // One or both correct — end round after a short delay
+    const bothWrong = !state.player1Correct && !state.player2Correct;
+    const oneCorrect = (state.player1Correct && !state.player2Correct) || (!state.player1Correct && state.player2Correct);
+
+    if (bothAnswered || oneCorrect || bothWrong) {
+      // Round ends — after short delay
       const timer = setTimeout(() => {
         channelRef.current?.send({ type: 'broadcast', event: 'round_end', payload: {} });
         update({ phase: 'round_end' });
-      }, 2000);
+      }, bothWrong ? 1000 : 2000);
       return () => clearTimeout(timer);
     }
-  }, [isHost, state.phase, state.player1Correct, state.player2Correct]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isHost, state.phase, state.player1Correct, state.player2Correct, state.player1Lives, state.player2Lives]);
 
   // ---- HOST: next round ----
   const nextRound = useCallback(async () => {
