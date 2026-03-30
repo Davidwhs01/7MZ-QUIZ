@@ -453,7 +453,7 @@ export function getRandomSong(excludeIds: string[] = [], selo?: SeloKey, artist?
   return available[Math.floor(Math.random() * available.length)];
 }
 
-export function searchSongs(query: string, selo?: SeloKey): Song[] {
+export function searchSongs(query: string, selo?: SeloKey, artist?: Artist): Song[] {
   if (!query || query.length < 2) return [];
   
   const normalizedQuery = query
@@ -464,11 +464,14 @@ export function searchSongs(query: string, selo?: SeloKey): Song[] {
   const terms = normalizedQuery.split(/\s+/);
   
   let pool = songs;
+  if (artist) {
+    pool = pool.filter(s => s.artist === artist);
+  }
   if (selo) {
     if (selo === 'PÓS REVELAÇÃO') {
-      pool = songs.filter(s => s.selos?.includes('PÓS REVELAÇÃO'));
+      pool = pool.filter(s => s.selos?.includes('PÓS REVELAÇÃO'));
     } else {
-      pool = songs.filter(s => s.category === selo);
+      pool = pool.filter(s => s.category === selo);
     }
   }
   

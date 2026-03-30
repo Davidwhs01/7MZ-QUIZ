@@ -568,6 +568,7 @@ export default function PlayPage() {
               disabled={state.phase !== 'PLAYING'}
               placeholder="Qual música está tocando?"
               category={selectedCategory && selectedCategory !== 'ALL' ? selectedCategory : undefined}
+              artist={activeChannel}
             />
 
             {/* Correct feedback overlay */}

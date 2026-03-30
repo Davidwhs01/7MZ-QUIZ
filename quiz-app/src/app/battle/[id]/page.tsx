@@ -78,12 +78,7 @@ export default function BattlePage() {
       setShowResult(false);
 
       const playRound = async () => {
-        let ts = state.timestamp;
-        // If duration is 0, get real duration
-        if (state.currentSong!.duration === 0 && state.battleMode !== 'inferno') {
-          const realDur = await getRealDuration(state.currentSong!.youtubeId);
-          ts = Math.max(30, Math.floor(Math.random() * (realDur - state.audioDuration - 20)));
-        }
+        const ts = state.timestamp;
         loadAndPlay(state.currentSong!.youtubeId, ts, state.audioDuration);
       };
       playRound();
@@ -355,6 +350,7 @@ export default function BattlePage() {
               onSelect={handleGuess}
               disabled={!canGuess}
               placeholder={hasGuessed ? 'Aguardando rodada acabar...' : 'Qual música está tocando?'}
+              artist={activeChannel}
             />
 
             {/* Round end: show next round button for host */}

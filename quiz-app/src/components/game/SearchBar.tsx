@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { Song, SeloKey, searchSongs } from '@/data/songs';
+import { Song, SeloKey, searchSongs, type Artist } from '@/data/songs';
 import styles from './SearchBar.module.css';
 
 interface SearchBarProps {
@@ -9,9 +9,10 @@ interface SearchBarProps {
   disabled?: boolean;
   placeholder?: string;
   category?: SeloKey;
+  artist?: Artist;
 }
 
-export default function SearchBar({ onSelect, disabled = false, placeholder = "Digite o nome da música...", category }: SearchBarProps) {
+export default function SearchBar({ onSelect, disabled = false, placeholder = "Digite o nome da música...", category, artist }: SearchBarProps) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<Song[]>([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -26,11 +27,11 @@ export default function SearchBar({ onSelect, disabled = false, placeholder = "D
       setIsOpen(false);
       return;
     }
-    const found = searchSongs(q, category);
+    const found = searchSongs(q, category, artist);
     setResults(found);
     setIsOpen(found.length > 0);
     setSelectedIndex(-1);
-  }, [category]);
+  }, [category, artist]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
