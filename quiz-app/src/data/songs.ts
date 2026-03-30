@@ -434,13 +434,16 @@ export const songs: Song[] = [
   { id: "goku-vegeta", title: "Rap do Goku e Vegeta (Dragon Ball Super) - O HOMEM MAIS FORTE DO UNIVERSO | NERD HITS", youtubeId: "KRXrDOtta10", duration: 0, category: 'NERD HITS', artist: '7MZ', searchTerms: ["goku", "vegeta", "dragon", "ball", "homem", "forte", "universo"] },
 ];
 
-export function getRandomSong(excludeIds: string[] = [], selo?: SeloKey): Song | null {
+export function getRandomSong(excludeIds: string[] = [], selo?: SeloKey, artist?: Artist): Song | null {
   let pool = songs;
+  if (artist) {
+    pool = pool.filter(s => s.artist === artist);
+  }
   if (selo) {
     if (selo === 'PÓS REVELAÇÃO') {
-      pool = songs.filter(s => s.selos?.includes('PÓS REVELAÇÃO'));
+      pool = pool.filter(s => s.selos?.includes('PÓS REVELAÇÃO'));
     } else {
-      pool = songs.filter(s => s.category === selo);
+      pool = pool.filter(s => s.category === selo);
     }
   }
   const available = pool.filter(s => !excludeIds.includes(s.id));

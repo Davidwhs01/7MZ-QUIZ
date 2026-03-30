@@ -61,7 +61,7 @@ export default function PlayPage() {
   // Start new round: get real duration from YT, generate safe timestamp, then play
   const startNewRound = useCallback(async () => {
     const cat = categoryRef.current;
-    const data = loadNextSong(cat);
+    const data = loadNextSong(cat, activeChannel);
     
     if (!data) {
       console.log('[7MZ DEBUG] Game complete! No more songs.');

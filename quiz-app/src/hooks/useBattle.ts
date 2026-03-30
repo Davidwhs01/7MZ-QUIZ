@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { createClient } from '@/utils/supabase/client';
-import { getRandomSong, type Song } from '@/data/songs';
+import { getRandomSong, type Song, type Artist } from '@/data/songs';
 import { generateRandomTimestamp, getAudioDuration } from '@/lib/game-logic';
 import type { RealtimeChannel } from '@supabase/supabase-js';
 
@@ -67,7 +67,7 @@ const INITIAL_STATE: BattleState = {
   message: '',
 };
 
-export function useBattle(roomId: string | null) {
+export function useBattle(roomId: string | null, artist?: Artist) {
   const supabase = useMemo(() => createClient(), []);
   const [state, setState] = useState<BattleState>(INITIAL_STATE);
   const [room, setRoom] = useState<RoomRow | null>(null);
@@ -311,7 +311,8 @@ export function useBattle(roomId: string | null) {
   const generateRound = useCallback((): Record<string, unknown> => {
     const song = getRandomSong(
       Array.from(playedSongsRef.current),
-      state.battleMode === 'inferno' ? undefined : undefined, // TODO: filter by artist from room
+      state.battleMode === 'inferno' ? undefined : undefined,
+      artist,
     );
     if (!song) {
       playedSongsRef.current.clear();
@@ -323,7 +324,7 @@ export function useBattle(roomId: string | null) {
     const roundStartTime = Date.now();
 
     return { song, timestamp, audioDuration: duration, roundStartTime, songId: song.id };
-  }, [state.battleMode]);
+  }, [state.battleMode, artist]);
 
   // ---- HOST: start countdown + first round ----
   const startGame = useCallback(async () => {

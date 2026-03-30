@@ -142,7 +142,9 @@ export default function Home() {
 
             <div className={styles.statsBar}>
               <div className={styles.statItem}>
-                <span className={styles.statNumber}>{songs.length}+</span>
+                <span className={styles.statNumber}>
+                  {songs.filter(s => s.artist === activeChannel).length}+
+                </span>
                 <span className={styles.statLabel}>Músicas</span>
               </div>
               <div className={styles.statDivider} />
@@ -152,7 +154,12 @@ export default function Home() {
               </div>
               <div className={styles.statDivider} />
               <div className={styles.statItem}>
-                <span className={styles.statNumber}>{activeChannel === '7MZ' ? 2 : 1}</span>
+                <span className={styles.statNumber}>
+                  {new Set([
+                    ...songs.filter(s => s.artist === activeChannel).map(s => s.category),
+                    ...songs.filter(s => s.artist === activeChannel).flatMap(s => s.selos || [])
+                  ]).size}
+                </span>
                 <span className={styles.statLabel}>Selos</span>
               </div>
             </div>

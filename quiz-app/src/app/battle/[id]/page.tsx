@@ -23,7 +23,7 @@ export default function BattlePage() {
   const {
     state, room, playerNum, isHost, error,
     startGame, submitGuess, nextRound, useHint, leave,
-  } = useBattle(roomId);
+  } = useBattle(roomId, activeChannel);
 
   const [hintLevel, setHintLevel] = useState(0);
   const [showResult, setShowResult] = useState(false);
