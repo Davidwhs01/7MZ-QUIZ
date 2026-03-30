@@ -3,12 +3,11 @@
 import { useEffect, useCallback, useRef, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { createClient } from '@/utils/supabase/client';
 import { useBattle } from '@/hooks/useBattle';
 import { useYouTubePlayer } from '@/hooks/useYouTubePlayer';
-import { useChannel } from '@/context/ChannelContext';
+import Visualizer from '@/components/game/Visualizer';
 import { sfx } from '@/lib/audio-effects';
 import SearchBar from '@/components/game/SearchBar';
 import { type Song } from '@/data/songs';
@@ -18,12 +17,11 @@ export default function BattlePage() {
   const params = useParams();
   const router = useRouter();
   const roomId = params?.id as string;
-  const { activeChannel } = useChannel();
 
   const {
     state, room, playerNum, isHost, error,
-    startGame, submitGuess, nextRound, useHint, leave,
-  } = useBattle(roomId, activeChannel);
+    startGame, submitGuess, useHint, leave,
+  } = useBattle(roomId);
 
   const [hintLevel, setHintLevel] = useState(0);
   const [showResult, setShowResult] = useState(false);
@@ -31,9 +29,6 @@ export default function BattlePage() {
   const [correctFlash, setCorrectFlash] = useState(false);
   const [hasGuessed, setHasGuessed] = useState(false);
   const [playerNames, setPlayerNames] = useState<{ p1: string; p2: string }>({ p1: 'Jogador 1', p2: 'Jogador 2' });
-  const [activeBarHeights, setActiveBarHeights] = useState<number[]>(
-    Array.from({ length: 24 }, () => 4)
-  );
   const [copied, setCopied] = useState(false);
 
   const { isPlaying, volume, changeVolume, loadAndPlay, getRealDuration, replay, stop } = useYouTubePlayer('bt-player', {
@@ -101,15 +96,6 @@ export default function BattlePage() {
     }
   }, [state.phase, stop]);
 
-  // Visualizer animation
-  useEffect(() => {
-    if (!isPlaying) return;
-    const interval = setInterval(() => {
-      setActiveBarHeights(prev => prev.map(() => 10 + Math.random() * 35));
-    }, 120);
-    return () => clearInterval(interval);
-  }, [isPlaying]);
-
   const handleGuess = useCallback((song: Song) => {
     if (hasGuessed) return;
     setHasGuessed(true);
@@ -146,11 +132,6 @@ export default function BattlePage() {
       replay(state.currentSong.youtubeId, state.timestamp, duration);
     }
   }, [state.currentSong, state.timestamp, hintLevel, state.battleMode, replay]);
-
-  const handleNextRound = useCallback(() => {
-    if (!isHost) return;
-    nextRound();
-  }, [isHost, nextRound]);
 
   const handleLeave = useCallback(async () => {
     await leave();
@@ -300,21 +281,7 @@ export default function BattlePage() {
 
             {/* Visualizer */}
             <div className={styles.visualizerContainer}>
-              <div className={styles.visualizerLabel}>
-                {isPlaying ? '♪ TOCANDO...' : '♪ PAUSADO'}
-              </div>
-              <div className={styles.visualizer}>
-                {activeBarHeights.map((h, i) => (
-                  <div
-                    key={i}
-                    className={styles.bar}
-                    style={{
-                      height: isPlaying ? `${h}px` : '3px',
-                      opacity: isPlaying ? 1 : 0.3,
-                    }}
-                  />
-                ))}
-              </div>
+              <Visualizer isPlaying={isPlaying} barCount={24} minHeight={10} maxHeight={45} />
             </div>
 
             {/* Controls */}
@@ -350,34 +317,26 @@ export default function BattlePage() {
               onSelect={handleGuess}
               disabled={!canGuess}
               placeholder={hasGuessed ? 'Aguardando rodada acabar...' : 'Qual música está tocando?'}
-              artist={activeChannel}
+              artist={state.artist as '7MZ' | 'ENYGMA'}
             />
 
-            {/* Round end: show next round button for host */}
-            {state.phase === 'round_end' && isHost && (
-              <motion.button
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                onClick={handleNextRound}
-                style={{
-                  padding: '12px 32px',
-                  border: 'none',
-                  borderRadius: 'var(--radius-lg)',
-                  background: 'var(--accent-orange)',
-                  color: '#000',
-                  fontFamily: 'var(--font-ui)',
-                  fontSize: '0.85rem',
-                  fontWeight: 800,
-                  cursor: 'pointer',
-                  marginTop: 8,
-                }}
-              >
-                {state.currentRound >= state.totalRounds ? 'VER RESULTADO' : 'PRÓXIMA RODADA →'}
-              </motion.button>
-            )}
-
-            {state.phase === 'round_end' && !isHost && (
-              <div className={styles.waitingDots}>Aguardando host...</div>
+            {/* Round end feedback */}
+            {state.phase === 'round_end' && (
+              <div className={styles.roundEndFeedback}>
+                <div className={styles.roundResult}>
+                  <span className={iGotItRight ? styles.correctEmoji : styles.wrongEmoji}>
+                    {iGotItRight ? '✅' : '❌'}
+                  </span>
+                  <span>Você {iGotItRight ? 'acertou!' : 'errou!'}</span>
+                </div>
+                <div className={styles.roundResult}>
+                  <span className={oppGotItRight ? styles.correctEmoji : styles.wrongEmoji}>
+                    {oppGotItRight ? '✅' : '❌'}
+                  </span>
+                  <span>{oppName} {oppGotItRight ? 'acertou!' : 'errou!'}</span>
+                </div>
+                <div className={styles.nextRoundText}>Próxima rodada em breve...</div>
+              </div>
             )}
           </div>
         )}

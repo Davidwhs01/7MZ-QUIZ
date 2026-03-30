@@ -411,3 +411,37 @@
   color: var(--accent-orange);
   font-weight: 800;
 }
+
+/* Round End Feedback */
+.roundEndFeedback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  margin-top: 8px;
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-subtle);
+}
+.roundResult {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.correctEmoji {
+  font-size: 1.2rem;
+}
+.wrongEmoji {
+  font-size: 1.2rem;
+  opacity: 0.6;
+}
+.nextRoundText {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}

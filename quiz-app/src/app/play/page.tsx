@@ -7,6 +7,7 @@ import { getAudioDuration, generateRandomTimestamp, calculateRoundScore } from '
 import { saveGameScore } from '@/utils/supabase/gameActions';
 import { sfx } from '@/lib/audio-effects';
 import SearchBar from '@/components/game/SearchBar';
+import Visualizer from '@/components/game/Visualizer';
 import { Song, SeloKey, SongCategory, songs } from '@/data/songs';
 import styles from './play.module.css';
 import Link from 'next/link';
@@ -64,7 +65,6 @@ export default function PlayPage() {
     const data = loadNextSong(cat, activeChannel);
     
     if (!data) {
-      console.log('[7MZ DEBUG] Game complete! No more songs.');
       return;
     }
     
@@ -78,7 +78,6 @@ export default function PlayPage() {
     const fixedData = { ...data, timestamp: safeTimestamp };
     nextSongDataRef.current = fixedData;
     
-    console.log('[7MZ DEBUG] Playing:', data.song.title, '| realDuration:', realDuration, 's | startAt:', safeTimestamp, 's | snippet:', data.duration, 's');
     loadAndPlay(data.song.youtubeId, safeTimestamp, data.duration);
   }, [loadNextSong, getRealDuration, loadAndPlay]);
 
@@ -107,12 +106,6 @@ export default function PlayPage() {
     
     const playbackTime = nextSongDataRef.current?.timestamp ?? state.timestamp;
     
-    console.log('[7MZ VIDEO] Opening with:', { 
-      id: state.currentSong.youtubeId, 
-      start: playbackTime,
-      source: nextSongDataRef.current ? 'nextSongDataRef' : 'state.timestamp'
-    });
-
     setVideoData({
       id: state.currentSong.youtubeId,
       start: Math.floor(playbackTime)
@@ -220,11 +213,6 @@ export default function PlayPage() {
     }, 100);
   };
 
-  // Dynamic fake visualizer
-  const [activeBarHeights, setActiveBarHeights] = useState<number[]>(
-    Array.from({ length: 28 }, () => 10)
-  );
-
   // Submit score on game over
   useEffect(() => {
     if (state.phase === 'GAME_OVER' && state.score > 0 && !scoreSubmittedRef.current) {
@@ -240,19 +228,6 @@ export default function PlayPage() {
       sfx.playGameOver();
     }
   }, [state.phase]);
-
-  useEffect(() => {
-    if (!isPlaying) return;
-    
-    // Rapidly update heights to simulate real audio frequencies
-    const interval = setInterval(() => {
-      setActiveBarHeights(prev => 
-        prev.map(() => 15 + Math.random() * 45) // random heights between 15px and 60px
-      );
-    }, 120); // Update every 120ms for a snappy, realistic analyzer feel
-    
-    return () => clearInterval(interval);
-  }, [isPlaying]);
 
   // Exponential growth for fire intensity: slower start (subtle at low streak), peak at 20.
   const fireIntensity = Math.pow(Math.min(state.trueStreak / 20, 1), 2);
@@ -464,21 +439,7 @@ export default function PlayPage() {
 
             {/* Sound Wave Visualizer — synced with isPlaying */}
             <div className={styles.visualizerContainer}>
-              <div className={styles.visualizerLabel}>
-                {isPlaying ? '♪ TOCANDO...' : '♪ PAUSADO'}
-              </div>
-              <div className={styles.visualizer}>
-                {activeBarHeights.map((h, i) => (
-                  <div
-                    key={i}
-                    className={styles.bar}
-                    style={{ 
-                      height: isPlaying ? `${h}px` : `${3 + (i % 3) * 2}px`,
-                      opacity: isPlaying ? 1 : 0.3,
-                    }}
-                  />
-                ))}
-              </div>
+              <Visualizer isPlaying={isPlaying} barCount={28} minHeight={15} maxHeight={60} />
             </div>
 
             {/* Controls Row */}

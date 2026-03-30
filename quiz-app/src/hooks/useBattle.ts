@@ -14,14 +14,19 @@ export interface BattleState {
   player2Score: number;
   player1Lives: number;
   player2Lives: number;
+  player1HintLevel: number;
+  player2HintLevel: number;
   currentSong: Song | null;
   timestamp: number;
   audioDuration: number;
   roundStartTime: number;
   player1Correct: boolean;
   player2Correct: boolean;
+  player1Answered: boolean;
+  player2Answered: boolean;
   lastCorrectPlayer: number | null;
   battleMode: 'normal' | 'inferno';
+  artist: string;
   message: string;
 }
 
@@ -34,6 +39,7 @@ export interface RoomRow {
   current_round: number;
   total_rounds: number;
   battle_mode: 'normal' | 'inferno';
+  artist: string;
   player1_score: number;
   player2_score: number;
   player1_lives: number;
@@ -56,14 +62,19 @@ const INITIAL_STATE: BattleState = {
   player2Score: 0,
   player1Lives: 3,
   player2Lives: 3,
+  player1HintLevel: 0,
+  player2HintLevel: 0,
   currentSong: null,
   timestamp: 0,
   audioDuration: 5,
   roundStartTime: 0,
   player1Correct: false,
   player2Correct: false,
+  player1Answered: false,
+  player2Answered: false,
   lastCorrectPlayer: null,
   battleMode: 'normal',
+  artist: '7MZ',
   message: '',
 };
 
@@ -134,6 +145,7 @@ export function useBattle(roomId: string | null, artist?: Artist) {
         player1Correct: roomData.p1_round_correct,
         player2Correct: roomData.p2_round_correct,
         battleMode: roomData.battle_mode,
+        artist: roomData.artist || '7MZ',
       });
 
       // Subscribe to broadcast channel
@@ -172,6 +184,10 @@ export function useBattle(roomId: string | null, artist?: Artist) {
           roundStartTime: roundData.roundStartTime as number,
           player1Correct: false,
           player2Correct: false,
+          player1Answered: false,
+          player2Answered: false,
+          player1HintLevel: 0,
+          player2HintLevel: 0,
           lastCorrectPlayer: null,
           message: 'Rodada 1',
         });
@@ -218,6 +234,8 @@ export function useBattle(roomId: string | null, artist?: Artist) {
           roundStartTime: d.roundStartTime as number,
           player1Correct: false,
           player2Correct: false,
+          player1Answered: false,
+          player2Answered: false,
           lastCorrectPlayer: null,
           message: `Rodada ${d.round}`,
         });
@@ -244,9 +262,17 @@ export function useBattle(roomId: string | null, artist?: Artist) {
       });
 
       channel.on('broadcast', { event: 'hint_used' }, (payload: { payload: Record<string, unknown> }) => {
-        // Just notify UI that opponent used a hint
         const d = payload.payload;
-        update({ message: `Oponente usou dica ${d.hintLevel}` });
+        const oppNum = d.playerNum as number;
+        const hintLevel = d.hintLevel as number;
+        
+        const patch: Partial<BattleState> = { message: `Oponente usou dica ${hintLevel}` };
+        if (oppNum === 1) {
+          patch.player1HintLevel = hintLevel;
+        } else {
+          patch.player2HintLevel = hintLevel;
+        }
+        update(patch);
         setTimeout(() => update({ message: '' }), 2000);
       });
 
@@ -266,6 +292,8 @@ export function useBattle(roomId: string | null, artist?: Artist) {
           roundStartTime: d.roundStartTime as number,
           player1Correct: false,
           player2Correct: false,
+          player1Answered: false,
+          player2Answered: false,
           lastCorrectPlayer: null,
           message: `Rodada ${d.round}`,
         });
@@ -312,7 +340,7 @@ export function useBattle(roomId: string | null, artist?: Artist) {
     const song = getRandomSong(
       Array.from(playedSongsRef.current),
       state.battleMode === 'inferno' ? undefined : undefined,
-      artist,
+      state.artist as Artist,
     );
     if (!song) {
       playedSongsRef.current.clear();
@@ -324,7 +352,7 @@ export function useBattle(roomId: string | null, artist?: Artist) {
     const roundStartTime = Date.now();
 
     return { song, timestamp, audioDuration: duration, roundStartTime, songId: song.id };
-  }, [state.battleMode, artist]);
+  }, [state.battleMode, state.artist]);
 
   // ---- HOST: start countdown + first round ----
   const startGame = useCallback(async () => {
@@ -361,6 +389,8 @@ export function useBattle(roomId: string | null, artist?: Artist) {
       roundStartTime: roundData.roundStartTime as number,
       player1Correct: false,
       player2Correct: false,
+      player1Answered: false,
+      player2Answered: false,
       message: 'Rodada 1',
     });
   }, [isHost, roomId, supabase, generateRound, update]);
@@ -447,10 +477,12 @@ export function useBattle(roomId: string | null, artist?: Artist) {
     const patch: Partial<BattleState> = {};
     if (pNum === 1) {
       patch.player1Correct = isCorrect;
+      patch.player1Answered = true;
       patch.player1Score = newP1Score;
       patch.player1Lives = newLives;
     } else {
       patch.player2Correct = isCorrect;
+      patch.player2Answered = true;
       patch.player2Score = newP2Score;
       patch.player2Lives = newLives;
     }
@@ -483,23 +515,61 @@ export function useBattle(roomId: string | null, artist?: Artist) {
   useEffect(() => {
     if (!isHost || state.phase !== 'playing') return;
 
-    // Round ends when both have answered correctly, or both lost lives this round
-    const bothAnswered = state.player1Correct && state.player2Correct;
-    const p1Done = state.player1Correct || (state.player1Lives < 3 && !state.player1Correct);
-    const p2Done = state.player2Correct || (state.player2Lives < 3 && !state.player2Correct);
+    // Round ends only when BOTH players have answered
+    const bothAnswered = state.player1Answered && state.player2Answered;
+    if (!bothAnswered) return;
 
-    const bothWrong = !state.player1Correct && !state.player2Correct;
-    const oneCorrect = (state.player1Correct && !state.player2Correct) || (!state.player1Correct && state.player2Correct);
+    // Auto-advance to next round after delay
+    const timer = setTimeout(async () => {
+      const nextRoundNum = state.currentRound + 1;
 
-    if (bothAnswered || oneCorrect || bothWrong) {
-      // Round ends — after short delay
-      const timer = setTimeout(() => {
-        channelRef.current?.send({ type: 'broadcast', event: 'round_end', payload: {} });
-        update({ phase: 'round_end' });
-      }, bothWrong ? 1000 : 2000);
-      return () => clearTimeout(timer);
-    }
-  }, [isHost, state.phase, state.player1Correct, state.player2Correct, state.player1Lives, state.player2Lives]);
+      if (nextRoundNum > state.totalRounds) {
+        const winnerText =
+          state.player1Score > state.player2Score ? 'Jogador 1 venceu!' :
+          state.player2Score > state.player1Score ? 'Jogador 2 venceu!' : 'Empate!';
+
+        channelRef.current?.send({ type: 'broadcast', event: 'game_over', payload: { winnerText } });
+        update({ phase: 'game_over', message: winnerText });
+
+        await supabase.from('game_rooms').update({
+          status: 'finished',
+          current_state: { phase: 'game_over', winnerText },
+        }).eq('id', roomId);
+        return;
+      }
+
+      const roundData = generateRound();
+      const payload = { ...roundData, round: nextRoundNum };
+
+      channelRef.current?.send({ type: 'broadcast', event: 'next_round', payload });
+
+      await supabase.from('game_rooms').update({
+        current_round: nextRoundNum,
+        p1_round_correct: false,
+        p2_round_correct: false,
+        speed_bonus_given: false,
+        round_start_time: roundData.roundStartTime as number,
+        current_state: { phase: 'playing', round: nextRoundNum },
+      }).eq('id', roomId);
+
+      update({
+        phase: 'playing',
+        currentRound: nextRoundNum,
+        currentSong: roundData.song as Song,
+        timestamp: roundData.timestamp as number,
+        audioDuration: roundData.audioDuration as number,
+        roundStartTime: roundData.roundStartTime as number,
+        player1Correct: false,
+        player2Correct: false,
+        player1Answered: false,
+        player2Answered: false,
+        lastCorrectPlayer: null,
+        message: `Rodada ${nextRoundNum}`,
+      });
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, [isHost, state.phase, state.currentRound, state.totalRounds, state.player1Answered, state.player2Answered, state.player1Correct, state.player2Correct, state.player1Score, state.player2Score, roomId, supabase, generateRound, update]);
 
   // ---- HOST: next round ----
   const nextRound = useCallback(async () => {
@@ -545,6 +615,8 @@ export function useBattle(roomId: string | null, artist?: Artist) {
       roundStartTime: roundData.roundStartTime as number,
       player1Correct: false,
       player2Correct: false,
+      player1Answered: false,
+      player2Answered: false,
       lastCorrectPlayer: null,
       message: `Rodada ${nextRoundNum}`,
     });
@@ -555,7 +627,7 @@ export function useBattle(roomId: string | null, artist?: Artist) {
     if (state.battleMode === 'inferno') return null;
     if (!playerNum || !channelRef.current) return null;
 
-    const currentHintLevel = 0; // TODO: track per-player hint level
+    const currentHintLevel = playerNum === 1 ? state.player1HintLevel : state.player2HintLevel;
     const newHintLevel = currentHintLevel + 1;
     if (newHintLevel > 2) return null;
 
@@ -568,7 +640,7 @@ export function useBattle(roomId: string | null, artist?: Artist) {
     });
 
     return { duration, hintLevel: newHintLevel };
-  }, [state.battleMode, playerNum]);
+  }, [state.battleMode, playerNum, state.player1HintLevel, state.player2HintLevel]);
 
   // ---- ANY: leave ----
   const leave = useCallback(async () => {

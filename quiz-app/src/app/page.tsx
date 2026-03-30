@@ -74,14 +74,14 @@ export default function Home() {
     if (!isLoggedIn) return;
     setLoading(true);
     setError('');
-    const { room, error: err } = await createRoom(battleMode);
+    const { room, error: err } = await createRoom(battleMode, activeChannel);
     if (err || !room) {
       setError(err || 'Erro ao criar sala');
       setLoading(false);
       return;
     }
     router.push(`/battle/${room.id}`);
-  }, [battleMode, router, isLoggedIn]);
+  }, [battleMode, router, isLoggedIn, activeChannel]);
 
   const handleJoinRoom = useCallback(async () => {
     if (roomCode.length < 4) return;

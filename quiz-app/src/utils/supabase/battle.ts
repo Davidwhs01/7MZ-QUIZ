@@ -9,7 +9,7 @@ function generateRoomCode(): string {
   return code;
 }
 
-export async function createRoom(battleMode: 'normal' | 'inferno' = 'normal') {
+export async function createRoom(battleMode: 'normal' | 'inferno' = 'normal', artist: string = '7MZ') {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { room: null, error: 'Login necessário' };
@@ -25,6 +25,7 @@ export async function createRoom(battleMode: 'normal' | 'inferno' = 'normal') {
       player1_id: user.id,
       status: 'waiting',
       battle_mode: battleMode,
+      artist: artist,
       current_state: { phase: 'waiting' },
     })
     .select()
