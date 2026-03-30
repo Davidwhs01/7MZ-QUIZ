@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useReducer } from 'react';
-import { Song, SongCategory, getRandomSong } from '@/data/songs';
+import { Song, SeloKey, getRandomSong } from '@/data/songs';
 import {
   getAudioDuration,
   generateRandomTimestamp,
@@ -146,8 +146,8 @@ export function useGameState() {
     dispatch({ type: 'START_GAME' });
   }, []);
 
-  const loadNextSong = useCallback((category?: SongCategory) => {
-    const song = getRandomSong(state.playedSongIds, category);
+  const loadNextSong = useCallback((selo?: SeloKey) => {
+    const song = getRandomSong(state.playedSongIds, selo);
     
     if (!song) {
       dispatch({ type: 'WRONG_ANSWER' }); // Ends the game

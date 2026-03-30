@@ -1,14 +1,14 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { Song, SongCategory, searchSongs } from '@/data/songs';
+import { Song, SeloKey, searchSongs } from '@/data/songs';
 import styles from './SearchBar.module.css';
 
 interface SearchBarProps {
   onSelect: (song: Song) => void;
   disabled?: boolean;
   placeholder?: string;
-  category?: SongCategory;
+  category?: SeloKey;
 }
 
 export default function SearchBar({ onSelect, disabled = false, placeholder = "Digite o nome da música...", category }: SearchBarProps) {

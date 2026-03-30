@@ -7,7 +7,7 @@ import { getAudioDuration, generateRandomTimestamp, calculateRoundScore } from '
 import { saveGameScore } from '@/utils/supabase/gameActions';
 import { sfx } from '@/lib/audio-effects';
 import SearchBar from '@/components/game/SearchBar';
-import { Song, SongCategory, songs } from '@/data/songs';
+import { Song, SeloKey, SongCategory, songs } from '@/data/songs';
 import styles from './play.module.css';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -44,7 +44,7 @@ export default function PlayPage() {
   const [bonusEarned, setBonusEarned] = useState(0);
   const [floatingPoints, setFloatingPoints] = useState<{ id: number, val: number } | null>(null);
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<SongCategory | 'ALL' | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<SeloKey | 'ALL' | null>(null);
   const [isViewingVideo, setIsViewingVideo] = useState(false);
   const [videoData, setVideoData] = useState<{ id: string; start: number } | null>(null);
   
@@ -56,7 +56,7 @@ export default function PlayPage() {
   const feedbackTimerRef = useRef<NodeJS.Timeout | null>(null);
   const hasStartedRef = useRef(false);
   const scoreSubmittedRef = useRef(false);
-  const categoryRef = useRef<SongCategory | undefined>(undefined);
+  const categoryRef = useRef<SeloKey | undefined>(undefined);
 
   // Start new round: get real duration from YT, generate safe timestamp, then play
   const startNewRound = useCallback(async () => {
@@ -364,20 +364,37 @@ export default function PlayPage() {
               )}
 
               {activeChannel === 'ENYGMA' && (
-                <motion.button
-                  variants={{
-                    hidden: { y: 20, opacity: 0 },
-                    visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 300 } }
-                  }}
-                  whileHover={{ scale: 1.05, y: -5 }}
-                  whileTap={{ scale: 0.95 }}
-                  className={`${styles.categoryCard} ${selectedCategory === 'ENYGMA' ? styles.categoryCardActive : ''}`}
-                  onClick={() => setSelectedCategory('ENYGMA')}
-                >
-                  <span className={styles.categoryEmoji}>🔮</span>
-                  <span className={styles.categoryName}>ENYGMA</span>
-                  <span className={styles.categoryCount}>{songs.filter(s => s.category === 'ENYGMA').length} músicas</span>
-                </motion.button>
+                <>
+                  <motion.button
+                    variants={{
+                      hidden: { y: 20, opacity: 0 },
+                      visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 300 } }
+                    }}
+                    whileHover={{ scale: 1.05, y: -5 }}
+                    whileTap={{ scale: 0.95 }}
+                    className={`${styles.categoryCard} ${selectedCategory === 'ENYGMA' ? styles.categoryCardActive : ''}`}
+                    onClick={() => setSelectedCategory('ENYGMA')}
+                  >
+                    <span className={styles.categoryEmoji}>🔮</span>
+                    <span className={styles.categoryName}>ENYGMA (TODAS)</span>
+                    <span className={styles.categoryCount}>{songs.filter(s => s.category === 'ENYGMA').length} músicas</span>
+                  </motion.button>
+
+                  <motion.button
+                    variants={{
+                      hidden: { y: 20, opacity: 0 },
+                      visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 300 } }
+                    }}
+                    whileHover={{ scale: 1.05, y: -5 }}
+                    whileTap={{ scale: 0.95 }}
+                    className={`${styles.categoryCard} ${selectedCategory === 'PÓS REVELAÇÃO' ? styles.categoryCardActive : ''}`}
+                    onClick={() => setSelectedCategory('PÓS REVELAÇÃO')}
+                  >
+                    <span className={styles.categoryEmoji}>🔥</span>
+                    <span className={styles.categoryName}>PÓS REVELAÇÃO</span>
+                    <span className={styles.categoryCount}>{songs.filter(s => s.selos?.includes('PÓS REVELAÇÃO')).length} músicas</span>
+                  </motion.button>
+                </>
               )}
 
               <motion.button

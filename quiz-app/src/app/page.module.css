@@ -298,7 +298,6 @@
 
 .sectionHeader {
   margin-bottom: 24px;
-  animation: fadeInUp 600ms ease 300ms both;
   text-align: center;
 }
 
@@ -326,7 +325,6 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  animation: fadeInUp 600ms ease 400ms both;
 }
 
 /* === Mode Cards === */
@@ -697,6 +695,367 @@
 
 .footerLink:hover {
   color: var(--accent-orange);
+}
+
+/* ============== MODE TOGGLE (SINGLE / MULTI) ============== */
+
+@keyframes panelSlideIn {
+  from { opacity: 0; transform: translateX(16px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.panelEnter {
+  animation: panelSlideIn 0.28s ease-out;
+}
+.modeToggle {
+  position: relative;
+  display: flex;
+  gap: 0;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 4px;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.modeToggleBtn {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  padding: 11px 16px;
+  border: none;
+  border-radius: calc(var(--radius-lg) - 4px);
+  background: transparent;
+  color: var(--text-muted);
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: color 0.25s ease;
+  letter-spacing: 0.04em;
+}
+
+.modeToggleBtn:hover {
+  color: var(--text-secondary);
+}
+
+.modeToggleActive {
+  color: var(--accent-orange) !important;
+}
+
+.modeTogglePill {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: calc(50% - 4px);
+  height: calc(100% - 8px);
+  border-radius: calc(var(--radius-lg) - 4px);
+  background: rgba(255, 136, 0, 0.12);
+  box-shadow: 0 0 14px rgba(255, 136, 0, 0.12);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+/* Active game banner */
+.activeBanner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, rgba(255, 136, 0, 0.08), rgba(255, 136, 0, 0.02));
+  border: 1px solid rgba(255, 136, 0, 0.2);
+  text-decoration: none;
+  color: var(--text-primary);
+  font-size: 0.82rem;
+  transition: all 0.2s;
+  animation: fadeInUp 400ms ease;
+}
+
+.activeBanner:hover {
+  border-color: var(--accent-orange);
+  transform: translateY(-1px);
+}
+
+.activeBanner strong {
+  color: var(--accent-orange);
+}
+
+.activeBannerArrow {
+  margin-left: auto;
+  color: var(--accent-orange);
+  font-size: 1.1rem;
+}
+
+/* ============== MULTI PANEL ============== */
+.multiPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+/* Multi mode card (simpler than modeCard) */
+.multiCard {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  border-radius: var(--radius-lg);
+  border: 1.5px solid var(--border-medium);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.multiCardActive {
+  border-color: var(--accent-orange);
+  background: rgba(255, 136, 0, 0.05);
+}
+
+.multiCardLocked {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.multiCardEmoji {
+  font-size: 1.6rem;
+  flex-shrink: 0;
+}
+
+.multiCardInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.multiCardName {
+  font-family: var(--font-ui);
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.multiCardDesc {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.multiCardBadge {
+  font-family: var(--font-ui);
+  font-size: 0.6rem;
+  font-weight: 800;
+  padding: 4px 12px;
+  border-radius: 100px;
+  background: rgba(255, 136, 0, 0.15);
+  color: var(--accent-orange);
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
+
+.multiCardBadgeSoon {
+  font-family: var(--font-ui);
+  font-size: 0.6rem;
+  font-weight: 800;
+  padding: 4px 12px;
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
+
+/* Multi sections (selo, difficulty) */
+.multiSection {
+  padding: 4px 0;
+}
+
+.multiLabel {
+  font-family: var(--font-ui);
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  padding-left: 2px;
+}
+
+/* Selo selector */
+.seloRow {
+  display: flex;
+  gap: 8px;
+}
+
+.seloBtn {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1.5px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.02);
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+  color: var(--text-secondary);
+}
+
+.seloBtn:hover { border-color: var(--accent-orange); }
+
+.seloBtnActive {
+  border-color: var(--accent-orange);
+  background: rgba(255, 136, 0, 0.08);
+  color: var(--text-primary);
+}
+
+.seloBtnName {
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: block;
+}
+
+.seloBtnCount {
+  font-size: 0.62rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+  display: block;
+}
+
+/* Difficulty selector */
+.diffRow {
+  display: flex;
+  gap: 8px;
+}
+
+.diffBtn {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1.5px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.02);
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+  color: var(--text-secondary);
+}
+
+.diffBtn:hover { border-color: var(--accent-orange); }
+
+.diffBtnActive {
+  border-color: var(--accent-orange);
+  background: rgba(255, 136, 0, 0.08);
+  color: var(--text-primary);
+}
+
+.diffBtnName {
+  font-family: var(--font-ui);
+  font-size: 0.73rem;
+  font-weight: 700;
+  display: block;
+}
+
+.diffBtnTag {
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+  display: block;
+}
+
+/* Create button */
+.createBtn {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: var(--radius-lg);
+  background: var(--accent-orange);
+  color: #000;
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  font-weight: 800;
+  cursor: pointer;
+  letter-spacing: 0.03em;
+  transition: all 0.15s;
+  margin-top: 4px;
+}
+
+.createBtn:hover { opacity: 0.9; }
+.createBtn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* Join row */
+.joinDivider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-muted);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.joinDivider::before,
+.joinDivider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border-medium);
+}
+
+.joinRow {
+  display: flex;
+  gap: 8px;
+}
+
+.codeInput {
+  flex: 1;
+  padding: 11px 14px;
+  border: 1.5px solid var(--border-medium);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  outline: none;
+  transition: border-color 0.2s;
+  min-width: 0;
+}
+
+.codeInput:focus { border-color: var(--accent-blue); }
+
+.codeInput::placeholder {
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  font-size: 0.82rem;
+}
+
+.joinBtn {
+  padding: 11px 20px;
+  border: none;
+  border-radius: var(--radius-lg);
+  background: var(--accent-blue);
+  color: #fff;
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+
+.joinBtn:hover { opacity: 0.9; }
+.joinBtn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* Error */
+.multiError {
+  text-align: center;
+  color: #ef4444;
+  font-size: 0.75rem;
+  padding: 8px 12px;
+  background: rgba(239, 68, 68, 0.08);
+  border-radius: var(--radius-md);
 }
 
 /* ============== KEYFRAMES ============== */

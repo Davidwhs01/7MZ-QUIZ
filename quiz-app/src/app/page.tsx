@@ -1,5 +1,7 @@
 'use client';
 
+import { useState, useCallback, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import styles from './page.module.css';
@@ -7,11 +9,93 @@ import BottomDrawer from '@/components/home/BottomDrawer';
 import LoginProfileCard from '@/components/home/LoginProfileCard';
 import GlobalRankingCard from '@/components/home/GlobalRankingCard';
 import ChannelSelector from '@/components/home/ChannelSelector';
-import { songs } from '@/data/songs';
+import { songs, type SongCategory, type Song } from '@/data/songs';
 import { useChannel } from '@/context/ChannelContext';
+import { createClient } from '@/utils/supabase/client';
+import { createRoom, joinRoom } from '@/utils/supabase/battle';
+
+type GameMode = 'single' | 'multi';
 
 export default function Home() {
+  const router = useRouter();
   const { activeChannel } = useChannel();
+  const [gameMode, setGameMode] = useState<GameMode>('single');
+  const [selectedSelo, setSelectedSelo] = useState<SongCategory | 'PÓS REVELAÇÃO'>(
+    activeChannel === 'ENYGMA' ? 'ENYGMA' : 'NERD HITS'
+  );
+  const [battleMode, setBattleMode] = useState<'normal' | 'inferno'>('normal');
+  const [roomCode, setRoomCode] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [activeGame, setActiveGame] = useState<{ id: string; code: string } | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    createClient().auth.getSession().then((res: { data: { session: unknown } }) => {
+      setIsLoggedIn(res.data.session !== null);
+    });
+  }, []);
+
+  // Check for active game
+  useEffect(() => {
+    if (!isLoggedIn) return;
+    const check = async () => {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data } = await supabase
+        .from('game_rooms')
+        .select('id, room_code')
+        .or(`player1_id.eq.${user.id},player2_id.eq.${user.id}`)
+        .in('status', ['waiting', 'playing'])
+        .limit(1);
+      if (data && data.length > 0) {
+        setActiveGame({ id: data[0].id, code: data[0].room_code });
+      }
+    };
+    check();
+  }, [isLoggedIn]);
+
+  useEffect(() => {
+    setSelectedSelo(activeChannel === 'ENYGMA' ? 'ENYGMA' : 'NERD HITS');
+  }, [activeChannel]);
+
+  const seloOptions: { key: SongCategory | 'PÓS REVELAÇÃO'; label: string }[] = activeChannel === '7MZ'
+    ? [
+        { key: 'NERD HITS', label: 'NERD HITS' },
+        { key: '7MZ RECORDS', label: '7MZ RECORDS' },
+      ]
+    : [
+        { key: 'ENYGMA', label: 'ENYGMA (TODAS)' },
+        { key: 'PÓS REVELAÇÃO', label: 'PÓS REVELAÇÃO' },
+      ];
+
+  const handleCreateRoom = useCallback(async () => {
+    if (!isLoggedIn) return;
+    setLoading(true);
+    setError('');
+    const { room, error: err } = await createRoom(battleMode);
+    if (err || !room) {
+      setError(err || 'Erro ao criar sala');
+      setLoading(false);
+      return;
+    }
+    router.push(`/battle/${room.id}`);
+  }, [battleMode, router, isLoggedIn]);
+
+  const handleJoinRoom = useCallback(async () => {
+    if (roomCode.length < 4) return;
+    setLoading(true);
+    setError('');
+    const { room, error: err } = await joinRoom(roomCode);
+    if (err || !room) {
+      setError(err || 'Sala não encontrada');
+      setLoading(false);
+      return;
+    }
+    router.push(`/battle/${room.id}`);
+  }, [roomCode, router]);
+
   return (
     <div className={styles.page}>
       {/* === Background Layer === */}
@@ -68,91 +152,198 @@ export default function Home() {
               </div>
               <div className={styles.statDivider} />
               <div className={styles.statItem}>
-                <span className={styles.statNumber}>3</span>
-                <span className={styles.statLabel}>Modos</span>
+                <span className={styles.statNumber}>{activeChannel === '7MZ' ? 2 : 1}</span>
+                <span className={styles.statLabel}>Selos</span>
               </div>
             </div>
           </section>
 
           <section className={styles.modesSection}>
+            {/* Toggle SINGLE / MULTI */}
             <div className={styles.sectionHeader}>
-              <span className={styles.sectionTag}>SELECIONE</span>
-              <h2 className={styles.sectionTitle}>MODOS DE JOGO</h2>
-            </div>
-
-            <div className={styles.modesGrid}>
-              <Link href="/play" className={styles.modeCard}>
-                <div className={styles.modeCardShine} />
-                <div className={styles.modeCardBorder} />
-                <div className={styles.modeCardInner}>
-                  <div className={styles.modeIconWrap}>
-                    <span className={styles.modeIcon}>🎵</span>
-                    <div className={styles.modeIconGlow} />
-                  </div>
-                  <div className={styles.modeInfo}>
-                    <h3 className={styles.modeName}>Adivinhe a Música pelo Áudio</h3>
-                    <p className={styles.modeDesc}>Ouça um trecho aleatório e lute para descobrir qual música está tocando</p>
-                  </div>
-                  <div className={styles.modeRight}>
-                    <span className={styles.modeStatus}>JOGAR</span>
-                    <svg className={styles.modeArrow} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="20" height="20">
-                      <path d="m9 18 6-6-6-6" />
-                    </svg>
-                  </div>
-                </div>
-              </Link>
-
-              <Link href="/battle" className={styles.modeCard}>
-                <div className={styles.modeCardShine} />
-                <div className={styles.modeCardBorder} />
-                <div className={styles.modeCardInner}>
-                  <div className={styles.modeIconWrap}>
-                    <span className={styles.modeIcon}>⚔️</span>
-                    <div className={styles.modeIconGlow} />
-                  </div>
-                  <div className={styles.modeInfo}>
-                    <h3 className={styles.modeName}>Batalha PvP</h3>
-                    <p className={styles.modeDesc}>Desafie um amigo em tempo real. 5 rodadas, 3 vidas, modo Normal ou Inferno</p>
-                  </div>
-                  <div className={styles.modeRight}>
-                    <span className={styles.modeStatus}>NOVO</span>
-                    <svg className={styles.modeArrow} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="20" height="20">
-                      <path d="m9 18 6-6-6-6" />
-                    </svg>
-                  </div>
-                </div>
-              </Link>
-
-              <div className={`${styles.modeCard} ${styles.modeCardLocked}`}>
-                <div className={styles.modeCardInner}>
-                  <div className={styles.modeIconWrap}>
-                    <span className={styles.modeIcon}>✍️</span>
-                  </div>
-                  <div className={styles.modeInfo}>
-                    <h3 className={styles.modeName}>Complete a Letra</h3>
-                    <p className={styles.modeDesc}>Complete os versos de rap geek que faltam na música para pontuar</p>
-                  </div>
-                  <div className={styles.modeRight}>
-                    <span className={styles.modeLock}>EM BREVE</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className={`${styles.modeCard} ${styles.modeCardLocked}`}>
-                <div className={styles.modeCardInner}>
-                  <div className={styles.modeIconWrap}>
-                    <span className={styles.modeIcon}>🎭</span>
-                  </div>
-                  <div className={styles.modeInfo}>
-                    <h3 className={styles.modeName}>Adivinhe o Personagem</h3>
-                    <p className={styles.modeDesc}>Descubra sobre qual figura geek a música está retratando</p>
-                  </div>
-                  <div className={styles.modeRight}>
-                    <span className={styles.modeLock}>EM BREVE</span>
-                  </div>
-                </div>
+              <div className={styles.modeToggle}>
+                <div
+                  className={styles.modeTogglePill}
+                  style={{ transform: gameMode === 'single' ? 'translateX(0)' : 'translateX(100%)' }}
+                />
+                <button
+                  className={`${styles.modeToggleBtn} ${gameMode === 'single' ? styles.modeToggleActive : ''}`}
+                  onClick={() => { setGameMode('single'); setError(''); }}
+                >
+                  🎵 SINGLE
+                </button>
+                <button
+                  className={`${styles.modeToggleBtn} ${gameMode === 'multi' ? styles.modeToggleActive : ''}`}
+                  onClick={() => { setGameMode('multi'); setError(''); }}
+                >
+                  ⚔️ MULTI
+                </button>
               </div>
             </div>
+
+            {/* Active Game Banner */}
+            {gameMode === 'multi' && activeGame && (
+              <Link href={`/battle/${activeGame.id}`} className={styles.activeBanner}>
+                <span>🎮</span>
+                <div>
+                  <strong>Partida em andamento</strong>
+                  <span> Sala {activeGame.code}</span>
+                </div>
+                <span className={styles.activeBannerArrow}>→</span>
+              </Link>
+            )}
+
+            {gameMode === 'single' ? (
+                <div key="single-panel" className={`${styles.modesGrid} ${styles.panelEnter}`}>
+                  <Link href="/play" className={styles.modeCard}>
+                    <div className={styles.modeCardShine} />
+                    <div className={styles.modeCardBorder} />
+                    <div className={styles.modeCardInner}>
+                      <div className={styles.modeIconWrap}>
+                        <span className={styles.modeIcon}>🎵</span>
+                        <div className={styles.modeIconGlow} />
+                      </div>
+                      <div className={styles.modeInfo}>
+                        <h3 className={styles.modeName}>Adivinhe a Música pelo Áudio</h3>
+                        <p className={styles.modeDesc}>Ouça um trecho aleatório e lute para descobrir qual música está tocando</p>
+                      </div>
+                      <div className={styles.modeRight}>
+                        <span className={styles.modeStatus}>JOGAR</span>
+                        <svg className={styles.modeArrow} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="20" height="20">
+                          <path d="m9 18 6-6-6-6" />
+                        </svg>
+                      </div>
+                    </div>
+                  </Link>
+
+                  <div className={`${styles.modeCard} ${styles.modeCardLocked}`}>
+                    <div className={styles.modeCardInner}>
+                      <div className={styles.modeIconWrap}>
+                        <span className={styles.modeIcon}>✍️</span>
+                      </div>
+                      <div className={styles.modeInfo}>
+                        <h3 className={styles.modeName}>Complete a Letra</h3>
+                        <p className={styles.modeDesc}>Complete os versos de rap geek que faltam na música para pontuar</p>
+                      </div>
+                      <div className={styles.modeRight}>
+                        <span className={styles.modeLock}>EM BREVE</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className={`${styles.modeCard} ${styles.modeCardLocked}`}>
+                    <div className={styles.modeCardInner}>
+                      <div className={styles.modeIconWrap}>
+                        <span className={styles.modeIcon}>🎭</span>
+                      </div>
+                      <div className={styles.modeInfo}>
+                        <h3 className={styles.modeName}>Adivinhe o Personagem</h3>
+                        <p className={styles.modeDesc}>Descubra sobre qual figura geek a música está retratando</p>
+                      </div>
+                      <div className={styles.modeRight}>
+                        <span className={styles.modeLock}>EM BREVE</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div key="multi-panel" className={`${styles.multiPanel} ${styles.panelEnter}`}>
+                  {/* Battle Card */}
+                  <div className={`${styles.multiCard} ${styles.multiCardActive}`}>
+                    <span className={styles.multiCardEmoji}>⚔️</span>
+                    <div className={styles.multiCardInfo}>
+                      <div className={styles.multiCardName}>Batalha 1v1</div>
+                      <div className={styles.multiCardDesc}>5 rodadas • 3 vidas • Quem somar mais pontos vence</div>
+                    </div>
+                    <span className={styles.multiCardBadge}>PRONTO</span>
+                  </div>
+
+                  {/* Selo Selector */}
+                  <div className={styles.multiSection}>
+                    <div className={styles.multiLabel}>Selo</div>
+                    <div className={styles.seloRow}>
+                      {seloOptions.map(opt => (
+                        <button
+                          key={opt.key}
+                          className={`${styles.seloBtn} ${selectedSelo === opt.key ? styles.seloBtnActive : ''}`}
+                          onClick={() => setSelectedSelo(opt.key)}
+                        >
+                          <span className={styles.seloBtnName}>{opt.label}</span>
+                          <span className={styles.seloBtnCount}>
+                            {opt.key === 'PÓS REVELAÇÃO'
+                              ? songs.filter(s => s.selos?.includes('PÓS REVELAÇÃO')).length
+                              : songs.filter(s => s.category === opt.key).length} músicas
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Difficulty Selector */}
+                  <div className={styles.multiSection}>
+                    <div className={styles.multiLabel}>Dificuldade</div>
+                    <div className={styles.diffRow}>
+                      <button
+                        className={`${styles.diffBtn} ${battleMode === 'normal' ? styles.diffBtnActive : ''}`}
+                        onClick={() => setBattleMode('normal')}
+                      >
+                        <span className={styles.diffBtnName}>⚡ Normal</span>
+                        <span className={styles.diffBtnTag}>Com dicas</span>
+                      </button>
+                      <button
+                        className={`${styles.diffBtn} ${battleMode === 'inferno' ? styles.diffBtnActive : ''}`}
+                        onClick={() => setBattleMode('inferno')}
+                      >
+                        <span className={styles.diffBtnName}>🔥 Inferno</span>
+                        <span className={styles.diffBtnTag}>Sem dicas</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Create Room */}
+                  <button
+                    className={styles.createBtn}
+                    onClick={handleCreateRoom}
+                    disabled={loading || !isLoggedIn}
+                  >
+                    {!isLoggedIn ? 'FAÇA LOGIN PARA JOGAR' : loading ? 'CRIANDO...' : '⚔️ CRIAR SALA'}
+                  </button>
+
+                  {/* Join Room */}
+                  <div className={styles.joinDivider}>ou entre com código</div>
+                  <div className={styles.joinRow}>
+                    <input
+                      className={styles.codeInput}
+                      type="text"
+                      placeholder="CÓDIGO"
+                      value={roomCode}
+                      onChange={e => { setRoomCode(e.target.value.toUpperCase()); setError(''); }}
+                      maxLength={6}
+                      autoComplete="off"
+                      spellCheck={false}
+                    />
+                    <button
+                      className={styles.joinBtn}
+                      onClick={handleJoinRoom}
+                      disabled={loading || roomCode.length < 4 || !isLoggedIn}
+                    >
+                      ENTRAR
+                    </button>
+                  </div>
+
+                  {error && <div className={styles.multiError}>{error}</div>}
+
+                  {/* Future modes */}
+                  <div className={`${styles.multiCard} ${styles.multiCardLocked}`}>
+                    <span className={styles.multiCardEmoji}>🏆</span>
+                    <div className={styles.multiCardInfo}>
+                      <div className={styles.multiCardName}>Torneio</div>
+                      <div className={styles.multiCardDesc}>Eliminatório com 4, 8 ou 16 jogadores</div>
+                    </div>
+                    <span className={styles.multiCardBadgeSoon}>EM BREVE</span>
+                  </div>
+                </div>
+              )}
           </section>
         </main>
 
@@ -163,7 +354,7 @@ export default function Home() {
               <span className={styles.sidebarIcon}>🏆</span>
               <h3 className={styles.sidebarTitle}>RANKING GLOBAL</h3>
             </div>
-            
+
             <GlobalRankingCard />
           </div>
         </aside>
