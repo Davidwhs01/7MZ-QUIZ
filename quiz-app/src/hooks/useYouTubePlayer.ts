@@ -136,7 +136,7 @@ export function useYouTubePlayer(containerId: string, options?: UseYouTubePlayer
           clearInterval(poll);
           playerRef.current?.pauseVideo();
           playerRef.current?.setVolume(prevVol);
-          resolve(dur > 0 ? dur : 240); // fallback 4min
+          resolve(dur > 0 ? dur : 180); // fallback 3min (avg geek rap)
         }
       }, 100);
     });

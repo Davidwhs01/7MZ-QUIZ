@@ -1,16 +1,17 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { Song, searchSongs } from '@/data/songs';
+import { Song, SongCategory, searchSongs } from '@/data/songs';
 import styles from './SearchBar.module.css';
 
 interface SearchBarProps {
   onSelect: (song: Song) => void;
   disabled?: boolean;
   placeholder?: string;
+  category?: SongCategory;
 }
 
-export default function SearchBar({ onSelect, disabled = false, placeholder = "Digite o nome da música..." }: SearchBarProps) {
+export default function SearchBar({ onSelect, disabled = false, placeholder = "Digite o nome da música...", category }: SearchBarProps) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<Song[]>([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -25,11 +26,11 @@ export default function SearchBar({ onSelect, disabled = false, placeholder = "D
       setIsOpen(false);
       return;
     }
-    const found = searchSongs(q);
+    const found = searchSongs(q, category);
     setResults(found);
     setIsOpen(found.length > 0);
     setSelectedIndex(-1);
-  }, []);
+  }, [category]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;

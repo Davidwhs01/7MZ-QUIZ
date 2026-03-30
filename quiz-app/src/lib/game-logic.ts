@@ -6,6 +6,12 @@ export const POINTS_HINT_2 = 30;
 
 export const DURATIONS = [5, 10, 15] as const;
 
+// Default safe margins (seconds)
+const DEFAULT_INTRO_SKIP = 30;
+const DEFAULT_OUTRO_BUFFER = 20;
+// Fallback duration when real duration is unknown (3 min avg for geek rap)
+const ESTIMATED_DURATION = 180;
+
 export interface Milestone {
   threshold: number;
   title: string;
@@ -50,21 +56,23 @@ export function getAudioDuration(hintLevel: number): number {
 }
 
 export function generateRandomTimestamp(song: Song, snippetDuration: number): number {
-  // Skip first 30s (intros/silence) and last 20s (outros)
-  const INTRO_SKIP = 30;
-  const OUTRO_BUFFER = 20;
-  
-  const safeStart = INTRO_SKIP;
-  const safeEnd = song.duration - OUTRO_BUFFER - snippetDuration;
-  
+  const introSkip = song.introSkip ?? DEFAULT_INTRO_SKIP;
+  const outroBuffer = song.outroBuffer ?? DEFAULT_OUTRO_BUFFER;
+  const duration = song.duration > 0 ? song.duration : ESTIMATED_DURATION;
+
+  const safeStart = introSkip;
+  const safeEnd = duration - outroBuffer - snippetDuration;
+
   if (safeEnd <= safeStart) {
-    // Song is too short for safe margins, use smaller margins
-    const fallbackStart = Math.min(10, Math.floor(song.duration * 0.1));
-    const fallbackEnd = song.duration - snippetDuration - 5;
+    // Song is too short for full margins — shrink proportionally
+    const reducedIntro = Math.min(Math.floor(duration * 0.1), 15);
+    const reducedOutro = Math.min(Math.floor(duration * 0.05), 10);
+    const fallbackStart = reducedIntro;
+    const fallbackEnd = duration - reducedOutro - snippetDuration;
     if (fallbackEnd <= fallbackStart) return fallbackStart;
     return fallbackStart + Math.floor(Math.random() * (fallbackEnd - fallbackStart));
   }
-  
+
   return safeStart + Math.floor(Math.random() * (safeEnd - safeStart));
 }
 

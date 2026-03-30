@@ -229,7 +229,9 @@ export default function PlayPage() {
   useEffect(() => {
     if (state.phase === 'GAME_OVER' && state.score > 0 && !scoreSubmittedRef.current) {
       scoreSubmittedRef.current = true;
-      saveGameScore(state.score, selectedCategory || 'ALL');
+      const cat = selectedCategory || 'ALL';
+      const art = cat === 'ENYGMA' ? 'ENYGMA' : cat === 'ALL' ? 'ALL' : '7MZ';
+      saveGameScore(state.score, cat, art);
     }
   }, [state.phase, state.score, selectedCategory]);
 
@@ -316,7 +318,7 @@ export default function PlayPage() {
             </p>
 
             {/* Category Cards */}
-            <motion.div 
+            <motion.div
               className={styles.categoryGrid}
               initial="hidden"
               animate="visible"
@@ -343,7 +345,7 @@ export default function PlayPage() {
                     <span className={styles.categoryName}>NERD HITS</span>
                     <span className={styles.categoryCount}>{songs.filter(s => s.category === 'NERD HITS').length} músicas</span>
                   </motion.button>
-                  
+
                   <motion.button
                     variants={{
                       hidden: { y: 20, opacity: 0 },
@@ -360,7 +362,7 @@ export default function PlayPage() {
                   </motion.button>
                 </>
               )}
-              
+
               {activeChannel === 'ENYGMA' && (
                 <motion.button
                   variants={{
@@ -373,11 +375,11 @@ export default function PlayPage() {
                   onClick={() => setSelectedCategory('ENYGMA')}
                 >
                   <span className={styles.categoryEmoji}>🔮</span>
-                  <span className={styles.categoryName}>OFICIAL</span>
+                  <span className={styles.categoryName}>ENYGMA</span>
                   <span className={styles.categoryCount}>{songs.filter(s => s.category === 'ENYGMA').length} músicas</span>
                 </motion.button>
               )}
-              
+
               <motion.button
                 variants={{
                   hidden: { y: 20, opacity: 0 },
@@ -415,7 +417,7 @@ export default function PlayPage() {
               onClick={handleStart}
               disabled={!isReady || !selectedCategory}
             >
-              {!selectedCategory ? 'SELECIONE UMA CATEGORIA' : (!isReady ? 'CARREGANDO...' : 'COMEÇAR')}
+              {!selectedCategory ? 'SELECIONE UM ARTISTA' : (!isReady ? 'CARREGANDO...' : 'COMEÇAR')}
             </motion.button>
           </div>
         )}
@@ -549,6 +551,7 @@ export default function PlayPage() {
               onSelect={handleAnswer}
               disabled={state.phase !== 'PLAYING'}
               placeholder="Qual música está tocando?"
+              category={selectedCategory && selectedCategory !== 'ALL' ? selectedCategory : undefined}
             />
 
             {/* Correct feedback overlay */}

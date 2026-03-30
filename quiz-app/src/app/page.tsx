@@ -102,6 +102,27 @@ export default function Home() {
                 </div>
               </Link>
 
+              <Link href="/battle" className={styles.modeCard}>
+                <div className={styles.modeCardShine} />
+                <div className={styles.modeCardBorder} />
+                <div className={styles.modeCardInner}>
+                  <div className={styles.modeIconWrap}>
+                    <span className={styles.modeIcon}>⚔️</span>
+                    <div className={styles.modeIconGlow} />
+                  </div>
+                  <div className={styles.modeInfo}>
+                    <h3 className={styles.modeName}>Batalha PvP</h3>
+                    <p className={styles.modeDesc}>Desafie um amigo em tempo real. 5 rodadas, 3 vidas, modo Normal ou Inferno</p>
+                  </div>
+                  <div className={styles.modeRight}>
+                    <span className={styles.modeStatus}>NOVO</span>
+                    <svg className={styles.modeArrow} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="20" height="20">
+                      <path d="m9 18 6-6-6-6" />
+                    </svg>
+                  </div>
+                </div>
+              </Link>
+
               <div className={`${styles.modeCard} ${styles.modeCardLocked}`}>
                 <div className={styles.modeCardInner}>
                   <div className={styles.modeIconWrap}>
@@ -152,7 +173,7 @@ export default function Home() {
       <footer className={styles.footer}>
         <div className={styles.footerInner}>
           <p className={styles.footerText}>
-            Fan-made com <span className={styles.footerHeart}>♥</span> para a comunidade 7 Minutoz
+            Feito com <span className={styles.footerHeart}>♥</span> para a fanbase de música geek
           </p>
           <a
             href="https://www.youtube.com/@7minutoz"

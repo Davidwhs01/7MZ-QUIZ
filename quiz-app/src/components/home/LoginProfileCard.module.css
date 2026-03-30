@@ -1,0 +1,212 @@
+.loadingContent {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.loadingAvatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  animation: pulse 2s infinite;
+}
+
+.loadingTextWrap {
+  flex: 1;
+}
+
+.loadingBar {
+  height: 16px;
+  width: 60%;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.loadingBarSmall {
+  height: 12px;
+  width: 80%;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Logged in */
+.loggedInContent {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.avatarLink {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  text-decoration: none;
+}
+
+.avatarImg {
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.avatarRing {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1.5px solid var(--accent-orange);
+}
+
+.loginText {
+  flex: 1;
+  min-width: 0;
+}
+
+.usernameLink {
+  text-decoration: none;
+  color: inherit;
+}
+
+.username {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.userMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.userPoints {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--accent-orange);
+}
+
+.metaDot {
+  color: var(--border-medium);
+}
+
+.logoutBtn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* Not logged in */
+.loggedOutContent {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.guestRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.guestAvatar {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+}
+
+.guestAvatarImg {
+  border-radius: 50%;
+  opacity: 0.3;
+  filter: grayscale(1);
+}
+
+.guestAvatarRing {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1.5px dashed var(--border-medium);
+  animation: rotateRing 10s linear infinite;
+}
+
+@keyframes rotateRing {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.guestText {
+  flex: 1;
+  min-width: 0;
+}
+
+.guestTitle {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.guestDesc {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin: 2px 0 0;
+}
+
+.loginButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.loginBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  flex-shrink: 0;
+  white-space: nowrap;
+  width: 100%;
+  transition: opacity 0.15s;
+}
+
+.loginBtn:hover {
+  opacity: 0.9;
+}
+
+.discordBtn {
+  background: #5865F2;
+  color: white;
+}
+
+.googleBtn {
+  background: #ffffff;
+  color: #111111;
+}
+
+.loginBtnIcon {
+  width: 16px;
+  height: 16px;
+}

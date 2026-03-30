@@ -8,32 +8,34 @@ import { createClient } from '@/utils/supabase/client';
 import { motion } from 'framer-motion';
 import { useChannel } from '@/context/ChannelContext';
 
-type RankedPlayer = {
+interface RankedPlayer {
   id: string;
   score: number;
   games_played: number;
   username: string;
   avatar_url: string;
-};
+}
+
+type RankTab = 'GLOBAL' | '7MZ' | 'ENYGMA';
 
 export default function RankingPage() {
   const { activeChannel } = useChannel();
-  const [activeTab, setActiveTab] = useState<'GERAL' | 'NERD HITS' | '7MZ RECORDS' | 'ENYGMA'>('GERAL');
+  const [activeTab, setActiveTab] = useState<RankTab>('GLOBAL');
   const [ranking, setRanking] = useState<RankedPlayer[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setActiveTab('GERAL');
+    setActiveTab('GLOBAL');
   }, [activeChannel]);
 
   useEffect(() => {
     const fetchRanking = async () => {
       setLoading(true);
       const supabase = createClient();
-      
+
       try {
-        if (activeTab === 'GERAL') {
-          // Use core leaderboard table for overall cumulative points
+        if (activeTab === 'GLOBAL') {
+          // Global: highscore from leaderboard table
           const { data, error } = await supabase
             .from('leaderboard')
             .select(`
@@ -42,38 +44,57 @@ export default function RankingPage() {
             `)
             .order('score', { ascending: false })
             .limit(50);
-            
+
           if (error) throw error;
-          
-          setRanking(data.map((d: any) => ({
-            id: d.id,
-            score: d.score,
-            games_played: d.games_played,
-            username: (d.profiles as any)?.username || 'Desconhecido',
-            avatar_url: (d.profiles as any)?.avatar_url || '/7mz-logo.jpg'
+
+          setRanking(data.map((d: Record<string, unknown>) => ({
+            id: d.id as string,
+            score: d.score as number,
+            games_played: d.games_played as number,
+            username: ((d.profiles as Record<string, unknown>)?.username as string) || 'Desconhecido',
+            avatar_url: ((d.profiles as Record<string, unknown>)?.avatar_url as string) || '/7mz-logo.jpg'
           })));
 
-        } else if (activeTab === 'NERD HITS') {
-          // Use Postgres View for Nerd Hits specific
+        } else {
+          // By artist: highscore from match_history grouped by user
           const { data, error } = await supabase
-            .from('ranking_nerdhits')
-            .select('*')
-            .order('score', { ascending: false })
-            .limit(50);
-            
-          if (error) throw error;
-          setRanking(data as RankedPlayer[]);
+            .from('match_history')
+            .select(`
+              user_id,
+              score,
+              profiles(username, avatar_url)
+            `)
+            .eq('artist', activeTab)
+            .order('score', { ascending: false });
 
-        } else if (activeTab === '7MZ RECORDS') {
-          // Use Postgres View for 7MZ Records
-          const { data, error } = await supabase
-            .from('ranking_7mzrecords')
-            .select('*')
-            .order('score', { ascending: false })
-            .limit(50);
-            
           if (error) throw error;
-          setRanking(data as RankedPlayer[]);
+
+          // Group by user, keep highest score and count games
+          const userMap = new Map<string, RankedPlayer>();
+          for (const row of (data as Record<string, unknown>[])) {
+            const uid = row.user_id as string;
+            const score = row.score as number;
+            const profile = row.profiles as Record<string, unknown> | null;
+            const existing = userMap.get(uid);
+
+            if (!existing || score > existing.score) {
+              userMap.set(uid, {
+                id: uid,
+                score,
+                games_played: existing ? existing.games_played + 1 : 1,
+                username: (profile?.username as string) || 'Desconhecido',
+                avatar_url: (profile?.avatar_url as string) || '/7mz-logo.jpg'
+              });
+            } else if (existing) {
+              existing.games_played++;
+            }
+          }
+
+          const sorted = Array.from(userMap.values())
+            .sort((a, b) => b.score - a.score)
+            .slice(0, 50);
+
+          setRanking(sorted);
         }
       } catch (err) {
         console.error('Error fetching rankings:', err);
@@ -88,12 +109,21 @@ export default function RankingPage() {
   const top3 = ranking.slice(0, 3);
   const others = ranking.slice(3);
 
-  // Always force [2nd, 1st, 3rd] structure to keep visual layout balanced even if missing players
   const podiumArray = [
     { player: top3[1], rankPos: 2, spotClass: styles.second },
     { player: top3[0], rankPos: 1, spotClass: styles.first },
     { player: top3[2], rankPos: 3, spotClass: styles.third },
   ];
+
+  const tabs: { key: RankTab; label: string }[] = activeChannel === '7MZ'
+    ? [
+        { key: 'GLOBAL', label: 'GLOBAL' },
+        { key: '7MZ', label: '7 MINUTOZ' },
+      ]
+    : [
+        { key: 'GLOBAL', label: 'GLOBAL' },
+        { key: 'ENYGMA', label: 'ENYGMA' },
+      ];
 
   return (
     <div className={styles.page}>
@@ -120,7 +150,7 @@ export default function RankingPage() {
       </header>
 
       <main className={styles.main}>
-        <motion.h2 
+        <motion.h2
           className={styles.pageTitle}
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -129,40 +159,17 @@ export default function RankingPage() {
         </motion.h2>
         <p className={styles.pageSubtitle}>Eternizados pelo talento. Compare sua posição global.</p>
 
-        {/* Filters */}
+        {/* Tabs */}
         <div className={styles.tabsContainer}>
-          <button 
-            className={`${styles.tabBtn} ${activeTab === 'GERAL' ? styles.tabBtnActive : ''}`}
-            onClick={() => setActiveTab('GERAL')}
-          >
-            GLOBAL
-          </button>
-          
-          {activeChannel === '7MZ' && (
-            <>
-              <button 
-                className={`${styles.tabBtn} ${activeTab === 'NERD HITS' ? styles.tabBtnActive : ''}`}
-                onClick={() => setActiveTab('NERD HITS')}
-              >
-                Nerd Hits
-              </button>
-              <button 
-                className={`${styles.tabBtn} ${activeTab === '7MZ RECORDS' ? styles.tabBtnActive : ''}`}
-                onClick={() => setActiveTab('7MZ RECORDS')}
-              >
-                Records
-              </button>
-            </>
-          )}
-          
-          {activeChannel === 'ENYGMA' && (
-            <button 
-              className={`${styles.tabBtn} ${activeTab === 'ENYGMA' ? styles.tabBtnActive : ''}`}
-              onClick={() => setActiveTab('ENYGMA')}
+          {tabs.map(tab => (
+            <button
+              key={tab.key}
+              className={`${styles.tabBtn} ${activeTab === tab.key ? styles.tabBtnActive : ''}`}
+              onClick={() => setActiveTab(tab.key)}
             >
-              Enygma
+              {tab.label}
             </button>
-          )}
+          ))}
         </div>
 
         {loading ? (
@@ -173,15 +180,15 @@ export default function RankingPage() {
           <>
             {/* Podium (Top 3) */}
             <div className={styles.podiumContainer}>
-              {podiumArray.map((spot, idx) => {
+              {podiumArray.map((spot) => {
                 const { player, rankPos, spotClass } = spot;
-                
+
                 if (!player) {
                   return <div key={`empty-${rankPos}`} className={`${styles.podiumSpot} ${spotClass}`} />;
                 }
 
                 return (
-                  <motion.div 
+                  <motion.div
                     key={player.id}
                     className={`${styles.podiumSpot} ${spotClass}`}
                     initial={{ y: 50, opacity: 0 }}
@@ -190,11 +197,11 @@ export default function RankingPage() {
                   >
                     {rankPos === 1 && <span className={styles.podiumCrown}>👑</span>}
                     <div className={styles.podiumAvatarWrap}>
-                      <Image 
-                        src={player.avatar_url || '/7mz-logo.jpg'} 
+                      <Image
+                        src={player.avatar_url || '/7mz-logo.jpg'}
                         alt={player.username}
-                        width={rankPos === 1 ? 86 : 70} 
-                        height={rankPos === 1 ? 86 : 70} 
+                        width={rankPos === 1 ? 86 : 70}
+                        height={rankPos === 1 ? 86 : 70}
                         className={styles.podiumAvatar}
                       />
                       <div className={styles.podiumRing} />
@@ -214,8 +221,8 @@ export default function RankingPage() {
                 {others.map((player, idx) => {
                   const actualRank = idx + 4;
                   return (
-                    <motion.div 
-                      key={player.id} 
+                    <motion.div
+                      key={player.id}
                       className={styles.rankItem}
                       initial={{ x: -20, opacity: 0 }}
                       animate={{ x: 0, opacity: 1 }}
@@ -223,11 +230,11 @@ export default function RankingPage() {
                     >
                       <span className={styles.rankNumber}>#{actualRank}</span>
                       <div className={styles.rankItemUser}>
-                        <Image 
-                          src={player.avatar_url || '/7mz-logo.jpg'} 
+                        <Image
+                          src={player.avatar_url || '/7mz-logo.jpg'}
                           alt={player.username}
-                          width={40} height={40} 
-                          className={styles.rankItemAvatar} 
+                          width={40} height={40}
+                          className={styles.rankItemAvatar}
                         />
                         <span className={styles.rankItemName}>{player.username}</span>
                       </div>
