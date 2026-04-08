@@ -156,12 +156,12 @@ export default function PlayPage() {
     
     // Override the song duration with the real one for timestamp generation
     const songWithRealDuration = { ...data.song, duration: realDuration };
-    const safeTimestamp = generateRandomTimestamp(songWithRealDuration, data.duration);
-    
-    const fixedData = { ...data, timestamp: safeTimestamp };
+    const safeTimestamp = generateRandomTimestamp(songWithRealDuration, realDuration);
+
+    const fixedData = { ...data, timestamp: safeTimestamp, duration: realDuration };
     nextSongDataRef.current = fixedData;
     
-    loadAndPlay(data.song.youtubeId, safeTimestamp, data.duration);
+    loadAndPlay(data.song.youtubeId, safeTimestamp, realDuration);
   }, [loadNextSong, getRealDuration, loadAndPlay, gameArtist]);
 
   // Keep skipSongRef updated so error handler can call it
