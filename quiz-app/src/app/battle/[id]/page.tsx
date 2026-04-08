@@ -66,7 +66,7 @@ export default function BattlePage() {
   const feedbackTimerRef = useRef<NodeJS.Timeout | null>(null);
   const hasStartedRef = useRef(false);
   const scoreSubmittedRef = useRef(false);
-  const categoryRef = useRef<SeloKey | undefined>(undefined);
+  const categoryRef = useRef<SeloKey | SeloKey[] | undefined>(undefined);
 
   useEffect(() => {
     if (!room) return;

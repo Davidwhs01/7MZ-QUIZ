@@ -146,7 +146,7 @@ export function useGameState() {
     dispatch({ type: 'START_GAME' });
   }, []);
 
-  const loadNextSong = useCallback((selo?: SeloKey, artist?: Artist) => {
+  const loadNextSong = useCallback((selo?: SeloKey | SeloKey[], artist?: Artist) => {
     const song = getRandomSong(state.playedSongIds, selo, artist);
     
     if (!song) {

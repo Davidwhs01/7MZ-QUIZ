@@ -590,13 +590,16 @@ export const songs: Song[] = [
   { id: "rodrigozin-Jxk1RQhcRag", title: "Todos os Samples de 'Fazendo Grana Pro Meu Filme' de Rodrigo Zin", youtubeId: "Jxk1RQhcRag", duration: 0, category: 'AUTORAIS', artist: 'RODRIGOZIN', searchTerms: ["todos","samples","fazendo","grana","pro","meu","filme","rodrigo","zin"] },
 ];
 
-export function getRandomSong(excludeIds: string[] = [], selo?: SeloKey, artist?: Artist): Song | null {
+export function getRandomSong(excludeIds: string[] = [], selo?: SeloKey | SeloKey[], artist?: Artist): Song | null {
   let pool = songs;
   if (artist) {
     pool = pool.filter(s => s.artist === artist);
   }
   if (selo) {
-    if (selo === 'PÓS REVELAÇÃO') {
+    if (Array.isArray(selo)) {
+      // Multiple categories - e.g., GEEKS + AUTORAIS for Rodrigo Zin "TODAS"
+      pool = pool.filter(s => selo.includes(s.category as SeloKey));
+    } else if (selo === 'PÓS REVELAÇÃO') {
       pool = pool.filter(s => s.selos?.includes('PÓS REVELAÇÃO'));
     } else {
       pool = pool.filter(s => s.category === selo);

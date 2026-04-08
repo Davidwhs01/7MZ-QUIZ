@@ -137,7 +137,7 @@ export default function PlayPage() {
   const feedbackTimerRef = useRef<NodeJS.Timeout | null>(null);
   const hasStartedRef = useRef(false);
   const scoreSubmittedRef = useRef(false);
-  const categoryRef = useRef<SeloKey | undefined>(undefined);
+  const categoryRef = useRef<SeloKey | SeloKey[] | undefined>(undefined);
 
   // Start new round: get real duration from YT, generate safe timestamp, then play
   const startNewRound = useCallback(async () => {
@@ -219,7 +219,23 @@ export default function PlayPage() {
     if (hasStartedRef.current || !selectedCategory) return;
     hasStartedRef.current = true;
     scoreSubmittedRef.current = false;
-    categoryRef.current = selectedCategory === 'ALL' ? undefined : selectedCategory;
+    
+    // Handle ALL: for each artist, use their categories combined
+    if (selectedCategory === 'ALL') {
+      if (gameArtist === '7MZ') {
+        categoryRef.current = ['NERD HITS', '7MZ RECORDS'];
+      } else if (gameArtist === 'RODRIGOZIN') {
+        categoryRef.current = ['GEEKS', 'AUTORAIS'];
+      } else if (gameArtist === 'ENYGMA') {
+        categoryRef.current = 'ENYGMA';
+      } else if (gameArtist === 'MELANIE') {
+        categoryRef.current = 'POP';
+      } else {
+        categoryRef.current = undefined;
+      }
+    } else {
+      categoryRef.current = selectedCategory;
+    }
     startGame();
   };
 
@@ -520,7 +536,7 @@ export default function PlayPage() {
               >
                 <span className={styles.categoryEmoji}>🌌</span>
                 <span className={styles.categoryName}>TODAS AS MÚSICAS</span>
-                <span className={styles.categoryCount}>{songs.length} músicas globais</span>
+                <span className={styles.categoryCount}>{gameArtist === '7MZ' ? songs.filter(s => s.artist === '7MZ').length : gameArtist === 'RODRIGOZIN' ? songs.filter(s => s.artist === 'RODRIGOZIN').length : gameArtist === 'MELANIE' ? songs.filter(s => s.artist === 'MELANIE').length : songs.filter(s => s.artist === 'ENYGMA').length} músicas</span>
               </motion.button>
             </motion.div>
 
