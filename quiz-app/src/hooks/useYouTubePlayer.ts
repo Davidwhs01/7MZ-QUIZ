@@ -109,23 +109,29 @@ export function useYouTubePlayer(containerId: string, options?: UseYouTubePlayer
       timerRef.current = null;
     }
 
-    // Small delay to ensure player is ready
-    setTimeout(() => {
+    // Use cueVideoById first, then playVideo for more reliable playback
+    playerRef.current.cueVideoById({
+      videoId,
+      startSeconds,
+    });
+
+    // Play after a short delay to ensure video is cued
+    timerRef.current = setTimeout(() => {
       if (!playerRef.current) return;
       
-      playerRef.current.loadVideoById({
-        videoId,
-        startSeconds,
-      });
+      playerRef.current.playVideo();
 
       // Auto-pause after duration
-      timerRef.current = setTimeout(() => {
+      const pauseTimer = setTimeout(() => {
         if (playerRef.current) {
           playerRef.current.pauseVideo();
           setIsPlaying(false);
         }
       }, durationSeconds * 1000);
-    }, 50);
+      
+      // Store pause timer ref
+      timerRef.current = pauseTimer;
+    }, 100);
   }, []);
 
   // Load a video silently and return its real duration
