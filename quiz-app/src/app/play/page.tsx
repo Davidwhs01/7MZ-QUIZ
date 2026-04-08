@@ -113,7 +113,7 @@ export default function PlayPage() {
 
   const skipSongRef = useRef<() => void>(() => {});
 
-  const { isReady, isPlaying, volume, changeVolume, loadAndPlay, getRealDuration, replay, stop } = useYouTubePlayer('yt-player', {
+  const { isReady, isPlaying, volume, changeVolume, loadAndPlay, replay, stop } = useYouTubePlayer('yt-player', {
     onError: (errorCode: number) => {
       console.warn(`YouTube error ${errorCode}, skipping to next song...`);
       if (errorCode === 150 || errorCode === 101 || errorCode === 2) {
@@ -142,8 +142,8 @@ export default function PlayPage() {
   const scoreSubmittedRef = useRef(false);
   const categoryRef = useRef<SeloKey | SeloKey[] | undefined>(undefined);
 
-  // Start new round: get real duration from YT, generate safe timestamp, then play
-  const startNewRound = useCallback(async () => {
+  // Start new round: use duration from database (or fallback 180s) - no polling needed
+  const startNewRound = useCallback(() => {
     const cat = categoryRef.current;
     const data = loadNextSong(cat, gameArtist);
     
@@ -151,20 +151,19 @@ export default function PlayPage() {
       return;
     }
     
-    // Get the REAL video duration from YouTube API (for timestamp generation)
-    const realDuration = await getRealDuration(data.song.youtubeId);
-    const songDuration = realDuration > 0 ? realDuration : (data.song.duration > 0 ? data.song.duration : 180);
+    // Use duration from database, fallback to 180s (avg geek rap)
+    const songDuration = data.song.duration > 0 ? data.song.duration : 180;
     
     // Generate safe timestamp using song duration
-    const songWithRealDuration = { ...data.song, duration: songDuration };
-    const safeTimestamp = generateRandomTimestamp(songWithRealDuration, data.duration);
+    const songWithDuration = { ...data.song, duration: songDuration };
+    const safeTimestamp = generateRandomTimestamp(songWithDuration, data.duration);
 
     const fixedData = { ...data, timestamp: safeTimestamp };
     nextSongDataRef.current = fixedData;
     
-    // Use data.duration (5/10/15s) for how long audio plays, not the full song duration
+    // Use data.duration (5/10/15s) for how long audio plays
     loadAndPlay(data.song.youtubeId, safeTimestamp, data.duration);
-  }, [loadNextSong, getRealDuration, loadAndPlay, gameArtist]);
+  }, [loadNextSong, loadAndPlay, gameArtist]);
 
   // Keep skipSongRef updated so error handler can call it
   useEffect(() => {
