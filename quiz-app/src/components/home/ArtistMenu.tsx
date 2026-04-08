@@ -15,6 +15,7 @@ const GEEK_ARTISTS: { id: ChannelType; name: string; logo: string; desc: string 
   { id: '7MZ', name: '7 Minutoz', logo: '/7mz-logo.jpg', desc: 'Rap nerd, anime & games' },
   { id: 'ENYGMA', name: 'Enygma', logo: '/enygma-logo.jpg', desc: 'Rap de personagens' },
   { id: 'M4RKIM', name: 'M4rkim', logo: '/M4rkim-Logo.jpg', desc: 'Rap nacional' },
+  { id: 'ANIRAP', name: 'Anirap', logo: '/anirap-logo.jpg', desc: 'Rap nacional' },
 ];
 
 const POP_ARTISTS: { id: ChannelType; name: string; logo: string; desc: string }[] = [

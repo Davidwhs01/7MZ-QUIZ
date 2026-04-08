@@ -157,8 +157,11 @@ export default function RankingPage() {
           {activeChannel === 'M4RKIM' && (
             <Image src="/M4rkim-Logo.jpg" alt="M4rkim Logo" width={36} height={36} className={styles.logoHeaderImg} />
           )}
+          {activeChannel === 'ANIRAP' && (
+            <Image src="/anirap-logo.jpg" alt="Anirap Logo" width={36} height={36} className={styles.logoHeaderImg} />
+          )}
           <h1 className={styles.logo}>
-            {activeChannel === '7MZ' ? '7 MINUTOZ' : activeChannel === 'MELANIE' ? 'MELANIE' : activeChannel === 'RODRIGOZIN' ? 'RODRIGO ZIN' : activeChannel === 'M4RKIM' ? 'M4RKIM' : 'ENYGMA'} <span>ARENA</span>
+            {activeChannel === '7MZ' ? '7 MINUTOZ' : activeChannel === 'MELANIE' ? 'MELANIE' : activeChannel === 'RODRIGOZIN' ? 'RODRIGO ZIN' : activeChannel === 'M4RKIM' ? 'M4RKIM' : activeChannel === 'ANIRAP' ? 'ANIRAP' : 'ENYGMA'} <span>ARENA</span>
           </h1>
           <Link href={`/${section}`} className={styles.sectionLink}>
             {section === 'geek' ? '← GEEK' : '← STUDIO'}

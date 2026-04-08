@@ -62,7 +62,7 @@ function useGameArtistFromURL(activeChannel: Artist): Artist {
     }
     
     // Use activeChannel from context, but validate it's valid
-    if (activeChannel === '7MZ' || activeChannel === 'ENYGMA' || activeChannel === 'MELANIE' || activeChannel === 'RODRIGOZIN' || activeChannel === 'MITSKI' || activeChannel === 'M4RKIM') {
+    if (activeChannel === '7MZ' || activeChannel === 'ENYGMA' || activeChannel === 'MELANIE' || activeChannel === 'RODRIGOZIN' || activeChannel === 'MITSKI' || activeChannel === 'M4RKIM' || activeChannel === 'ANIRAP') {
       setDetectedArtist(activeChannel);
     } else {
       // Default to 7MZ if activeChannel is invalid
@@ -103,6 +103,9 @@ export default function PlayPage() {
         break;
       case 'M4RKIM':
         document.body.classList.add('theme-m4rkim');
+        break;
+      case 'ANIRAP':
+        document.body.classList.add('theme-anirap');
         break;
     }
     console.log('Theme applied:', gameArtist);
@@ -380,8 +383,11 @@ export default function PlayPage() {
           {gameArtist === 'M4RKIM' && (
             <Image src="/M4rkim-Logo.jpg" alt="M4rkim Logo" width={36} height={36} className={styles.logoHeaderImg} />
           )}
+          {gameArtist === 'ANIRAP' && (
+            <Image src="/anirap-logo.jpg" alt="Anirap Logo" width={36} height={36} className={styles.logoHeaderImg} />
+          )}
           <h1 className={styles.logo}>
-            {gameArtist === '7MZ' ? '7 MINUTOZ' : gameArtist === 'MELANIE' ? 'MELANIE' : gameArtist === 'RODRIGOZIN' ? 'RODRIGO ZIN' : gameArtist === 'MITSKI' ? 'MITSKI' : gameArtist === 'M4RKIM' ? 'M4RKIM' : 'ENYGMA'} <span>ARENA</span>
+            {gameArtist === '7MZ' ? '7 MINUTOZ' : gameArtist === 'MELANIE' ? 'MELANIE' : gameArtist === 'RODRIGOZIN' ? 'RODRIGO ZIN' : gameArtist === 'MITSKI' ? 'MITSKI' : gameArtist === 'M4RKIM' ? 'M4RKIM' : gameArtist === 'ANIRAP' ? 'ANIRAP' : 'ENYGMA'} <span>ARENA</span>
           </h1>
         </div>
         {state.phase !== 'IDLE' && state.phase !== 'GAME_OVER' && (
@@ -546,6 +552,25 @@ export default function PlayPage() {
                 </>
               )}
 
+              {gameArtist === 'ANIRAP' && (
+                <>
+                  <motion.button
+                    variants={{
+                      hidden: { y: 20, opacity: 0 },
+                      visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 300 } }
+                    }}
+                    whileHover={{ scale: 1.05, y: -5 }}
+                    whileTap={{ scale: 0.95 }}
+                    className={`${styles.categoryCard} ${selectedCategory === 'ANIRAP' ? styles.categoryCardActive : ''}`}
+                    onClick={() => setSelectedCategory('ANIRAP')}
+                  >
+                    <span className={styles.categoryEmoji}>🎤</span>
+                    <span className={styles.categoryName}>ANIRAP</span>
+                    <span className={styles.categoryCount}>{songs.filter(s => s.artist === 'ANIRAP').length} músicas</span>
+                  </motion.button>
+                </>
+              )}
+
               {gameArtist === 'RODRIGOZIN' && (
                 <>
                   <motion.button
@@ -592,7 +617,7 @@ export default function PlayPage() {
               >
                 <span className={styles.categoryEmoji}>🌌</span>
                 <span className={styles.categoryName}>TODAS AS MÚSICAS</span>
-                <span className={styles.categoryCount}>{gameArtist === '7MZ' ? songs.filter(s => s.artist === '7MZ').length : gameArtist === 'RODRIGOZIN' ? songs.filter(s => s.artist === 'RODRIGOZIN').length : gameArtist === 'MELANIE' ? songs.filter(s => s.artist === 'MELANIE').length : gameArtist === 'MITSKI' ? songs.filter(s => s.artist === 'MITSKI').length : gameArtist === 'M4RKIM' ? songs.filter(s => s.artist === 'M4RKIM').length : songs.filter(s => s.artist === 'ENYGMA').length} músicas</span>
+                <span className={styles.categoryCount}>{gameArtist === '7MZ' ? songs.filter(s => s.artist === '7MZ').length : gameArtist === 'RODRIGOZIN' ? songs.filter(s => s.artist === 'RODRIGOZIN').length : gameArtist === 'MELANIE' ? songs.filter(s => s.artist === 'MELANIE').length : gameArtist === 'MITSKI' ? songs.filter(s => s.artist === 'MITSKI').length : gameArtist === 'M4RKIM' ? songs.filter(s => s.artist === 'M4RKIM').length : gameArtist === 'ANIRAP' ? songs.filter(s => s.artist === 'ANIRAP').length : songs.filter(s => s.artist === 'ENYGMA').length} músicas</span>
               </motion.button>
             </motion.div>
 

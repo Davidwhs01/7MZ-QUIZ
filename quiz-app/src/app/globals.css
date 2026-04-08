@@ -206,6 +206,44 @@ body.theme-m4rkim {
   --scrollbar-thumb: linear-gradient(180deg, #ffffff, #333333);
 }
 
+/* ANIRAP THEME (Deep Navy / Violet Glow / Elegant) 
+   Baseado na identidade visual da logo com um toque "roxeado" nos detalhes. */
+body.theme-anirap {
+  /* Primary Accent: Lilac / Purple Text */
+  --accent-orange: #e9d5ff; /* Lilás claro */
+  --accent-orange-rgb: 233, 213, 255;
+  --accent-orange-bright: #f5f3ff;
+  --accent-orange-dim: #c084fc;
+  --accent-neon: #d8b4fe;
+  
+  /* Background Tones - Deep Space Navy (with hint of Purple) */
+  --bg-primary: #04041a;
+  --bg-secondary: #080825;
+  --bg-tertiary: #0c0c30;
+  --bg-card: rgba(8, 8, 30, 0.98);
+  
+  /* Glow Effects - Elegant Purple/Blue/White */
+  --glow-orange: 
+    0 0 12px rgba(255, 255, 255, 0.4), 
+    0 0 25px rgba(168, 85, 247, 0.3); /* Purple hint */
+  --glow-orange-strong: 
+    0 0 20px rgba(255, 255, 255, 0.6), 
+    0 0 45px rgba(147, 51, 234, 0.4), /* Violet strong */
+    0 0 90px rgba(60, 60, 255, 0.2);
+  --border-orange: rgba(192, 132, 252, 0.4); /* Purple tinted border */
+  
+  /* Secondary Accent: Electric Purple/Indigo */
+  --accent-blue: #a855f7;
+  --accent-blue-rgb: 168, 85, 247;
+  --accent-blue-bright: #c084fc;
+  --accent-blue-dim: #7e22ce;
+  --glow-blue: 0 0 25px rgba(168, 85, 247, 0.4);
+  --border-blue: rgba(147, 51, 234, 0.3);
+
+  /* Scrollbar override */
+  --scrollbar-thumb: linear-gradient(180deg, #c084fc, #04041a);
+}
+
 /* RODRIGOZIN THEME (Laranja Invador) */
 body.theme-rodrigozin {
   /* Primary Accent: Laranja Invador */
