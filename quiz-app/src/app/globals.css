@@ -149,6 +149,25 @@ body.theme-pop {
   --accent-blue-dim: #6a0096;
 }
 
+/* MITSKI THEME (Ruby Red / Dark Crimson) */
+body.theme-mitski {
+  /* Primary Accent: Ruby Red */
+  --accent-orange: #ff2a4d;
+  --accent-orange-rgb: 255, 42, 77;
+  --accent-orange-bright: #ff5c77;
+  --accent-orange-dim: #cc1a36;
+  --accent-neon: #ff8095;
+  
+  --glow-orange: 0 0 20px rgba(255, 42, 77, 0.25), 0 0 60px rgba(255, 42, 77, 0.08);
+  --glow-orange-strong: 0 0 30px rgba(255, 42, 77, 0.5), 0 0 80px rgba(255, 42, 77, 0.15);
+  --border-orange: rgba(255, 42, 77, 0.25);
+  
+  /* Secondary Accent: Dark Crimson / Purple Tone */
+  --accent-blue: #700021;
+  --accent-blue-rgb: 112, 0, 33;
+  --accent-blue-dim: #4d0016;
+}
+
 /* RODRIGOZIN THEME (Laranja Invador) */
 body.theme-rodrigozin {
   /* Primary Accent: Laranja Invador */

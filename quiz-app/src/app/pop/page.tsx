@@ -18,7 +18,7 @@ type GameMode = 'single' | 'multi';
 
 export default function PopHome() {
   const router = useRouter();
-  const { isLoaded } = useChannel();
+  const { isLoaded, activeChannel } = useChannel();
   const [gameMode, setGameMode] = useState<GameMode>('single');
   const [selectedSelo] = useState<'POP'>('POP');
   const [battleMode, setBattleMode] = useState<'normal' | 'inferno'>('normal');
@@ -35,7 +35,7 @@ export default function PopHome() {
     if (!isLoggedIn) return;
     setLoading(true);
     setError('');
-    const { room, error: err } = await createRoom(battleMode, 'MELANIE');
+    const { room, error: err } = await createRoom(battleMode, activeChannel);
     if (err || !room) {
       setError(err || 'Erro ao criar sala');
       setLoading(false);
@@ -150,7 +150,7 @@ export default function PopHome() {
             <div className={styles.statsBar}>
               <div className={styles.statItem}>
                 <span className={styles.statNumber}>
-                  {sectionSongs.filter(s => s.artist === 'MELANIE').length}+
+                  {sectionSongs.length}+
                 </span>
                 <span className={styles.statLabel}>Músicas</span>
               </div>
@@ -161,7 +161,7 @@ export default function PopHome() {
               </div>
               <div className={styles.statDivider} />
               <div className={styles.statItem}>
-                <span className={styles.statNumber}>1</span>
+                <span className={styles.statNumber}>2</span>
                 <span className={styles.statLabel}>Artistas</span>
               </div>
             </div>
@@ -202,7 +202,7 @@ export default function PopHome() {
 
             {gameMode === 'single' ? (
                 <div key="single-panel" className={`${styles.modesGrid} ${styles.panelEnter}`}>
-                  <Link href="/play?artist=meln" className={styles.modeCard}>
+                  <Link href={`/play?artist=${activeChannel === 'MITSKI' ? 'mitski' : 'meln'}`} className={styles.modeCard}>
                     <div className={styles.modeCardShine} />
                     <div className={styles.modeCardBorder} />
                     <div className={styles.modeCardInner}>

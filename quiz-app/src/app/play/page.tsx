@@ -57,7 +57,7 @@ function useGameArtistFromURL(activeChannel: Artist): Artist {
     }
     
     // Use activeChannel from context, but validate it's valid
-    if (activeChannel === '7MZ' || activeChannel === 'ENYGMA' || activeChannel === 'MELANIE' || activeChannel === 'RODRIGOZIN') {
+    if (activeChannel === '7MZ' || activeChannel === 'ENYGMA' || activeChannel === 'MELANIE' || activeChannel === 'RODRIGOZIN' || activeChannel === 'MITSKI') {
       setDetectedArtist(activeChannel);
     } else {
       // Default to 7MZ if activeChannel is invalid
@@ -77,7 +77,7 @@ export default function PlayPage() {
   // Apply theme based on gameArtist - force immediately on mount
   useEffect(() => {
     // Clear all theme classes first
-    document.body.classList.remove('theme-7mz', 'theme-enygma', 'theme-melanie', 'theme-geek', 'theme-pop');
+    document.body.classList.remove('theme-7mz', 'theme-enygma', 'theme-melanie', 'theme-geek', 'theme-pop', 'theme-rodrigozin', 'theme-mitski');
     
     // Apply theme based on detected artist
     switch (gameArtist) {
@@ -92,6 +92,9 @@ export default function PlayPage() {
         break;
       case 'RODRIGOZIN':
         document.body.classList.add('theme-rodrigozin');
+        break;
+      case 'MITSKI':
+        document.body.classList.add('theme-mitski');
         break;
     }
     console.log('Theme applied:', gameArtist);
@@ -230,6 +233,8 @@ export default function PlayPage() {
         categoryRef.current = 'ENYGMA';
       } else if (gameArtist === 'MELANIE') {
         categoryRef.current = 'POP';
+      } else if (gameArtist === 'MITSKI') {
+        categoryRef.current = 'POP';
       } else {
         categoryRef.current = undefined;
       }
@@ -362,8 +367,11 @@ export default function PlayPage() {
           {gameArtist === 'MELANIE' && (
             <Image src="/Melanie-Logo.jpg" alt="Melanie Logo" width={36} height={36} className={styles.logoHeaderImg} />
           )}
+          {gameArtist === 'MITSKI' && (
+            <Image src="/Mitski-Logo.jpg" alt="Mitski Logo" width={36} height={36} className={styles.logoHeaderImg} />
+          )}
           <h1 className={styles.logo}>
-            {gameArtist === '7MZ' ? '7 MINUTOZ' : gameArtist === 'MELANIE' ? 'MELANIE' : gameArtist === 'RODRIGOZIN' ? 'RODRIGO ZIN' : 'ENYGMA'} <span>ARENA</span>
+            {gameArtist === '7MZ' ? '7 MINUTOZ' : gameArtist === 'MELANIE' ? 'MELANIE' : gameArtist === 'RODRIGOZIN' ? 'RODRIGO ZIN' : gameArtist === 'MITSKI' ? 'MITSKI' : 'ENYGMA'} <span>ARENA</span>
           </h1>
         </div>
         {state.phase !== 'IDLE' && state.phase !== 'GAME_OVER' && (
@@ -490,6 +498,25 @@ export default function PlayPage() {
                 </>
               )}
 
+              {gameArtist === 'MITSKI' && (
+                <>
+                  <motion.button
+                    variants={{
+                      hidden: { y: 20, opacity: 0 },
+                      visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 300 } }
+                    }}
+                    whileHover={{ scale: 1.05, y: -5 }}
+                    whileTap={{ scale: 0.95 }}
+                    className={`${styles.categoryCard} ${selectedCategory === 'POP' ? styles.categoryCardActive : ''}`}
+                    onClick={() => setSelectedCategory('POP')}
+                  >
+                    <span className={styles.categoryEmoji}>🎤</span>
+                    <span className={styles.categoryName}>POP</span>
+                    <span className={styles.categoryCount}>{songs.filter(s => s.artist === 'MITSKI').length} músicas</span>
+                  </motion.button>
+                </>
+              )}
+
               {gameArtist === 'RODRIGOZIN' && (
                 <>
                   <motion.button
@@ -536,7 +563,7 @@ export default function PlayPage() {
               >
                 <span className={styles.categoryEmoji}>🌌</span>
                 <span className={styles.categoryName}>TODAS AS MÚSICAS</span>
-                <span className={styles.categoryCount}>{gameArtist === '7MZ' ? songs.filter(s => s.artist === '7MZ').length : gameArtist === 'RODRIGOZIN' ? songs.filter(s => s.artist === 'RODRIGOZIN').length : gameArtist === 'MELANIE' ? songs.filter(s => s.artist === 'MELANIE').length : songs.filter(s => s.artist === 'ENYGMA').length} músicas</span>
+                <span className={styles.categoryCount}>{gameArtist === '7MZ' ? songs.filter(s => s.artist === '7MZ').length : gameArtist === 'RODRIGOZIN' ? songs.filter(s => s.artist === 'RODRIGOZIN').length : gameArtist === 'MELANIE' ? songs.filter(s => s.artist === 'MELANIE').length : gameArtist === 'MITSKI' ? songs.filter(s => s.artist === 'MITSKI').length : songs.filter(s => s.artist === 'ENYGMA').length} músicas</span>
               </motion.button>
             </motion.div>
 

@@ -1,6 +1,6 @@
 export type SongCategory = 'NERD HITS' | '7MZ RECORDS' | 'ENYGMA' | 'POP' | 'GEEKS' | 'AUTORAIS';
 export type SeloKey = SongCategory | 'PÓS REVELAÇÃO';
-export type Artist = '7MZ' | 'ENYGMA' | 'MELANIE' | 'RODRIGOZIN';
+export type Artist = '7MZ' | 'ENYGMA' | 'MELANIE' | 'RODRIGOZIN' | 'MITSKI';
 export type AppSection = 'geek' | 'pop';
 
 export interface Song {
@@ -11,14 +11,14 @@ export interface Song {
   category: SongCategory;
   artist: Artist;
   anime?: string;
-  searchTerms: string[];
+  searchTerms?: string[];
   introSkip?: number;
   outroBuffer?: number;
   selos?: string[];
 }
 
 export function getSongSection(song: Song): AppSection {
-  return song.artist === 'MELANIE' ? 'pop' : 'geek';
+  return (song.artist === 'MELANIE' || song.artist === 'MITSKI') ? 'pop' : 'geek';
 }
 
 export function getSongsBySection(section: AppSection): Song[] {
@@ -588,6 +588,91 @@ export const songs: Song[] = [
   { id: "rodrigozin-jIsahTxSFDE", title: "11 - Rodrigo Zin - Grana Gama II (Part. Ju Maia e Nebula)", youtubeId: "jIsahTxSFDE", duration: 0, category: 'AUTORAIS', artist: 'RODRIGOZIN', searchTerms: ["rodrigo","zin","grana","gama","part","maia","nebula"] },
   { id: "rodrigozin-OA03l6K_4PE", title: "Rodrigo Zin - O Mais Vendido (Clipe Oficial)", youtubeId: "OA03l6K_4PE", duration: 0, category: 'AUTORAIS', artist: 'RODRIGOZIN', searchTerms: ["rodrigo","zin","mais","vendido","clipe","oficial"] },
   { id: "rodrigozin-Jxk1RQhcRag", title: "Todos os Samples de 'Fazendo Grana Pro Meu Filme' de Rodrigo Zin", youtubeId: "Jxk1RQhcRag", duration: 0, category: 'AUTORAIS', artist: 'RODRIGOZIN', searchTerms: ["todos","samples","fazendo","grana","pro","meu","filme","rodrigo","zin"] },
+
+  // --- MITSKI UPLOADS (ALL POP SONGS) ---
+  { id: "mitski-9ffnue9zMEY", title: "Mitski - A Burning Hill (Official Video)", youtubeId: "9ffnue9zMEY", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-wWHsr3VQadc", title: "Mitski - A Horse Named Cold Air (Official Audio)", youtubeId: "wWHsr3VQadc", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-GIdawcrXlPo", title: "Mitski - A Loving Feeling (Official Audio)", youtubeId: "GIdawcrXlPo", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-p8FDl_tMs4Y", title: "Mitski - A Pearl (Official Video)", youtubeId: "p8FDl_tMs4Y", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-uf0rzDVijC0", title: "Mitski - Bag of Bones (Official Audio)", youtubeId: "uf0rzDVijC0", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-MpAQJYh3ljI", title: "Mitski - Because Dreaming Costs Money, My Dear (Official Video)", youtubeId: "MpAQJYh3ljI", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-Zr6CeTm3aSE", title: "Mitski - \"Bella Ciao\" (English Cover)", youtubeId: "Zr6CeTm3aSE", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-TpXNon9QKXY", title: "Mitski - Blue Light (Official Audio)", youtubeId: "TpXNon9QKXY", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-zgI56IFtQto", title: "Mitski - Brand New City (Official Audio)", youtubeId: "zgI56IFtQto", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-NafP0MbGEuE", title: "Mitski - Buffalo Replaced (Official Lyric Video)", youtubeId: "NafP0MbGEuE", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-5WW7cuAm-7Y", title: "Mitski - Bug Like an Angel (Official Video)", youtubeId: "5WW7cuAm-7Y", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-ZgJcmeqZFnM", title: "Mitski - Carry Me Out (Official Audio)", youtubeId: "ZgJcmeqZFnM", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-yu9k8J3Yunk", title: "Mitski - Cats (English Lyric Video)", youtubeId: "yu9k8J3Yunk", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-HOd3je72RJk", title: "Mitski - Charon's Obol (English Lyric Video)", youtubeId: "HOd3je72RJk", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-0gHWLbgSUbI", title: "Mitski - Circle (Official Video)", youtubeId: "0gHWLbgSUbI", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-4y0O7gAQEFU", title: "Mitski - Class of 2013 (Official Video)", youtubeId: "4y0O7gAQEFU", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-22yRUQMjvUA", title: "Mitski - Come Into the Water (Official Audio)", youtubeId: "22yRUQMjvUA", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-aIaqTsCcWsw", title: "Mitski - Crack Baby (Official Audio)", youtubeId: "aIaqTsCcWsw", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-8jMUQKpsbhk", title: "Mitski - Dan the Dancer (Official Audio)", youtubeId: "8jMUQKpsbhk", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-3z3S3sj1xaM", title: "Mitski - Dead Women (English Lyric Video)", youtubeId: "3z3S3sj1xaM", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-TijrUpgClyQ", title: "Mitski - Door (Official Audio)", youtubeId: "TijrUpgClyQ", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-38_WVr5H2FA", title: "Mitski - Drunk Walk Home (Official Audio)", youtubeId: "38_WVr5H2FA", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-kRPI6JSCOK0", title: "Mitski - Eric (Official Audio)", youtubeId: "kRPI6JSCOK0", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-AyXm7ZZRJjM", title: "Mitski - Everyone (Official Audio)", youtubeId: "AyXm7ZZRJjM", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-rVRMh2PVE80", title: "Mitski - Fireworks (Official Audio)", youtubeId: "rVRMh2PVE80", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-DVIaDzs1EH4", title: "Mitski - First Love/Late Spring (Official Audio)", youtubeId: "DVIaDzs1EH4", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-mHKTdlUyyko", title: "Mitski - Francis Forever (Official Audio)", youtubeId: "mHKTdlUyyko", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-3zdFZJf-B90", title: "Mitski - Geyser (Official Video)", youtubeId: "3zdFZJf-B90", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-ohxu-pA7o64", title: "Mitski - Goodbye, My Danish Sweetheart (Official Video)", youtubeId: "ohxu-pA7o64", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-2g9f_FQYeF4", title: "Mitski: Happy (Official Film Clip)", youtubeId: "2g9f_FQYeF4", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-gvIkcN5YMH4", title: "Mitski - Heat Lightning (Official Lyric Video)", youtubeId: "gvIkcN5YMH4", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-4zSHu-fY-yM", title: "Mitski - Heaven (Official Lyric Video)", youtubeId: "4zSHu-fY-yM", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-dJ9O_2l5ln0", title: "Mitski - Humpty (Official Video)", youtubeId: "dJ9O_2l5ln0", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-Rr90U7bPoiE", title: "Mitski: I Bet on Losing Dogs (Official Film Clip)", youtubeId: "Rr90U7bPoiE", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-qU5D49kfNEM", title: "Mitski - I Don't Like My Mind (Official Lyric Video)", youtubeId: "qU5D49kfNEM", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-_tV5Mn_raxk", title: "Mitski - I Don't Smoke (Official Audio)", youtubeId: "_tV5Mn_raxk", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-So0NYg0I0CI", title: "Mitski - I Guess (Official Audio)", youtubeId: "So0NYg0I0CI", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-mrXJmsLTBpA", title: "Mitski - I Love Me After You (Official Lyric Video)", youtubeId: "mrXJmsLTBpA", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-1-kO12tP3SE", title: "Mitski - I Want You (Official Video)", youtubeId: "1-kO12tP3SE", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-A2LEaF1jCeA", title: "Mitski - I Will (Official Audio)", youtubeId: "A2LEaF1jCeA", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-ewngJEy0uy8", title: "Mitski - I'll Change for You (English Lyric Video)", youtubeId: "ewngJEy0uy8", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-pq65f3k9J4k", title: "Mitski: I'm Your Man (Official Film Clip)", youtubeId: "pq65f3k9J4k", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-83yYI2bWN0U", title: "Mitski - If I Leave (Official Video)", youtubeId: "83yYI2bWN0U", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-DlVKgdhYV6g", title: "Mitski - In a Lake (English Lyric Video)", youtubeId: "DlVKgdhYV6g", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-DVHXiU8oufg", title: "Mitski - Instead of Here (English Lyric Video)", youtubeId: "DVHXiU8oufg", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski--KttTf9jyT8", title: "Mitski - Jobless Monday (Official Audio)", youtubeId: "-KttTf9jyT8", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-aBJk6oDsulQ", title: "Mitski - Last Words of a Shooting Star (Official Audio)", youtubeId: "aBJk6oDsulQ", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-21SM9Kxw3mA", title: "Mitski - Lightning (English Lyric Video)", youtubeId: "21SM9Kxw3mA", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-Bfurc6KcMwk", title: "Mitski - Liquid Smooth (Official Audio)", youtubeId: "Bfurc6KcMwk", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-1unkUUKwoqA", title: "Mitski - Lonesome Love (Official Audio)", youtubeId: "1unkUUKwoqA", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-P4J3Z9xgjWQ", title: "Mitski - Love Me More (Official Video)", youtubeId: "P4J3Z9xgjWQ", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-HYbXt4_r9Pw", title: "Mitski – Working for the Knife (Official Video)", youtubeId: "HYbXt4_r9Pw", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-hn4V6836mUM", title: "Mitski - My Body's Made of Crushed Little Stars (Official Audio)", youtubeId: "hn4V6836mUM", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-vx4kLgnFexo", title: "Mitski - My Love Mine All Mine (Official Video)", youtubeId: "vx4kLgnFexo", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-qooWnw5rEcI", title: "Mitski - Nobody (Official Video)", youtubeId: "qooWnw5rEcI", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-9XRIj1_OTxA", title: "Mitski - Old Friend (Official Audio)", youtubeId: "9XRIj1_OTxA", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-xhqn-SeGDd0", title: "Mitski - Once More to See You (Official Audio)", youtubeId: "xhqn-SeGDd0", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-o3Jq35HZuCg", title: "Mitski - Pearl Diver (Official Audio)", youtubeId: "o3Jq35HZuCg", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-fdPL_dToT4k", title: "Mitski - Pink in the Night (Official Audio)", youtubeId: "fdPL_dToT4k", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-EjYoldxFg14", title: "Mitski - Real Men (Official Audio)", youtubeId: "EjYoldxFg14", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-LvQIZ1IqyFc", title: "Mitski - Remember My Name (Official Audio)", youtubeId: "LvQIZ1IqyFc", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-zK5jN65zQF0", title: "Mitski - Rules (English Lyric Video)", youtubeId: "zK5jN65zQF0", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-b4ocDcD9Z8w", title: "Mitski - Shame (Official Video)", youtubeId: "b4ocDcD9Z8w", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-dExLwcq2-0g", title: "Mitski - Should've Been Me (Official Audio)", youtubeId: "dExLwcq2-0g", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-zdFoi-YEIFU", title: "Mitski - Star (Official Video)", youtubeId: "zdFoi-YEIFU", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-cNwy1Th4NYo", title: "Mitski - Stay Soft (Official Video)", youtubeId: "cNwy1Th4NYo", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-hwYhauU1chY", title: "Mitski - Texas Reznikoff (Official Audio)", youtubeId: "hwYhauU1chY", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-FxdE919nhqE", title: "Mitski - That White Cat (English Lyric Video)", youtubeId: "FxdE919nhqE", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-zkgsWurEfoo", title: "Mitski - That's Our Lamp (Official Audio)", youtubeId: "zkgsWurEfoo", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-iFXwChLAyFM", title: "Mitski - The Deal (Official Lyric Video)", youtubeId: "iFXwChLAyFM", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-ECNey1cvdgY", title: "Mitski - The Frost (Official Lyric Video)", youtubeId: "ECNey1cvdgY", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-LmXFF_whkVk", title: "Mitski - The Only Heartbreaker (Official Video)", youtubeId: "LmXFF_whkVk", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-MFsCyEjTBlU", title: "Mitski - There's Nothing Left For You (Official Audio)", youtubeId: "MFsCyEjTBlU", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-c3yKKyOxoZM", title: "Mitski - Thursday Girl (Official Audio)", youtubeId: "c3yKKyOxoZM", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-bAX4sckx5l0", title: "Mitski - Townie (Official Video)", youtubeId: "bAX4sckx5l0", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-GOeAaxvidPI", title: "Mitski - Valentine, Texas (Official Audio)", youtubeId: "GOeAaxvidPI", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-pMOBZtE9Mek", title: "Mitski: Washing Machine Heart (Official Film Clip)", youtubeId: "pMOBZtE9Mek", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-wvDl4W0eZ_w", title: "Mitski - When Memories Snow (Official Lyric Video)", youtubeId: "wvDl4W0eZ_w", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-1mOGviDFRQU", title: "Mitski - Where's My Phone? (Official Video)", youtubeId: "1mOGviDFRQU", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-mje7DWeqFIs", title: "Mitski - Why Didn't You Stop Me (Official Audio)", youtubeId: "mje7DWeqFIs", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-D7FwNXxgl10", title: "Mitski - Wife (Official Audio)", youtubeId: "D7FwNXxgl10", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-t6hN8nGcpY8", title: "Mitski - Working for the Knife (Official Lyric Video)", youtubeId: "t6hN8nGcpY8", duration: 0, category: 'POP', artist: 'MITSKI' },
+  { id: "mitski-u_hDHm9MD0I", title: "Mitski - Your Best American Girl (Official Video)", youtubeId: "u_hDHm9MD0I", duration: 0, category: 'POP', artist: 'MITSKI' },
 ];
 
 export function getRandomSong(excludeIds: string[] = [], selo?: SeloKey | SeloKey[], artist?: Artist): Song | null {

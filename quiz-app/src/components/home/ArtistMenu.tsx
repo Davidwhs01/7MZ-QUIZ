@@ -18,6 +18,7 @@ const GEEK_ARTISTS: { id: ChannelType; name: string; logo: string; desc: string 
 
 const POP_ARTISTS: { id: ChannelType; name: string; logo: string; desc: string }[] = [
   { id: 'MELANIE', name: 'Melanie Martinez', logo: '/Melanie-Logo.jpg', desc: 'Pop alternativo' },
+  { id: 'MITSKI', name: 'Mitski', logo: '/Mitski-Logo.jpg', desc: 'Pop Indie' },
 ];
 
 export default function ArtistMenu({ isOpen, onClose }: ArtistMenuProps) {

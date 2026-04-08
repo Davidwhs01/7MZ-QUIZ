@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 export type ChannelCategory = 'GEEK' | 'POP';
-export type ChannelType = '7MZ' | 'ENYGMA' | 'MELANIE' | 'RODRIGOZIN';
+export type ChannelType = '7MZ' | 'ENYGMA' | 'MELANIE' | 'RODRIGOZIN' | 'MITSKI';
 
 interface ChannelContextProps {
   activeChannel: ChannelType;
@@ -29,10 +29,10 @@ export const ChannelProvider = ({ children }: { children: ReactNode }) => {
       setChannelCategory(savedCategory);
     }
     
-    if (savedChannel && (savedChannel === '7MZ' || savedChannel === 'ENYGMA' || savedChannel === 'MELANIE')) {
-      const isGeek = savedChannel === '7MZ' || savedChannel === 'ENYGMA';
+    if (savedChannel && (savedChannel === '7MZ' || savedChannel === 'ENYGMA' || savedChannel === 'MELANIE' || savedChannel === 'RODRIGOZIN' || savedChannel === 'MITSKI')) {
+      const isGeek = savedChannel === '7MZ' || savedChannel === 'ENYGMA' || savedChannel === 'RODRIGOZIN';
       const categoryMatch = (savedCategory === 'GEEK' && isGeek) || 
-                           (savedCategory === 'POP' && savedChannel === 'MELANIE');
+                           (savedCategory === 'POP' && (savedChannel === 'MELANIE' || savedChannel === 'MITSKI'));
       
       if (categoryMatch) {
         setActiveChannel(savedChannel);
@@ -53,7 +53,7 @@ export const ChannelProvider = ({ children }: { children: ReactNode }) => {
   // Apply theme
   useEffect(() => {
     if (!isLoaded) return;
-    document.body.classList.remove('theme-7mz', 'theme-enygma', 'theme-melanie', 'theme-rodrigozin');
+    document.body.classList.remove('theme-7mz', 'theme-enygma', 'theme-melanie', 'theme-rodrigozin', 'theme-mitski');
     if (activeChannel === '7MZ') {
       document.body.classList.add('theme-7mz');
     } else if (activeChannel === 'ENYGMA') {
@@ -62,6 +62,8 @@ export const ChannelProvider = ({ children }: { children: ReactNode }) => {
       document.body.classList.add('theme-melanie');
     } else if (activeChannel === 'RODRIGOZIN') {
       document.body.classList.add('theme-rodrigozin');
+    } else if (activeChannel === 'MITSKI') {
+      document.body.classList.add('theme-mitski');
     }
   }, [activeChannel, isLoaded]);
 

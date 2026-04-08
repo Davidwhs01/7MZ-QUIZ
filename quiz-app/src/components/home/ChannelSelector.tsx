@@ -7,18 +7,19 @@ import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useChannel } from '@/context/ChannelContext';
 
-export type ChannelType = '7MZ' | 'ENYGMA' | 'MELANIE' | 'RODRIGOZIN';
+export type ChannelType = '7MZ' | 'ENYGMA' | 'MELANIE' | 'RODRIGOZIN' | 'MITSKI';
 
 const CHANNELS = {
   '7MZ': { id: '7MZ', name: '7 Minutoz', logo: '/7mz-logo.jpg' },
   'ENYGMA': { id: 'ENYGMA', name: 'Enygma', logo: '/enygma-logo.jpg' },
   'MELANIE': { id: 'MELANIE', name: 'Melanie Martinez', logo: '/Melanie-Logo.jpg' },
   'RODRIGOZIN': { id: 'RODRIGOZIN', name: 'Rodrigo Zin', logo: '/RodrigoZin-Logo.jpg' },
+  'MITSKI': { id: 'MITSKI', name: 'Mitski', logo: '/Mitski-Logo.jpg' },
 } as const;
 
 const SECTION_CHANNELS: Record<string, ChannelType[]> = {
   'geek': ['7MZ', 'ENYGMA', 'RODRIGOZIN'],
-  'pop': ['MELANIE'],
+  'pop': ['MELANIE', 'MITSKI'],
 };
 
 let uidCounter = 10;
@@ -205,6 +206,7 @@ export default function ChannelSelector({ onChannelChange }: ChannelSelectorProp
                     src={channelInfo.logo}
                     alt={`${channelInfo.name} Logo`}
                     fill
+                    sizes="(max-width: 768px) 150px, 200px"
                     style={{ objectFit: 'cover' }}
                     priority={isCenter}
                     className={styles.avatar}
