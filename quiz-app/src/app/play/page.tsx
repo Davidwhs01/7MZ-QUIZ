@@ -161,8 +161,8 @@ export default function PlayPage() {
     const fixedData = { ...data, timestamp: safeTimestamp };
     nextSongDataRef.current = fixedData;
     
-    // Use 5 seconds fixed for audio duration to test
-    loadAndPlay(data.song.youtubeId, safeTimestamp, 5);
+    // Use data.duration (5/10/15s) for how long audio plays
+    loadAndPlay(data.song.youtubeId, safeTimestamp, data.duration);
   }, [loadNextSong, loadAndPlay, gameArtist]);
 
   // Keep skipSongRef updated so error handler can call it
@@ -284,8 +284,6 @@ export default function PlayPage() {
   const handleHint = useCallback(() => {
     const hintData = useHint();
     if (hintData && nextSongDataRef.current) {
-      // Use the REAL timestamp from the ref (which was generated with getRealDuration),
-      // NOT hintData.timestamp which comes from state and may be wrong (duration:0 fallback)
       replay(
         nextSongDataRef.current.song.youtubeId,
         nextSongDataRef.current.timestamp,

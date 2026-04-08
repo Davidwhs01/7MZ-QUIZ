@@ -160,9 +160,13 @@ export function useYouTubePlayer(containerId: string, options?: UseYouTubePlayer
       timerRef.current = null;
     }
 
-    playerRef.current.seekTo(startSeconds, true);
-    playerRef.current.playVideo();
+    // Reload the video first to ensure it's loaded, then seek and play
+    playerRef.current.loadVideoById({
+      videoId,
+      startSeconds,
+    });
 
+    // Auto-pause after duration
     timerRef.current = setTimeout(() => {
       if (playerRef.current) {
         playerRef.current.pauseVideo();
