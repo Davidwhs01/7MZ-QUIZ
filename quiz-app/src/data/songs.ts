@@ -671,7 +671,6 @@ export const songs: Song[] = [
   { id: "mitski-1mOGviDFRQU", title: "Mitski - Where's My Phone? (Official Video)", youtubeId: "1mOGviDFRQU", duration: 0, category: 'POP', artist: 'MITSKI' },
   { id: "mitski-mje7DWeqFIs", title: "Mitski - Why Didn't You Stop Me (Official Audio)", youtubeId: "mje7DWeqFIs", duration: 0, category: 'POP', artist: 'MITSKI' },
   { id: "mitski-D7FwNXxgl10", title: "Mitski - Wife (Official Audio)", youtubeId: "D7FwNXxgl10", duration: 0, category: 'POP', artist: 'MITSKI' },
-  { id: "mitski-t6hN8nGcpY8", title: "Mitski - Working for the Knife (Official Lyric Video)", youtubeId: "t6hN8nGcpY8", duration: 0, category: 'POP', artist: 'MITSKI' },
   { id: "mitski-u_hDHm9MD0I", title: "Mitski - Your Best American Girl (Official Video)", youtubeId: "u_hDHm9MD0I", duration: 0, category: 'POP', artist: 'MITSKI' },
 ];
 
