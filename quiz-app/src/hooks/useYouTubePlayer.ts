@@ -99,23 +99,33 @@ export function useYouTubePlayer(containerId: string, options?: UseYouTubePlayer
     startSeconds: number,
     durationSeconds: number
   ) => {
-    if (!playerRef.current) return;
+    if (!playerRef.current) {
+      console.warn('loadAndPlay: player not ready');
+      return;
+    }
     
     if (timerRef.current) {
       clearTimeout(timerRef.current);
       timerRef.current = null;
     }
 
-    playerRef.current.loadVideoById({
-      videoId,
-      startSeconds,
-    });
+    // Small delay to ensure player is ready
+    setTimeout(() => {
+      if (!playerRef.current) return;
+      
+      playerRef.current.loadVideoById({
+        videoId,
+        startSeconds,
+      });
 
-    // Auto-pause after duration
-    timerRef.current = setTimeout(() => {
-      playerRef.current?.pauseVideo();
-      setIsPlaying(false);
-    }, durationSeconds * 1000);
+      // Auto-pause after duration
+      timerRef.current = setTimeout(() => {
+        if (playerRef.current) {
+          playerRef.current.pauseVideo();
+          setIsPlaying(false);
+        }
+      }, durationSeconds * 1000);
+    }, 50);
   }, []);
 
   // Load a video silently and return its real duration
@@ -154,13 +164,20 @@ export function useYouTubePlayer(containerId: string, options?: UseYouTubePlayer
       timerRef.current = null;
     }
 
-    playerRef.current.seekTo(startSeconds, true);
-    playerRef.current.playVideo();
+    // Small delay to ensure player is ready
+    setTimeout(() => {
+      if (!playerRef.current) return;
+      
+      playerRef.current.seekTo(startSeconds, true);
+      playerRef.current.playVideo();
 
-    timerRef.current = setTimeout(() => {
-      playerRef.current?.pauseVideo();
-      setIsPlaying(false);
-    }, durationSeconds * 1000);
+      timerRef.current = setTimeout(() => {
+        if (playerRef.current) {
+          playerRef.current.pauseVideo();
+          setIsPlaying(false);
+        }
+      }, durationSeconds * 1000);
+    }, 50);
   }, []);
 
   const pause = useCallback(() => {
