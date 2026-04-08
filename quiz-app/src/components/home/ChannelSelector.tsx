@@ -44,25 +44,31 @@ export default function ChannelSelector({ onChannelChange }: ChannelSelectorProp
     ? activeChannel 
     : availableChannels[0];
 
-  const getOtherChannel = (current: ChannelType): ChannelType => {
-    const others = availableChannels.filter(c => c !== current);
-    if (others.length === 0) return current;
-    return others[Math.floor(Math.random() * others.length)];
+  const getNextChannel = (current: ChannelType): ChannelType => {
+    const idx = availableChannels.indexOf(current);
+    const nextIdx = (idx + 1) % availableChannels.length;
+    return availableChannels[nextIdx];
+  };
+
+  const getPrevChannel = (current: ChannelType): ChannelType => {
+    const idx = availableChannels.indexOf(current);
+    const prevIdx = (idx - 1 + availableChannels.length) % availableChannels.length;
+    return availableChannels[prevIdx];
   };
 
   const [items, setItems] = useState(() => {
     return [
-      { uid: 1, id: getOtherChannel(currentChannel) },
+      { uid: 1, id: getPrevChannel(currentChannel) },
       { uid: 2, id: currentChannel },
-      { uid: 3, id: getOtherChannel(currentChannel) },
+      { uid: 3, id: getNextChannel(currentChannel) },
     ];
   });
 
   useEffect(() => {
     setItems([
-      { uid: uidCounter++, id: getOtherChannel(currentChannel) },
+      { uid: uidCounter++, id: getPrevChannel(currentChannel) },
       { uid: uidCounter++, id: currentChannel },
-      { uid: uidCounter++, id: getOtherChannel(currentChannel) }
+      { uid: uidCounter++, id: getNextChannel(currentChannel) }
     ]);
   }, [currentChannel]);
 
