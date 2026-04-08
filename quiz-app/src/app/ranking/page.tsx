@@ -3,10 +3,12 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useParams, useRouter } from 'next/navigation';
 import styles from './page.module.css';
 import { createClient } from '@/utils/supabase/client';
 import { motion } from 'framer-motion';
 import { useChannel } from '@/context/ChannelContext';
+import { SECTIONS, AppSection, isValidSection } from '@/data/sections';
 
 interface RankedPlayer {
   id: string;
@@ -16,9 +18,15 @@ interface RankedPlayer {
   avatar_url: string;
 }
 
-type RankTab = 'GLOBAL' | '7MZ' | 'ENYGMA';
+type RankTab = 'GLOBAL' | '7MZ' | 'ENYGMA' | 'MELANIE';
 
 export default function RankingPage() {
+  const params = useParams();
+  const router = useRouter();
+  const sectionParam = params.section as string;
+  const section: AppSection = isValidSection(sectionParam) ? sectionParam : 'geek';
+  const sectionConfig = SECTIONS[section];
+  
   const { activeChannel } = useChannel();
   const [activeTab, setActiveTab] = useState<RankTab>('GLOBAL');
   const [ranking, setRanking] = useState<RankedPlayer[]>([]);
@@ -35,7 +43,6 @@ export default function RankingPage() {
 
       try {
         if (activeTab === 'GLOBAL') {
-          // Global: highscore from leaderboard table
           const { data, error } = await supabase
             .from('leaderboard')
             .select(`
@@ -138,14 +145,21 @@ export default function RankingPage() {
           </svg>
         </Link>
         <div className={styles.logoHeader}>
-          {activeChannel === '7MZ' ? (
+          {activeChannel === '7MZ' && (
             <Image src="/7mz-logo.jpg" alt="7MZ Logo" width={36} height={36} className={styles.logoHeaderImg} />
-          ) : (
-            <Image src="/enygma-logo.png" alt="Enygma Logo" width={36} height={36} className={styles.logoHeaderImg} />
+          )}
+          {activeChannel === 'ENYGMA' && (
+            <Image src="/enygma-logo.jpg" alt="Enygma Logo" width={36} height={36} className={styles.logoHeaderImg} />
+          )}
+          {activeChannel === 'MELANIE' && (
+            <Image src="/Melanie-Logo.jpg" alt="Melanie Logo" width={36} height={36} className={styles.logoHeaderImg} />
           )}
           <h1 className={styles.logo}>
-            {activeChannel === '7MZ' ? '7 MINUTOZ' : 'ENYGMA'} <span>ARENA</span>
+            {activeChannel === '7MZ' ? '7 MINUTOZ' : activeChannel === 'MELANIE' ? 'MELANIE' : 'ENYGMA'} <span>ARENA</span>
           </h1>
+          <Link href={`/${section}`} className={styles.sectionLink}>
+            {section === 'geek' ? '← GEEK' : '← STUDIO'}
+          </Link>
         </div>
       </header>
 

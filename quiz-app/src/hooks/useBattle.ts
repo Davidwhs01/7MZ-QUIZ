@@ -246,11 +246,11 @@ export function useBattle(roomId: string | null, artist?: Artist) {
         const patch: Partial<BattleState> = {};
         if (d.playerNum === 1) {
           patch.player1Correct = d.isCorrect as boolean;
-          if (d.scoreDelta) patch.player1Score = state.player1Score + (d.scoreDelta as number);
+          if (d.scoreDelta !== undefined) patch.player1Score = (d.scoreDelta as number);
           if (d.lives !== undefined) patch.player1Lives = d.lives as number;
         } else {
           patch.player2Correct = d.isCorrect as boolean;
-          if (d.scoreDelta) patch.player2Score = state.player2Score + (d.scoreDelta as number);
+          if (d.scoreDelta !== undefined) patch.player2Score = (d.scoreDelta as number);
           if (d.lives !== undefined) patch.player2Lives = d.lives as number;
         }
         if (d.isCorrect) patch.lastCorrectPlayer = d.playerNum as number;
@@ -354,67 +354,6 @@ export function useBattle(roomId: string | null, artist?: Artist) {
     return { song, timestamp, audioDuration: duration, roundStartTime, songId: song.id };
   }, [state.battleMode, state.artist]);
 
-  // ---- HOST: start countdown + first round ----
-  const startGame = useCallback(async () => {
-    if (!isHost || !channelRef.current) return;
-
-    // Countdown
-    for (let i = 3; i >= 1; i--) {
-      channelRef.current.send({ type: 'broadcast', event: 'countdown_tick', payload: { tick: i } });
-      update({ phase: 'countdown', message: `Começando em ${i}...` });
-      await new Promise(r => setTimeout(r, 1000));
-    }
-
-    const roundData = generateRound();
-    const payload = { ...roundData, round: 1 };
-
-    channelRef.current.send({ type: 'broadcast', event: 'round_start', payload });
-
-    // Also update DB
-    await supabase.from('game_rooms').update({
-      current_round: 1,
-      p1_round_correct: false,
-      p2_round_correct: false,
-      speed_bonus_given: false,
-      round_start_time: roundData.roundStartTime as number,
-      current_state: { phase: 'playing', round: 1 },
-    }).eq('id', roomId);
-
-    update({
-      phase: 'playing',
-      currentRound: 1,
-      currentSong: roundData.song as Song,
-      timestamp: roundData.timestamp as number,
-      audioDuration: roundData.audioDuration as number,
-      roundStartTime: roundData.roundStartTime as number,
-      player1Correct: false,
-      player2Correct: false,
-      player1Answered: false,
-      player2Answered: false,
-      message: 'Rodada 1',
-    });
-  }, [isHost, roomId, supabase, generateRound, update]);
-
-  // ---- ANY PLAYER: submit guess ----
-  const submitGuess = useCallback((songId: string, hintLevel: number) => {
-    if (!channelRef.current || !userId || !playerNum) return;
-    if (state.phase !== 'playing') return;
-
-    const isCorrect = songId === state.currentSong?.id;
-    const now = Date.now();
-
-    channelRef.current.send({
-      type: 'broadcast',
-      event: 'guess',
-      payload: { playerNum, songId, hintLevel, isCorrect, timestamp: now },
-    });
-
-    // Host processes the guess
-    if (isHost) {
-      processGuess(playerNum, isCorrect, hintLevel, now);
-    }
-  }, [userId, playerNum, state.phase, state.currentSong, isHost]); // eslint-disable-line react-hooks/exhaustive-deps
-
   // ---- HOST: process a guess ----
   const processGuess = useCallback(async (
     pNum: 1 | 2,
@@ -434,14 +373,11 @@ export function useBattle(roomId: string | null, artist?: Artist) {
     let winnerText = '';
 
     if (isCorrect) {
-      // Calculate points
       if (state.battleMode === 'inferno') {
         scoreDelta = 100;
       } else {
         const basePoints = [100, 60, 30][Math.min(hintLevel, 2)];
         scoreDelta = basePoints;
-
-        // Speed bonus: first correct without hints gets +30
         if (hintLevel === 0 && !state.player1Correct && !state.player2Correct) {
           scoreDelta += 30;
         }
@@ -459,7 +395,6 @@ export function useBattle(roomId: string | null, artist?: Artist) {
     const newP1Correct = pNum === 1 ? isCorrect : state.player1Correct;
     const newP2Correct = pNum === 2 ? isCorrect : state.player2Correct;
 
-    // Broadcast result
     channelRef.current.send({
       type: 'broadcast',
       event: 'guess_result',
@@ -473,7 +408,6 @@ export function useBattle(roomId: string | null, artist?: Artist) {
       },
     });
 
-    // Update local state
     const patch: Partial<BattleState> = {};
     if (pNum === 1) {
       patch.player1Correct = isCorrect;
@@ -493,7 +427,6 @@ export function useBattle(roomId: string | null, artist?: Artist) {
     }
     update(patch);
 
-    // Update DB
     const dbUpdate: Record<string, unknown> = {
       [correctKey]: newP1Correct || newP2Correct,
       [livesKey]: newLives,
@@ -510,6 +443,25 @@ export function useBattle(roomId: string | null, artist?: Artist) {
 
     await supabase.from('game_rooms').update(dbUpdate).eq('id', roomId);
   }, [roomId, state, room, supabase, update]);
+
+  // ---- ANY PLAYER: submit guess ----
+  const submitGuess = useCallback(async (songId: string, hintLevel: number) => {
+    if (!channelRef.current || !userId || !playerNum) return;
+    if (state.phase !== 'playing') return;
+
+    const isCorrect = songId === state.currentSong?.id;
+    const now = Date.now();
+
+    if (isHost) {
+      await processGuess(playerNum, isCorrect, hintLevel, now);
+    }
+
+    channelRef.current.send({
+      type: 'broadcast',
+      event: 'guess',
+      payload: { playerNum, songId, hintLevel, isCorrect, timestamp: now },
+    });
+  }, [userId, playerNum, state.phase, state.currentSong, isHost, processGuess]);
 
   // ---- HOST: check if round is complete ----
   useEffect(() => {
@@ -571,57 +523,6 @@ export function useBattle(roomId: string | null, artist?: Artist) {
     return () => clearTimeout(timer);
   }, [isHost, state.phase, state.currentRound, state.totalRounds, state.player1Answered, state.player2Answered, state.player1Correct, state.player2Correct, state.player1Score, state.player2Score, roomId, supabase, generateRound, update]);
 
-  // ---- HOST: next round ----
-  const nextRound = useCallback(async () => {
-    if (!isHost || !channelRef.current) return;
-
-    const nextRoundNum = state.currentRound + 1;
-
-    if (nextRoundNum > state.totalRounds) {
-      const winnerText =
-        state.player1Score > state.player2Score ? 'Jogador 1 venceu!' :
-        state.player2Score > state.player1Score ? 'Jogador 2 venceu!' : 'Empate!';
-
-      channelRef.current.send({ type: 'broadcast', event: 'game_over', payload: { winnerText } });
-      update({ phase: 'game_over', message: winnerText });
-
-      await supabase.from('game_rooms').update({
-        status: 'finished',
-        current_state: { phase: 'game_over', winnerText },
-      }).eq('id', roomId);
-      return;
-    }
-
-    const roundData = generateRound();
-    const payload = { ...roundData, round: nextRoundNum };
-
-    channelRef.current.send({ type: 'broadcast', event: 'next_round', payload });
-
-    await supabase.from('game_rooms').update({
-      current_round: nextRoundNum,
-      p1_round_correct: false,
-      p2_round_correct: false,
-      speed_bonus_given: false,
-      round_start_time: roundData.roundStartTime as number,
-      current_state: { phase: 'playing', round: nextRoundNum },
-    }).eq('id', roomId);
-
-    update({
-      phase: 'playing',
-      currentRound: nextRoundNum,
-      currentSong: roundData.song as Song,
-      timestamp: roundData.timestamp as number,
-      audioDuration: roundData.audioDuration as number,
-      roundStartTime: roundData.roundStartTime as number,
-      player1Correct: false,
-      player2Correct: false,
-      player1Answered: false,
-      player2Answered: false,
-      lastCorrectPlayer: null,
-      message: `Rodada ${nextRoundNum}`,
-    });
-  }, [isHost, state, roomId, supabase, generateRound, update]);
-
   // ---- ANY: use hint (normal mode only) ----
   const useHint = useCallback(() => {
     if (state.battleMode === 'inferno') return null;
@@ -650,12 +551,6 @@ export function useBattle(roomId: string | null, artist?: Artist) {
     }
   }, [roomId, supabase]);
 
-  // ---- ANY: request rematch ----
-  const requestRematch = useCallback(() => {
-    channelRef.current?.send({ type: 'broadcast', event: 'rematch_request', payload: {} });
-    update({ message: 'Aguardando oponente aceitar...' });
-  }, [update]);
-
   return {
     state,
     room,
@@ -664,11 +559,8 @@ export function useBattle(roomId: string | null, artist?: Artist) {
     isHost,
     opponentNum,
     error,
-    startGame,
     submitGuess,
-    nextRound,
     useHint,
     leave,
-    requestRematch,
   };
 }

@@ -3,6 +3,7 @@
   flex-direction: column;
   align-items: center;
   gap: 8px;
+  width: 100%;
 }
 
 .label {
@@ -18,16 +19,22 @@
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  gap: 3px;
-  height: 60px;
+  gap: 2px;
+  height: 80px;
   width: 100%;
-  max-width: 320px;
+  max-width: 400px;
 }
 
 .bar {
-  width: 6px;
-  min-width: 4px;
-  background: linear-gradient(to top, var(--accent-orange), var(--accent-yellow));
-  border-radius: 3px;
-  transition: height 0.1s ease-out, opacity 0.2s ease;
+  flex: 1;
+  min-width: 3px;
+  max-width: 5px;
+  background: linear-gradient(
+    180deg,
+    var(--accent-blue) 0%,
+    var(--accent-orange) 60%,
+    var(--accent-orange-dim) 100%
+  );
+  border-radius: 2px;
+  transition: height 0.04s ease-out, opacity 0.08s ease;
 }

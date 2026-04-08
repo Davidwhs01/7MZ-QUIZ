@@ -1,0 +1,33 @@
+import { Song } from "./quiz-app/src/data/songs";
+
+// --- NEW MELANIE SONGS EXTRACTED --- 
+export const newMelanieSongs = [
+  { id: "melanie--K-AXrTLqPU", title: "LEECHES", youtubeId: "-K-AXrTLqPU", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["leeches"] },
+  { id: "melanie-iW1djiqFzAk", title: "BATTLE OF THE LARYNX", youtubeId: "iW1djiqFzAk", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["battle","the","larynx"] },
+  { id: "melanie-8Y3BXWkG-Bk", title: "THE CONTORTIONIST", youtubeId: "8Y3BXWkG-Bk", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["the","contortionist"] },
+  { id: "melanie-yP54cnKzoFI", title: "MOON CYCLE", youtubeId: "yP54cnKzoFI", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["moon","cycle"] },
+  { id: "melanie-kZtLeFs5fCA", title: "NYMPHOLOGY", youtubeId: "kZtLeFs5fCA", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["nymphology"] },
+  { id: "melanie-QhcLlBWIlEE", title: "EVIL", youtubeId: "QhcLlBWIlEE", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["evil"] },
+  { id: "melanie-HAFBY8Wskbk", title: "WOMB", youtubeId: "HAFBY8Wskbk", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["womb"] },
+  { id: "melanie-DXHSKLGIrrI", title: "POWDER", youtubeId: "DXHSKLGIrrI", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["powder"] },
+  { id: "melanie-2e4SiznTXKU", title: "PLUTO", youtubeId: "2e4SiznTXKU", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["pluto"] },
+  { id: "melanie--92dl4IUHQQ", title: "MILK OF THE SIREN", youtubeId: "-92dl4IUHQQ", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["milk","the","siren"] },
+  { id: "melanie-WsPyOVUb_e8", title: "GARBAGE", youtubeId: "WsPyOVUb_e8", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["garbage"] },
+  { id: "melanie-c_LIHi670tI", title: "IS THIS A CULT?", youtubeId: "c_LIHi670tI", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["this","cult"] },
+  { id: "melanie-jieiS-k5ziA", title: "POSSESSION", youtubeId: "jieiS-k5ziA", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["possession"] },
+  { id: "melanie-828v-qOLlR4", title: "WHITE BOY WITH A GUN", youtubeId: "828v-qOLlR4", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["white","boy","with","gun"] },
+  { id: "melanie-Y_Bkb0kqiaA", title: "DISNEY PRINCESS", youtubeId: "Y_Bkb0kqiaA", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["disney","princess"] },
+  { id: "melanie-7WxtPVjfSXo", title: "GRUDGES", youtubeId: "7WxtPVjfSXo", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["grudges"] },
+  { id: "melanie-zAKukOBNVQE", title: "MONOPOLY MAN", youtubeId: "zAKukOBNVQE", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["monopoly","man"] },
+  { id: "melanie-aVMci3Ub_FQ", title: "AVOIDANT", youtubeId: "aVMci3Ub_FQ", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["avoidant"] },
+  { id: "melanie-bd33vyAPO-k", title: "MONOLITH", youtubeId: "bd33vyAPO-k", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["monolith"] },
+  { id: "melanie-7M2aspTiMSc", title: "WEIGHT WATCHERS", youtubeId: "7M2aspTiMSc", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["weight","watchers"] },
+  { id: "melanie-OJVcccvaC9k", title: "THE PLAGUE", youtubeId: "OJVcccvaC9k", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["the","plague"] },
+  { id: "melanie-G5uU3OigluM", title: "BATSHIT INTELLIGENCE", youtubeId: "G5uU3OigluM", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["batshit","intelligence"] },
+  { id: "melanie-xHFPyE0wmAs", title: "GUTTER", youtubeId: "xHFPyE0wmAs", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["gutter"] },
+  { id: "melanie-Kst-f5zYWJI", title: "UNCANNY VALLEY", youtubeId: "Kst-f5zYWJI", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["uncanny","valley"] },
+  { id: "melanie-WPkgGvBfRPw", title: "THE VATICAN", youtubeId: "WPkgGvBfRPw", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["the","vatican"] },
+  { id: "melanie-RFIpskhn5XM", title: "HELL’S FRONT PORCH", youtubeId: "RFIpskhn5XM", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["hell","front","porch"] },
+  { id: "melanie-nKFLJlnwYzU", title: "CHATROOM", youtubeId: "nKFLJlnwYzU", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["chatroom"] },
+  { id: "melanie--EUfhQJuYK4", title: "THE LAST TWO PEOPLE ON EARTH", youtubeId: "-EUfhQJuYK4", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["the","last","two","people","earth"] },
+];
