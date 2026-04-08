@@ -151,17 +151,19 @@ export default function PlayPage() {
       return;
     }
     
-    // Get the REAL video duration from YouTube API
+    // Get the REAL video duration from YouTube API (for timestamp generation)
     const realDuration = await getRealDuration(data.song.youtubeId);
+    const songDuration = realDuration > 0 ? realDuration : (data.song.duration > 0 ? data.song.duration : 180);
     
-    // Override the song duration with the real one for timestamp generation
-    const songWithRealDuration = { ...data.song, duration: realDuration };
-    const safeTimestamp = generateRandomTimestamp(songWithRealDuration, realDuration);
+    // Generate safe timestamp using song duration
+    const songWithRealDuration = { ...data.song, duration: songDuration };
+    const safeTimestamp = generateRandomTimestamp(songWithRealDuration, data.duration);
 
-    const fixedData = { ...data, timestamp: safeTimestamp, duration: realDuration };
+    const fixedData = { ...data, timestamp: safeTimestamp };
     nextSongDataRef.current = fixedData;
     
-    loadAndPlay(data.song.youtubeId, safeTimestamp, realDuration);
+    // Use data.duration (5/10/15s) for how long audio plays, not the full song duration
+    loadAndPlay(data.song.youtubeId, safeTimestamp, data.duration);
   }, [loadNextSong, getRealDuration, loadAndPlay, gameArtist]);
 
   // Keep skipSongRef updated so error handler can call it
