@@ -149,6 +149,25 @@ body.theme-pop {
   --accent-blue-dim: #6a0096;
 }
 
+/* RODRIGOZIN THEME (Cyan / Teal) */
+body.theme-rodrigozin {
+  /* Primary Accent: Cyan */
+  --accent-orange: #00d4aa;
+  --accent-orange-rgb: 0, 212, 170;
+  --accent-orange-bright: #00f5c4;
+  --accent-orange-dim: #00a887;
+  --accent-neon: #00ffe5;
+  
+  --glow-orange: 0 0 20px rgba(0, 212, 170, 0.25), 0 0 60px rgba(0, 212, 170, 0.08);
+  --glow-orange-strong: 0 0 30px rgba(0, 212, 170, 0.5), 0 0 80px rgba(0, 212, 170, 0.15);
+  --border-orange: rgba(0, 212, 170, 0.25);
+  
+  /* Secondary Accent: Electric Blue */
+  --accent-blue: #00a8ff;
+  --accent-blue-rgb: 0, 168, 255;
+  --accent-blue-dim: #0086cc;
+}
+
 /* === Reset === */
 *, *::before, *::after {
   box-sizing: border-box;

@@ -7,16 +7,17 @@ import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useChannel } from '@/context/ChannelContext';
 
-export type ChannelType = '7MZ' | 'ENYGMA' | 'MELANIE';
+export type ChannelType = '7MZ' | 'ENYGMA' | 'MELANIE' | 'RODRIGOZIN';
 
 const CHANNELS = {
   '7MZ': { id: '7MZ', name: '7 Minutoz', logo: '/7mz-logo.jpg' },
   'ENYGMA': { id: 'ENYGMA', name: 'Enygma', logo: '/enygma-logo.jpg' },
   'MELANIE': { id: 'MELANIE', name: 'Melanie Martinez', logo: '/Melanie-Logo.jpg' },
+  'RODRIGOZIN': { id: 'RODRIGOZIN', name: 'Rodrigo Zin', logo: '/RodrigoZin-Logo.jpg' },
 } as const;
 
 const SECTION_CHANNELS: Record<string, ChannelType[]> = {
-  'geek': ['7MZ', 'ENYGMA'],
+  'geek': ['7MZ', 'ENYGMA', 'RODRIGOZIN'],
   'pop': ['MELANIE'],
 };
 

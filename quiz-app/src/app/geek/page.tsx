@@ -225,7 +225,10 @@ export default function GeekHome() {
 
             {gameMode === 'single' ? (
                 <div key="single-panel" className={`${styles.modesGrid} ${styles.panelEnter}`}>
-                  <Link href={`/play?artist=${activeChannel === 'ENYGMA' ? 'enygma' : '7mz'}`} className={styles.modeCard}>
+                  <Link href={`/play?artist=${
+                    activeChannel === 'ENYGMA' ? 'enygma' : 
+                    activeChannel === 'RODRIGOZIN' ? 'rodrigozin' : '7mz'
+                  }`} className={styles.modeCard}>
                     <div className={styles.modeCardShine} />
                     <div className={styles.modeCardBorder} />
                     <div className={styles.modeCardInner}>

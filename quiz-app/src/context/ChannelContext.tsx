@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 export type ChannelCategory = 'GEEK' | 'POP';
-export type ChannelType = '7MZ' | 'ENYGMA' | 'MELANIE';
+export type ChannelType = '7MZ' | 'ENYGMA' | 'MELANIE' | 'RODRIGOZIN';
 
 interface ChannelContextProps {
   activeChannel: ChannelType;
@@ -53,13 +53,15 @@ export const ChannelProvider = ({ children }: { children: ReactNode }) => {
   // Apply theme
   useEffect(() => {
     if (!isLoaded) return;
-    document.body.classList.remove('theme-7mz', 'theme-enygma', 'theme-melanie');
+    document.body.classList.remove('theme-7mz', 'theme-enygma', 'theme-melanie', 'theme-rodrigozin');
     if (activeChannel === '7MZ') {
       document.body.classList.add('theme-7mz');
     } else if (activeChannel === 'ENYGMA') {
       document.body.classList.add('theme-enygma');
     } else if (activeChannel === 'MELANIE') {
       document.body.classList.add('theme-melanie');
+    } else if (activeChannel === 'RODRIGOZIN') {
+      document.body.classList.add('theme-rodrigozin');
     }
   }, [activeChannel, isLoaded]);
 
