@@ -155,7 +155,7 @@ export default function RankingPage() {
             <Image src="/Melanie-Logo.jpg" alt="Melanie Logo" width={36} height={36} className={styles.logoHeaderImg} />
           )}
           <h1 className={styles.logo}>
-            {activeChannel === '7MZ' ? '7 MINUTOZ' : activeChannel === 'MELANIE' ? 'MELANIE' : 'ENYGMA'} <span>ARENA</span>
+            {activeChannel === '7MZ' ? '7 MINUTOZ' : activeChannel === 'MELANIE' ? 'MELANIE' : activeChannel === 'RODRIGOZIN' ? 'RODRIGO ZIN' : 'ENYGMA'} <span>ARENA</span>
           </h1>
           <Link href={`/${section}`} className={styles.sectionLink}>
             {section === 'geek' ? '← GEEK' : '← STUDIO'}
