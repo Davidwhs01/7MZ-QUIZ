@@ -161,8 +161,8 @@ export default function PlayPage() {
     const fixedData = { ...data, timestamp: safeTimestamp };
     nextSongDataRef.current = fixedData;
     
-    // Use data.duration (5/10/15s) for how long audio plays
-    loadAndPlay(data.song.youtubeId, safeTimestamp, data.duration);
+    // Use 5 seconds fixed for audio duration to test
+    loadAndPlay(data.song.youtubeId, safeTimestamp, 5);
   }, [loadNextSong, loadAndPlay, gameArtist]);
 
   // Keep skipSongRef updated so error handler can call it
