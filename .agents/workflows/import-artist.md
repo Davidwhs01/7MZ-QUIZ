@@ -31,14 +31,67 @@ node manage_channels.js add <HANDLE_INFORMADO> --name "<NOME_EXIBICAO>" --artist
 
 *Nota para a IA:* Após o script rodar e alterar `songs.ts`, cheque o output do terminal para ver se vídeos foram processados com sucesso. O script vai atualizar sozinho os arquivos `channels.json` e `songs.ts`.
 
-### Passo 4: Atualizar Interface de Usuário e Componentes
+### Passo 4: CORREÇÃO OBRIGATÓRIA - Verificar Posição das Músicas
+
+**IMPORTANTE - ERRO COMUM:** O script `manage_channels.js` as vezes insere as músicas no lugar errado (dentro de funções como `searchSongs` ao invés do array principal `songs`). Você DEVE verificar e corrigir isso antes de continuar.
+
+**Como verificar:**
+1. Abra `quiz-app/src/data/songs.ts`
+2. Procure pelo final do array `songs` (geralmente após a última música do último artista, antes de um `];`)
+3. As músicas devem estar dentro de `export const songs: Song[] = [` ... `];`
+4. As músicas NÃO devem estar dentro de nenhuma função
+
+**Como corrigir se estiver errado:**
+1. Use `grep_search` para encontrar onde as músicas foram inseridas erroneamente
+2. Remova as músicas do local errado
+3. Adicione as músicas no local correto: após a última música do array, antes do `];` final
+4. Exemplo de formato correto:
+```typescript
+export const songs: Song[] = [
+  // ... outras músicas ...
+  
+  // --- NOVO ARTISTA UPLOADS ---
+  { id: "artista-xxx", title: "Musica 1", youtubeId: "xxx", duration: 0, category: 'CATEGORIA', artist: 'ARTISTA' },
+  { id: "artista-yyy", title: "Musica 2", youtubeId: "yyy", duration: 0, category: 'CATEGORIA', artist: 'ARTISTA' },
+];
+```
+
+### Passo 5: Atualizar Interface de Usuário e Componentes
 
 Muitas vezes telas como `ChannelSelector.tsx` ou arquivos que renderizam temas visuais (`globals.css`) e layouts dependem de nomes hardcoded. Usando a ferramenta `grep_search`:
 1. Faça uma varredura pelas constantes de canais usando `grep_search` pela chave de um artista já existente (Ex: `"RODRIGOZIN"` ou `"MELANIE"`).
 2. Verifique o arquivo `quiz-app/src/context/ChannelContext.tsx` e `quiz-app/src/components/home/ChannelSelector.tsx` se há listas pré-estabelecidas de canais lá dentro e atualize para incluir o novo artista.
 3. Se existir CSS específico por artista/canal, atualize os estilos de paleta correspondentes.
 
-### Passo 5: Relatar Finalização com Confirmação e Validação
+### Passo 6: Atualizar menus mobile (BottomDrawer, ArtistMenu, etc)
+
+Se o artista for GEEK, verifique se deve aparecer nos menus mobile:
+1. `ArtistMenu.tsx` - contém arrays `GEEK_ARTISTS` e `POP_ARTISTS`
+2. `BottomDrawer.tsx` - contém toggle de seção GEEK/POP
+3. Adicione o novo artista nas listas apropriadas se necessário
+
+### Passo 7: Validação Final
+
+Antes de finalizar, rode os comandos de validação:
+
+```bash
+cd quiz-app && npm run build
+cd quiz-app && npm run lint
+```
+
+Se o build falhar com erros de tipo em `songs.ts`, provavelmente as músicas estão no lugar errado (dentro de função). Retorne ao Passo 4.
+
+### Checklist de Importação
+
+- [ ] Tipos atualizados em songs.ts (SongCategory, Artist, getSongSection)
+- [ ] Músicas adicionadas no ARRAY principal (não em funções!)
+- [ ] build passando
+- [ ] lint passando (alguns warnings são aceitáveis)
+- [ ] Artista adicionado em ChannelSelector.tsx (se aplicável)
+- [ ] Artista adicionado em ArtistMenu.tsx (se aplicável)
+- [ ] Tema CSS adicionado em globals.css (se aplicável)
+
+### Passo 8: Relatar Finalização com Confirmação e Validação
 
 1. Demonstre os arquivos que foram adicionados e mostre `render_diffs()` das partes alteradas em `.ts` e `.tsx`.
 2. Pergunte ao usuário se você deve iniciar o servidor de desenvolvimento para testes (`npm run dev`) para confirmar que não existem erros no React Strict Mode.

@@ -4,9 +4,19 @@ import { useState } from 'react';
 import styles from './BottomDrawer.module.css';
 import LoginProfileCard from './LoginProfileCard';
 import GlobalRankingCard from './GlobalRankingCard';
+import { useChannel, ChannelCategory } from '@/context/ChannelContext';
+import { useRouter } from 'next/navigation';
 
 export default function BottomDrawer() {
   const [isOpen, setIsOpen] = useState(false);
+  const { channelCategory, setChannelCategory } = useChannel();
+  const router = useRouter();
+
+  const handleToggleSection = (category: ChannelCategory) => {
+    setChannelCategory(category);
+    setIsOpen(false);
+    router.push(category === 'GEEK' ? '/geek' : '/pop');
+  };
 
   return (
     <>
@@ -36,6 +46,33 @@ export default function BottomDrawer() {
 
         {/* Drawer content */}
         <div className={styles.drawerContent}>
+          {/* Section Toggle */}
+          <section className={styles.section}>
+            <div className={styles.sectionHeader}>
+              <span className={styles.sectionIcon}>🎵</span>
+              <h3 className={styles.sectionTitle}>SEÇÃO</h3>
+            </div>
+            <div className={styles.sectionToggle}>
+              <button
+                className={`${styles.toggleBtn} ${channelCategory === 'GEEK' ? styles.toggleBtnActive : ''}`}
+                onClick={() => handleToggleSection('GEEK')}
+              >
+                <span className={styles.toggleIcon}>🎮</span>
+                <span>GEEK</span>
+              </button>
+              <button
+                className={`${styles.toggleBtn} ${channelCategory === 'POP' ? styles.toggleBtnActive : ''}`}
+                onClick={() => handleToggleSection('POP')}
+              >
+                <span className={styles.toggleIcon}>🎤</span>
+                <span>POP</span>
+              </button>
+            </div>
+          </section>
+
+          {/* Divider */}
+          <div className={styles.divider} />
+
           {/* Login Section */}
           <section className={styles.section}>
             <div className={styles.sectionHeader}>
