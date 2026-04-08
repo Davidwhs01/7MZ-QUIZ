@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 export type ChannelCategory = 'GEEK' | 'POP';
-export type ChannelType = '7MZ' | 'ENYGMA' | 'MELANIE' | 'RODRIGOZIN' | 'MITSKI';
+export type ChannelType = '7MZ' | 'ENYGMA' | 'MELANIE' | 'RODRIGOZIN' | 'MITSKI' | 'M4RKIM';
 
 interface ChannelContextProps {
   activeChannel: ChannelType;
@@ -29,8 +29,8 @@ export const ChannelProvider = ({ children }: { children: ReactNode }) => {
       setChannelCategory(savedCategory);
     }
     
-    if (savedChannel && (savedChannel === '7MZ' || savedChannel === 'ENYGMA' || savedChannel === 'MELANIE' || savedChannel === 'RODRIGOZIN' || savedChannel === 'MITSKI')) {
-      const isGeek = savedChannel === '7MZ' || savedChannel === 'ENYGMA' || savedChannel === 'RODRIGOZIN';
+    if (savedChannel && (savedChannel === '7MZ' || savedChannel === 'ENYGMA' || savedChannel === 'MELANIE' || savedChannel === 'RODRIGOZIN' || savedChannel === 'MITSKI' || savedChannel === 'M4RKIM')) {
+      const isGeek = savedChannel === '7MZ' || savedChannel === 'ENYGMA' || savedChannel === 'RODRIGOZIN' || savedChannel === 'M4RKIM';
       const categoryMatch = (savedCategory === 'GEEK' && isGeek) || 
                            (savedCategory === 'POP' && (savedChannel === 'MELANIE' || savedChannel === 'MITSKI'));
       
@@ -53,7 +53,7 @@ export const ChannelProvider = ({ children }: { children: ReactNode }) => {
   // Apply theme
   useEffect(() => {
     if (!isLoaded) return;
-    document.body.classList.remove('theme-7mz', 'theme-enygma', 'theme-melanie', 'theme-rodrigozin', 'theme-mitski');
+    document.body.classList.remove('theme-7mz', 'theme-enygma', 'theme-melanie', 'theme-rodrigozin', 'theme-mitski', 'theme-m4rkim');
     if (activeChannel === '7MZ') {
       document.body.classList.add('theme-7mz');
     } else if (activeChannel === 'ENYGMA') {
@@ -64,6 +64,8 @@ export const ChannelProvider = ({ children }: { children: ReactNode }) => {
       document.body.classList.add('theme-rodrigozin');
     } else if (activeChannel === 'MITSKI') {
       document.body.classList.add('theme-mitski');
+    } else if (activeChannel === 'M4RKIM') {
+      document.body.classList.add('theme-m4rkim');
     }
   }, [activeChannel, isLoaded]);
 

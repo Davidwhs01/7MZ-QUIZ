@@ -60,6 +60,7 @@ export default function GeekHome() {
     if (isLoaded && activeChannel === 'ENYGMA') setSelectedSelo('ENYGMA');
     else if (isLoaded && activeChannel === '7MZ') setSelectedSelo('NERD HITS');
     else if (isLoaded && activeChannel === 'RODRIGOZIN') setSelectedSelo('GEEKS');
+    else if (isLoaded && activeChannel === 'M4RKIM') setSelectedSelo('M4RKIM');
   }, [activeChannel, isLoaded]);
 
   const selloOptions: { key: SongCategory | 'PÓS REVELAÇÃO'; label: string }[] = activeChannel === 'RODRIGOZIN'
@@ -71,6 +72,10 @@ export default function GeekHome() {
     ? [
         { key: 'NERD HITS', label: 'NERD HITS' },
         { key: '7MZ RECORDS', label: '7MZ RECORDS' },
+      ]
+    : activeChannel === 'M4RKIM'
+    ? [
+        { key: 'M4RKIM', label: 'M4RKIM' },
       ]
     : [
         { key: 'ENYGMA', label: 'ENYGMA' },
@@ -233,7 +238,8 @@ export default function GeekHome() {
                 <div key="single-panel" className={`${styles.modesGrid} ${styles.panelEnter}`}>
                   <Link href={`/play?artist=${
                     activeChannel === 'ENYGMA' ? 'enygma' : 
-                    activeChannel === 'RODRIGOZIN' ? 'rodrigozin' : '7mz'
+                    activeChannel === 'RODRIGOZIN' ? 'rodrigozin' :
+                    activeChannel === 'M4RKIM' ? 'm4rkim' : '7mz'
                   }`} className={styles.modeCard}>
                     <div className={styles.modeCardShine} />
                     <div className={styles.modeCardBorder} />

@@ -168,6 +168,44 @@ body.theme-mitski {
   --accent-blue-dim: #4d0016;
 }
 
+/* M4RKIM THEME (Noir / High-Contrast / RAW) 
+   Baseado na identidade visual da logo: P&B, grão cinematográfico e alto contraste. */
+body.theme-m4rkim {
+  /* Primary Accent: Pure "Flash" White */
+  --accent-orange: #ffffff;
+  --accent-orange-rgb: 255, 255, 255;
+  --accent-orange-bright: #ffffff;
+  --accent-orange-dim: #cccccc;
+  --accent-neon: #ffffff;
+  
+  /* Background Tones - Total Black & Cold Greys */
+  --bg-primary: #000000;
+  --bg-secondary: #080808;
+  --bg-tertiary: #121212;
+  --bg-card: rgba(15, 15, 15, 0.95);
+  
+  /* Glow Effects - Photographic Flash bulb style */
+  --glow-orange: 
+    0 0 10px rgba(255, 255, 255, 0.4), 
+    0 0 30px rgba(255, 255, 255, 0.1);
+  --glow-orange-strong: 
+    0 0 20px rgba(255, 255, 255, 0.7), 
+    0 0 50px rgba(255, 255, 255, 0.3),
+    0 0 100px rgba(255, 255, 255, 0.1);
+  --border-orange: rgba(255, 255, 255, 0.4);
+  
+  /* Secondary Accent: Steel / Graphite */
+  --accent-blue: #444444;
+  --accent-blue-rgb: 68, 68, 68;
+  --accent-blue-bright: #666666;
+  --accent-blue-dim: #222222;
+  --glow-blue: 0 0 20px rgba(255, 255, 255, 0.1);
+  --border-blue: rgba(255, 255, 255, 0.1);
+
+  /* Scrollbar override - Minimalist */
+  --scrollbar-thumb: linear-gradient(180deg, #ffffff, #333333);
+}
+
 /* RODRIGOZIN THEME (Laranja Invador) */
 body.theme-rodrigozin {
   /* Primary Accent: Laranja Invador */
