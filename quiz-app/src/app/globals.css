@@ -149,23 +149,23 @@ body.theme-pop {
   --accent-blue-dim: #6a0096;
 }
 
-/* RODRIGOZIN THEME (Cyan / Teal) */
+/* RODRIGOZIN THEME (Laranja Invador) */
 body.theme-rodrigozin {
-  /* Primary Accent: Cyan */
-  --accent-orange: #00d4aa;
-  --accent-orange-rgb: 0, 212, 170;
-  --accent-orange-bright: #00f5c4;
-  --accent-orange-dim: #00a887;
-  --accent-neon: #00ffe5;
+  /* Primary Accent: Laranja Invador */
+  --accent-orange: #D37A25;
+  --accent-orange-rgb: 211, 122, 37;
+  --accent-orange-bright: #E89030;
+  --accent-orange-dim: #B86820;
+  --accent-neon: #FF9933;
   
-  --glow-orange: 0 0 20px rgba(0, 212, 170, 0.25), 0 0 60px rgba(0, 212, 170, 0.08);
-  --glow-orange-strong: 0 0 30px rgba(0, 212, 170, 0.5), 0 0 80px rgba(0, 212, 170, 0.15);
-  --border-orange: rgba(0, 212, 170, 0.25);
+  --glow-orange: 0 0 20px rgba(211, 122, 37, 0.25), 0 0 60px rgba(211, 122, 37, 0.08);
+  --glow-orange-strong: 0 0 30px rgba(211, 122, 37, 0.5), 0 0 80px rgba(211, 122, 37, 0.15);
+  --border-orange: rgba(211, 122, 37, 0.25);
   
-  /* Secondary Accent: Electric Blue */
-  --accent-blue: #00a8ff;
-  --accent-blue-rgb: 0, 168, 255;
-  --accent-blue-dim: #0086cc;
+  /* Secondary Accent: Verde Seco */
+  --accent-blue: #6E734A;
+  --accent-blue-rgb: 110, 115, 74;
+  --accent-blue-dim: #5A6240;
 }
 
 /* === Reset === */

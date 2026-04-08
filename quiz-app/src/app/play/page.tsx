@@ -43,6 +43,11 @@ function useGameArtistFromURL(activeChannel: Artist): Artist {
       setIsDetected(true);
       return;
     }
+    if (artistParam === 'rodrigozin') {
+      setDetectedArtist('RODRIGOZIN');
+      setIsDetected(true);
+      return;
+    }
     
     // Check path to determine section
     if (path.includes('/pop') || path.startsWith('/pop')) {
@@ -52,7 +57,7 @@ function useGameArtistFromURL(activeChannel: Artist): Artist {
     }
     
     // Use activeChannel from context, but validate it's valid
-    if (activeChannel === '7MZ' || activeChannel === 'ENYGMA' || activeChannel === 'MELANIE') {
+    if (activeChannel === '7MZ' || activeChannel === 'ENYGMA' || activeChannel === 'MELANIE' || activeChannel === 'RODRIGOZIN') {
       setDetectedArtist(activeChannel);
     } else {
       // Default to 7MZ if activeChannel is invalid
@@ -84,6 +89,9 @@ export default function PlayPage() {
         break;
       case 'MELANIE':
         document.body.classList.add('theme-melanie');
+        break;
+      case 'RODRIGOZIN':
+        document.body.classList.add('theme-rodrigozin');
         break;
     }
     console.log('Theme applied:', gameArtist);
