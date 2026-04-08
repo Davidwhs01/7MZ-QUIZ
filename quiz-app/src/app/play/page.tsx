@@ -434,7 +434,7 @@ export default function PlayPage() {
                     onClick={() => setSelectedCategory('ENYGMA')}
                   >
                     <span className={styles.categoryEmoji}>🔮</span>
-                    <span className={styles.categoryName}>ENYGMA (TODAS)</span>
+                    <span className={styles.categoryName}>ENYGMA</span>
                     <span className={styles.categoryCount}>{songs.filter(s => s.category === 'ENYGMA').length} músicas</span>
                   </motion.button>
 
@@ -468,8 +468,42 @@ export default function PlayPage() {
                     onClick={() => setSelectedCategory('POP')}
                   >
                     <span className={styles.categoryEmoji}>🎤</span>
-                    <span className={styles.categoryName}>TODAS AS MÚSICAS</span>
+                    <span className={styles.categoryName}>POP</span>
                     <span className={styles.categoryCount}>{songs.filter(s => s.artist === 'MELANIE').length} músicas</span>
+                  </motion.button>
+                </>
+              )}
+
+              {gameArtist === 'RODRIGOZIN' && (
+                <>
+                  <motion.button
+                    variants={{
+                      hidden: { y: 20, opacity: 0 },
+                      visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 300 } }
+                    }}
+                    whileHover={{ scale: 1.05, y: -5 }}
+                    whileTap={{ scale: 0.95 }}
+                    className={`${styles.categoryCard} ${selectedCategory === 'GEEKS' ? styles.categoryCardActive : ''}`}
+                    onClick={() => setSelectedCategory('GEEKS')}
+                  >
+                    <span className={styles.categoryEmoji}>🎮</span>
+                    <span className={styles.categoryName}>GEEKS</span>
+                    <span className={styles.categoryCount}>{songs.filter(s => s.category === 'GEEKS').length} músicas</span>
+                  </motion.button>
+
+                  <motion.button
+                    variants={{
+                      hidden: { y: 20, opacity: 0 },
+                      visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 300 } }
+                    }}
+                    whileHover={{ scale: 1.05, y: -5 }}
+                    whileTap={{ scale: 0.95 }}
+                    className={`${styles.categoryCard} ${selectedCategory === 'AUTORAIS' ? styles.categoryCardActive : ''}`}
+                    onClick={() => setSelectedCategory('AUTORAIS')}
+                  >
+                    <span className={styles.categoryEmoji}>🎵</span>
+                    <span className={styles.categoryName}>AUTORAIS</span>
+                    <span className={styles.categoryCount}>{songs.filter(s => s.category === 'AUTORAIS').length} músicas</span>
                   </motion.button>
                 </>
               )}
@@ -485,7 +519,7 @@ export default function PlayPage() {
                 onClick={() => setSelectedCategory('ALL')}
               >
                 <span className={styles.categoryEmoji}>🌌</span>
-                <span className={styles.categoryName}>TODOS (MULTIVERSO)</span>
+                <span className={styles.categoryName}>TODAS AS MÚSICAS</span>
                 <span className={styles.categoryCount}>{songs.length} músicas globais</span>
               </motion.button>
             </motion.div>

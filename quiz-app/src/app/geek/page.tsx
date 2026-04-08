@@ -59,15 +59,21 @@ export default function GeekHome() {
   useEffect(() => {
     if (isLoaded && activeChannel === 'ENYGMA') setSelectedSelo('ENYGMA');
     else if (isLoaded && activeChannel === '7MZ') setSelectedSelo('NERD HITS');
+    else if (isLoaded && activeChannel === 'RODRIGOZIN') setSelectedSelo('GEEKS');
   }, [activeChannel, isLoaded]);
 
-  const selloOptions: { key: SongCategory | 'PÓS REVELAÇÃO'; label: string }[] = isLoaded && activeChannel === '7MZ'
+  const selloOptions: { key: SongCategory | 'PÓS REVELAÇÃO'; label: string }[] = activeChannel === 'RODRIGOZIN'
+    ? [
+        { key: 'GEEKS', label: 'GEEKS' },
+        { key: 'AUTORAIS', label: 'AUTORAIS' },
+      ]
+    : activeChannel === '7MZ'
     ? [
         { key: 'NERD HITS', label: 'NERD HITS' },
         { key: '7MZ RECORDS', label: '7MZ RECORDS' },
       ]
     : [
-        { key: 'ENYGMA', label: 'ENYGMA (TODAS)' },
+        { key: 'ENYGMA', label: 'ENYGMA' },
         { key: 'PÓS REVELAÇÃO', label: 'PÓS REVELAÇÃO' },
       ];
 
