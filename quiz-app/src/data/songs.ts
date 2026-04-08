@@ -1,19 +1,32 @@
-export type SongCategory = 'NERD HITS' | '7MZ RECORDS' | 'ENYGMA';
+export type SongCategory = 'NERD HITS' | '7MZ RECORDS' | 'ENYGMA' | 'POP';
 export type SeloKey = SongCategory | 'PÓS REVELAÇÃO';
-export type Artist = '7MZ' | 'ENYGMA';
+export type Artist = '7MZ' | 'ENYGMA' | 'MELANIE';
+export type AppSection = 'geek' | 'pop';
 
 export interface Song {
   id: string;
   title: string;
   youtubeId: string;
-  duration: number; // 0 = use getRealDuration() at runtime
+  duration: number;
   category: SongCategory;
   artist: Artist;
   anime?: string;
   searchTerms: string[];
-  introSkip?: number;   // seconds to skip at start (default 30)
-  outroBuffer?: number; // seconds to skip at end (default 20)
-  selos?: string[];     // sub-categories (e.g. 'PÓS REVELAÇÃO')
+  introSkip?: number;
+  outroBuffer?: number;
+  selos?: string[];
+}
+
+export function getSongSection(song: Song): AppSection {
+  return song.artist === 'MELANIE' ? 'pop' : 'geek';
+}
+
+export function getSongsBySection(section: AppSection): Song[] {
+  return songs.filter(s => getSongSection(s) === section);
+}
+
+export function getSongsByArtist(artist: Artist): Song[] {
+  return songs.filter(s => s.artist === artist);
 }
 
 // ============================================================
@@ -432,6 +445,55 @@ export const songs: Song[] = [
   { id: "gohan-furia", title: "Rap do Gohan (Dragon Ball Z) - A FÚRIA DE UM SAIYAJIN | NERD HITS", youtubeId: "0QQWwrs39As", duration: 0, category: 'NERD HITS', artist: '7MZ', searchTerms: ["gohan", "dragon", "ball", "furia", "saiyajin"] },
   { id: "bills-deus", title: "Rap do Bills (Dragon Ball Super) - DEUS DA DESTRUIÇÃO | NERD HITS", youtubeId: "XbUvowjHsAk", duration: 0, category: 'NERD HITS', artist: '7MZ', searchTerms: ["bills", "dragon", "ball", "deus", "destruicao"] },
   { id: "goku-vegeta", title: "Rap do Goku e Vegeta (Dragon Ball Super) - O HOMEM MAIS FORTE DO UNIVERSO | NERD HITS", youtubeId: "KRXrDOtta10", duration: 0, category: 'NERD HITS', artist: '7MZ', searchTerms: ["goku", "vegeta", "dragon", "ball", "homem", "forte", "universo"] },
+
+  // --- MELANIE MARTINEZ (from playlist) ---
+  { id: "melanie-RfPm4wc1rj4", title: "Dead to Me", youtubeId: "RfPm4wc1rj4", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["dead","to","me"] },
+  { id: "melanie-f3-mLw9AqhE", title: "Bittersweet Tragedy", youtubeId: "f3-mLw9AqhE", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["bittersweet","tragedy"] },
+  { id: "melanie-mh-E_c6TEv0", title: "Cry Baby", youtubeId: "mh-E_c6TEv0", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["cry","baby"] },
+  { id: "melanie-Fu5mBO3pH8k", title: "Dollhouse", youtubeId: "Fu5mBO3pH8k", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["dollhouse"] },
+  { id: "melanie-WnJLpABeZD8", title: "Sippy Cup", youtubeId: "WnJLpABeZD8", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["sippy","cup"] },
+  { id: "melanie-Y1X6dCCtzOc", title: "Carousel", youtubeId: "Y1X6dCCtzOc", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["carousel"] },
+  { id: "melanie-3I10gH32Xc8", title: "Alphabet Boy", youtubeId: "3I10gH32Xc8", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["alphabet","boy"] },
+  { id: "melanie-_RyiXOoDijk", title: "Soap", youtubeId: "_RyiXOoDijk", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["soap"] },
+  { id: "melanie-vD0ZkIibN54", title: "Training Wheels", youtubeId: "vD0ZkIibN54", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["training","wheels"] },
+  { id: "melanie-5w_hsen-fDs", title: "Pity Party", youtubeId: "5w_hsen-fDs", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["pity","party"] },
+  { id: "melanie-W3CwR9GPjOc", title: "Tag, You're It", youtubeId: "W3CwR9GPjOc", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["tag","youre","it"] },
+  { id: "melanie-MfkD3X8UEr4", title: "Milk and Cookies", youtubeId: "MfkD3X8UEr4", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["milk","cookies"] },
+  { id: "melanie-4CVa3z1kt3E", title: "Pacify Her", youtubeId: "4CVa3z1kt3E", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["pacify","her"] },
+  { id: "melanie-Av8k0aCdw6A", title: "Mrs. Potato Head", youtubeId: "Av8k0aCdw6A", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["mrs","potato","head"] },
+  { id: "melanie-UaYBbzUXGzM", title: "Mad Hatter", youtubeId: "UaYBbzUXGzM", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["mad","hatter"] },
+  { id: "melanie-tp8WZuJZh8o", title: "Play Date", youtubeId: "tp8WZuJZh8o", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["play","date"] },
+  { id: "melanie-QWM5BsDjXuI", title: "Teddy Bear", youtubeId: "QWM5BsDjXuI", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["teddy","bear"] },
+  { id: "melanie-WkMLrMAudzk", title: "Cake", youtubeId: "WkMLrMAudzk", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["cake"] },
+  { id: "melanie-2IHcXyYmZu0", title: "Gingerbread Man", youtubeId: "2IHcXyYmZu0", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["gingerbread","man"] },
+  { id: "melanie-2FV-clvIwPI", title: "Wheels on the Bus", youtubeId: "2FV-clvIwPI", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["wheels","on","the","bus"] },
+  { id: "melanie-d5rL9pZO6e0", title: "Class Fight", youtubeId: "d5rL9pZO6e0", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["class","fight"] },
+  { id: "melanie-TmqET0WZZsA", title: "The Principal", youtubeId: "TmqET0WZZsA", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["the","principal"] },
+  { id: "melanie-tkjI7eVY0bw", title: "Show & Tell", youtubeId: "tkjI7eVY0bw", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["show","tell"] },
+  { id: "melanie-jC0VO5uJV6w", title: "Nurse's Office", youtubeId: "jC0VO5uJV6w", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["nurse","office"] },
+  { id: "melanie-_VI7dehRwy0", title: "Drama Club", youtubeId: "_VI7dehRwy0", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["drama","club"] },
+  { id: "melanie-SneWdW4P7cQ", title: "Strawberry Shortcake", youtubeId: "SneWdW4P7cQ", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["strawberry","shortcake"] },
+  { id: "melanie-0vM7nweKJmk", title: "Lunchbox Friends", youtubeId: "0vM7nweKJmk", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["lunchbox","friends"] },
+  { id: "melanie-983KYWPqszs", title: "Orange Juice", youtubeId: "983KYWPqszs", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["orange","juice"] },
+  { id: "melanie-82s9TxIbnbQ", title: "Detention", youtubeId: "82s9TxIbnbQ", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["detention"] },
+  { id: "melanie-8p60STDz_6w", title: "Teacher's Pet", youtubeId: "8p60STDz_6w", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["teacher","pet"] },
+  { id: "melanie-y-8JnM3MJVk", title: "High School Sweethearts", youtubeId: "y-8JnM3MJVk", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["high","school","sweethearts"] },
+  { id: "melanie-ZqaH-MXRSac", title: "Recess", youtubeId: "ZqaH-MXRSac", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["recess"] },
+  { id: "melanie-EnHp2lqvhHI", title: "Fire Drill", youtubeId: "EnHp2lqvhHI", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["fire","drill"] },
+  { id: "melanie-fwCAy90o3Zs", title: "Copy Cat (feat. Tierra Whack)", youtubeId: "fwCAy90o3Zs", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["copy","cat","tierra","whack"] },
+  { id: "melanie-VQdMRFMIRKE", title: "Notebook", youtubeId: "VQdMRFMIRKE", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["notebook"] },
+  { id: "melanie-JlyVu751UFM", title: "Test Me", youtubeId: "JlyVu751UFM", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["test","me"] },
+  { id: "melanie-aoh4wIG-RLI", title: "Brain & Heart", youtubeId: "aoh4wIG-RLI", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["brain","heart"] },
+  { id: "melanie-g3wpxaJMRHc", title: "Numbers", youtubeId: "g3wpxaJMRHc", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["numbers"] },
+  { id: "melanie-LBBsKb1bMwQ", title: "Glued", youtubeId: "LBBsKb1bMwQ", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["glued"] },
+  { id: "melanie-pK-u6i7hbPg", title: "Field Trip", youtubeId: "pK-u6i7hbPg", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["field","trip"] },
+  { id: "melanie-0tHRHtxLQgU", title: "The Bakery", youtubeId: "0tHRHtxLQgU", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["the","bakery"] },
+  { id: "melanie-jAAJ4S5ayXo", title: "DEATH", youtubeId: "jAAJ4S5ayXo", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["death"] },
+  { id: "melanie-3oSHhZmc_o0", title: "VOID", youtubeId: "3oSHhZmc_o0", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["void"] },
+  { id: "melanie-xuhIFRdszbM", title: "TUNNEL VISION", youtubeId: "xuhIFRdszbM", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["tunnel","vision"] },
+  { id: "melanie-z61w9HxJAb0", title: "FAERIE SOIRÉE", youtubeId: "z61w9HxJAb0", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["faerie","soiree"] },
+  { id: "melanie-WcEwxk6hZnI", title: "LIGHT SHOWER", youtubeId: "WcEwxk6hZnI", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["light","shower"] },
+  { id: "melanie-bf6hlhpsgsg", title: "SPIDER WEB", youtubeId: "bf6hlhpsgsg", duration: 0, category: 'POP', artist: 'MELANIE', searchTerms: ["spider","web"] },
 ];
 
 export function getRandomSong(excludeIds: string[] = [], selo?: SeloKey, artist?: Artist): Song | null {

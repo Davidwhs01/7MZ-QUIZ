@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useCallback, useRef, useState } from 'react';
+import { useEffect, useCallback, useRef, useState, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import { useYouTubePlayer } from '@/hooks/useYouTubePlayer';
 import { useGameState } from '@/hooks/useGameState';
 import { getAudioDuration, generateRandomTimestamp, calculateRoundScore } from '@/lib/game-logic';
@@ -8,15 +9,86 @@ import { saveGameScore } from '@/utils/supabase/gameActions';
 import { sfx } from '@/lib/audio-effects';
 import SearchBar from '@/components/game/SearchBar';
 import Visualizer from '@/components/game/Visualizer';
-import { Song, SeloKey, SongCategory, songs } from '@/data/songs';
+import { Song, SeloKey, SongCategory, songs, type Artist } from '@/data/songs';
 import styles from './play.module.css';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { useChannel } from '@/context/ChannelContext';
 
+// Detect artist from URL - more robust logic
+function useGameArtistFromURL(activeChannel: Artist): Artist {
+  const [detectedArtist, setDetectedArtist] = useState<Artist>(activeChannel);
+  const [isDetected, setIsDetected] = useState(false);
+  
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const url = window.location.href;
+    const path = window.location.pathname;
+    
+    // Check URL params first (highest priority)
+    const artistParam = urlParams.get('artist');
+    if (artistParam === 'meln') {
+      setDetectedArtist('MELANIE');
+      setIsDetected(true);
+      return;
+    }
+    if (artistParam === 'enygma') {
+      setDetectedArtist('ENYGMA');
+      setIsDetected(true);
+      return;
+    }
+    if (artistParam === '7mz') {
+      setDetectedArtist('7MZ');
+      setIsDetected(true);
+      return;
+    }
+    
+    // Check path to determine section
+    if (path.includes('/pop') || path.startsWith('/pop')) {
+      setDetectedArtist('MELANIE');
+      setIsDetected(true);
+      return;
+    }
+    
+    // Use activeChannel from context, but validate it's valid
+    if (activeChannel === '7MZ' || activeChannel === 'ENYGMA' || activeChannel === 'MELANIE') {
+      setDetectedArtist(activeChannel);
+    } else {
+      // Default to 7MZ if activeChannel is invalid
+      setDetectedArtist('7MZ');
+    }
+    setIsDetected(true);
+  }, [activeChannel]);
+  
+  return detectedArtist;
+}
+
 export default function PlayPage() {
+  const router = useRouter();
   const { activeChannel } = useChannel();
+  const gameArtist = useGameArtistFromURL(activeChannel);
+  
+  // Apply theme based on gameArtist - force immediately on mount
+  useEffect(() => {
+    // Clear all theme classes first
+    document.body.classList.remove('theme-7mz', 'theme-enygma', 'theme-melanie', 'theme-geek', 'theme-pop');
+    
+    // Apply theme based on detected artist
+    switch (gameArtist) {
+      case '7MZ':
+        document.body.classList.add('theme-7mz');
+        break;
+      case 'ENYGMA':
+        document.body.classList.add('theme-enygma');
+        break;
+      case 'MELANIE':
+        document.body.classList.add('theme-melanie');
+        break;
+    }
+    console.log('Theme applied:', gameArtist);
+  }, [gameArtist]);
+  
   const {
     state,
     startGame,
@@ -62,7 +134,7 @@ export default function PlayPage() {
   // Start new round: get real duration from YT, generate safe timestamp, then play
   const startNewRound = useCallback(async () => {
     const cat = categoryRef.current;
-    const data = loadNextSong(cat, activeChannel);
+    const data = loadNextSong(cat, gameArtist);
     
     if (!data) {
       return;
@@ -79,7 +151,7 @@ export default function PlayPage() {
     nextSongDataRef.current = fixedData;
     
     loadAndPlay(data.song.youtubeId, safeTimestamp, data.duration);
-  }, [loadNextSong, getRealDuration, loadAndPlay]);
+  }, [loadNextSong, getRealDuration, loadAndPlay, gameArtist]);
 
   // Keep skipSongRef updated so error handler can call it
   useEffect(() => {
@@ -257,13 +329,17 @@ export default function PlayPage() {
           </svg>
         </Link>
         <div className={styles.logoHeader}>
-          {activeChannel === '7MZ' ? (
+          {gameArtist === '7MZ' && (
             <Image src="/7mz-logo.jpg" alt="7MZ Logo" width={36} height={36} className={styles.logoHeaderImg} />
-          ) : (
-            <Image src="/enygma-logo.png" alt="Enygma Logo" width={36} height={36} className={styles.logoHeaderImg} />
+          )}
+          {gameArtist === 'ENYGMA' && (
+            <Image src="/enygma-logo.jpg" alt="Enygma Logo" width={36} height={36} className={styles.logoHeaderImg} />
+          )}
+          {gameArtist === 'MELANIE' && (
+            <Image src="/Melanie-Logo.jpg" alt="Melanie Logo" width={36} height={36} className={styles.logoHeaderImg} />
           )}
           <h1 className={styles.logo}>
-            {activeChannel === '7MZ' ? '7 MINUTOZ' : 'ENYGMA'} <span>ARENA</span>
+            {gameArtist === '7MZ' ? '7 MINUTOZ' : gameArtist === 'MELANIE' ? 'MELANIE' : 'ENYGMA'} <span>ARENA</span>
           </h1>
         </div>
         {state.phase !== 'IDLE' && state.phase !== 'GAME_OVER' && (
@@ -303,7 +379,7 @@ export default function PlayPage() {
                 }
               }}
             >
-              {activeChannel === '7MZ' && (
+              {gameArtist === '7MZ' && (
                 <>
                   <motion.button
                     variants={{
@@ -337,7 +413,7 @@ export default function PlayPage() {
                 </>
               )}
 
-              {activeChannel === 'ENYGMA' && (
+              {gameArtist === 'ENYGMA' && (
                 <>
                   <motion.button
                     variants={{
@@ -367,6 +443,25 @@ export default function PlayPage() {
                     <span className={styles.categoryEmoji}>🔥</span>
                     <span className={styles.categoryName}>PÓS REVELAÇÃO</span>
                     <span className={styles.categoryCount}>{songs.filter(s => s.selos?.includes('PÓS REVELAÇÃO')).length} músicas</span>
+                  </motion.button>
+                </>
+              )}
+
+              {gameArtist === 'MELANIE' && (
+                <>
+                  <motion.button
+                    variants={{
+                      hidden: { y: 20, opacity: 0 },
+                      visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 300 } }
+                    }}
+                    whileHover={{ scale: 1.05, y: -5 }}
+                    whileTap={{ scale: 0.95 }}
+                    className={`${styles.categoryCard} ${selectedCategory === 'POP' ? styles.categoryCardActive : ''}`}
+                    onClick={() => setSelectedCategory('POP')}
+                  >
+                    <span className={styles.categoryEmoji}>🎤</span>
+                    <span className={styles.categoryName}>TODAS AS MÚSICAS</span>
+                    <span className={styles.categoryCount}>{songs.filter(s => s.artist === 'MELANIE').length} músicas</span>
                   </motion.button>
                 </>
               )}
@@ -529,7 +624,7 @@ export default function PlayPage() {
               disabled={state.phase !== 'PLAYING'}
               placeholder="Qual música está tocando?"
               category={selectedCategory && selectedCategory !== 'ALL' ? selectedCategory : undefined}
-              artist={activeChannel}
+              artist={gameArtist}
             />
 
             {/* Correct feedback overlay */}

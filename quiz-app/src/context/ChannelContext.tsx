@@ -2,48 +2,75 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-export type ChannelType = '7MZ' | 'ENYGMA';
+export type ChannelCategory = 'GEEK' | 'POP';
+export type ChannelType = '7MZ' | 'ENYGMA' | 'MELANIE';
 
 interface ChannelContextProps {
   activeChannel: ChannelType;
   setActiveChannel: (channel: ChannelType) => void;
+  channelCategory: ChannelCategory;
+  setChannelCategory: (category: ChannelCategory) => void;
+  isLoaded: boolean;
 }
 
 const ChannelContext = createContext<ChannelContextProps | undefined>(undefined);
 
 export const ChannelProvider = ({ children }: { children: ReactNode }) => {
   const [activeChannel, setActiveChannel] = useState<ChannelType>('7MZ');
-  const [isMounted, setIsMounted] = useState(false);
+  const [channelCategory, setChannelCategory] = useState<ChannelCategory>('GEEK');
+  const [isLoaded, setIsLoaded] = useState(false);
 
-  // Rehydrate channel from localStorage on mount
+  // Load from localStorage on mount (client only)
   useEffect(() => {
-    setIsMounted(true);
-    const saved = localStorage.getItem('geek-arena-channel') as ChannelType;
-    if (saved && (saved === '7MZ' || saved === 'ENYGMA')) {
-      setActiveChannel(saved);
+    const savedCategory = localStorage.getItem('geek-arena-category') as ChannelCategory;
+    const savedChannel = localStorage.getItem('geek-arena-channel') as ChannelType;
+    
+    if (savedCategory === 'GEEK' || savedCategory === 'POP') {
+      setChannelCategory(savedCategory);
     }
+    
+    if (savedChannel && (savedChannel === '7MZ' || savedChannel === 'ENYGMA' || savedChannel === 'MELANIE')) {
+      const isGeek = savedChannel === '7MZ' || savedChannel === 'ENYGMA';
+      const categoryMatch = (savedCategory === 'GEEK' && isGeek) || 
+                           (savedCategory === 'POP' && savedChannel === 'MELANIE');
+      
+      if (categoryMatch) {
+        setActiveChannel(savedChannel);
+      } else {
+        setActiveChannel(savedCategory === 'GEEK' ? '7MZ' : 'MELANIE');
+      }
+    }
+    setIsLoaded(true);
   }, []);
 
-  // Sync to localStorage and Body Class whenever it changes
+  // Save to localStorage when changes
   useEffect(() => {
-    if (!isMounted) return;
+    if (!isLoaded) return;
+    localStorage.setItem('geek-arena-category', channelCategory);
     localStorage.setItem('geek-arena-channel', activeChannel);
+  }, [activeChannel, channelCategory, isLoaded]);
 
-    // Apply global CSS Theme classes
+  // Apply theme
+  useEffect(() => {
+    if (!isLoaded) return;
+    document.body.classList.remove('theme-7mz', 'theme-enygma', 'theme-melanie');
     if (activeChannel === '7MZ') {
-      document.body.classList.remove('theme-enygma');
       document.body.classList.add('theme-7mz');
-    } else {
-      document.body.classList.remove('theme-7mz');
+    } else if (activeChannel === 'ENYGMA') {
       document.body.classList.add('theme-enygma');
+    } else if (activeChannel === 'MELANIE') {
+      document.body.classList.add('theme-melanie');
     }
-  }, [activeChannel, isMounted]);
-
-  // Prevent flash content if needed:
-  // if (!isMounted) return <div style={{ minHeight: '100vh', background: '#050508' }} />; // Opcionalmente, mostrar spinner/preto base
+  }, [activeChannel, isLoaded]);
 
   return (
-    <ChannelContext.Provider value={{ activeChannel, setActiveChannel }}>
+    <ChannelContext.Provider value={{ 
+      activeChannel, 
+      setActiveChannel,
+      channelCategory, 
+      setChannelCategory,
+      isLoaded
+    }}>
       {children}
     </ChannelContext.Provider>
   );

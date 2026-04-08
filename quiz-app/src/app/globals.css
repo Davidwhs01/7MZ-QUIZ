@@ -72,6 +72,26 @@
 }
 
 /* === THEME OVERRIDES === */
+
+/* GEEK THEME (Orange/Blue - 7MZ Original) */
+body.theme-geek {
+  /* Primary Accent: Orange */
+  --accent-orange: #ff6b2b;
+  --accent-orange-rgb: 255, 107, 43;
+  --accent-orange-bright: #ff8c42;
+  --accent-orange-dim: #cc5520;
+  --accent-neon: #ffa366;
+  
+  --glow-orange: 0 0 20px rgba(255, 107, 43, 0.25), 0 0 60px rgba(255, 107, 43, 0.08);
+  --glow-orange-strong: 0 0 30px rgba(255, 107, 43, 0.5), 0 0 80px rgba(255, 107, 43, 0.15);
+  --border-orange: rgba(255, 107, 43, 0.25);
+  
+  /* Secondary Accent: Blue */
+  --accent-blue: #3b82f6;
+  --accent-blue-rgb: 59, 130, 246;
+  --accent-blue-dim: #1d4ed8;
+}
+
 /* ENYGMA THEME (Neon Green / Deep Purple) */
 body.theme-enygma {
   /* Primary Accent: Neon Green */
@@ -89,6 +109,44 @@ body.theme-enygma {
   --accent-blue: #b100ff;
   --accent-blue-rgb: 177, 0, 255;
   --accent-blue-dim: #7900b3;
+}
+
+/* MELANIE THEME (Pink / Purple) */
+body.theme-melanie {
+  /* Primary Accent: Hot Pink */
+  --accent-orange: #ff69b4;
+  --accent-orange-rgb: 255, 105, 180;
+  --accent-orange-bright: #ff8dc7;
+  --accent-orange-dim: #cc4d91;
+  --accent-neon: #ffa0ce;
+  
+  --glow-orange: 0 0 20px rgba(255, 105, 180, 0.25), 0 0 60px rgba(255, 105, 180, 0.08);
+  --glow-orange-strong: 0 0 30px rgba(255, 105, 180, 0.5), 0 0 80px rgba(255, 105, 180, 0.15);
+  --border-orange: rgba(255, 105, 180, 0.25);
+  
+  /* Secondary Accent: Deep Purple */
+  --accent-blue: #9400d3;
+  --accent-blue-rgb: 148, 0, 211;
+  --accent-blue-dim: #6a0096;
+}
+
+/* POP/STUDIO THEME (Pink / Purple - same as Melanie) */
+body.theme-pop {
+  /* Primary Accent: Hot Pink */
+  --accent-orange: #ff69b4;
+  --accent-orange-rgb: 255, 105, 180;
+  --accent-orange-bright: #ff8dc7;
+  --accent-orange-dim: #cc4d91;
+  --accent-neon: #ffa0ce;
+  
+  --glow-orange: 0 0 20px rgba(255, 105, 180, 0.25), 0 0 60px rgba(255, 105, 180, 0.08);
+  --glow-orange-strong: 0 0 30px rgba(255, 105, 180, 0.5), 0 0 80px rgba(255, 105, 180, 0.15);
+  --border-orange: rgba(255, 105, 180, 0.25);
+  
+  /* Secondary Accent: Deep Purple */
+  --accent-blue: #9400d3;
+  --accent-blue-rgb: 148, 0, 211;
+  --accent-blue-dim: #6a0096;
 }
 
 /* === Reset === */

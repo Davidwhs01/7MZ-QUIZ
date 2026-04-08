@@ -181,38 +181,6 @@
   white-space: nowrap;
 }
 
-.sectionSwitch {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 8px 12px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 8px;
-  color: var(--text-muted);
-  font-size: 12px;
-  font-weight: 500;
-  text-decoration: none;
-  transition: all 0.2s;
-  margin-top: 12px;
-  width: 100%;
-}
-
-.sectionSwitch:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--text-secondary);
-  border-color: rgba(255, 255, 255, 0.15);
-}
-
-.sectionSwitchIcon {
-  font-size: 14px;
-}
-
-.sectionSwitchText {
-  white-space: nowrap;
-}
-
 /* Logo with rotating energy rings */
 .logoContainer {
   position: relative;

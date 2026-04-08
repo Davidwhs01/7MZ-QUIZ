@@ -15,6 +15,7 @@ type UserProfile = {
   avatar_url: string;
   score: number;
   games_played: number;
+  preferred_section: 'geek' | 'pop' | null;
 };
 
 type MatchHistory = {
@@ -40,6 +41,7 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [history, setHistory] = useState<MatchHistory[]>([]);
   const [identities, setIdentities] = useState<Identity[]>([]);
+  const [editSection, setEditSection] = useState<'geek' | 'pop' | null>(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -64,7 +66,7 @@ export default function ProfilePage() {
       // 2. Get user public profile stats and username/avatar
       const { data: publicProfile } = await supabase
         .from('profiles')
-        .select('username, avatar_url')
+        .select('username, avatar_url, preferred_section')
         .eq('id', user.id)
         .single();
 
@@ -83,7 +85,8 @@ export default function ProfilePage() {
         username: userName,
         avatar_url: publicProfile?.avatar_url || metadata.avatar_url || metadata.picture || '/7mz-logo.jpg',
         score: leaderData?.score || 0,
-        games_played: leaderData?.games_played || 0
+        games_played: leaderData?.games_played || 0,
+        preferred_section: publicProfile?.preferred_section || null
       });
       setEditUsername(userName);
 
@@ -183,6 +186,24 @@ export default function ProfilePage() {
     }
   };
 
+  const handleSectionChange = async (section: 'geek' | 'pop') => {
+    if (!profile) return;
+    try {
+      const supabase = createClient();
+      const { error } = await supabase
+        .from('profiles')
+        .update({ preferred_section: section })
+        .eq('id', profile.id);
+
+      if (error) throw error;
+      
+      setProfile(prev => prev ? { ...prev, preferred_section: section } : null);
+      setEditSection(null);
+    } catch (error: any) {
+      alert("Erro ao salvar: " + error.message);
+    }
+  };
+
   const hasDiscord = identities.some(i => i.provider === 'discord');
   const hasGoogle = identities.some(i => i.provider === 'google');
 
@@ -202,7 +223,7 @@ export default function ProfilePage() {
       <div className={styles.orbBlue} />
 
       <header className={styles.header}>
-        <Link href="/" className={styles.backBtn}>
+        <Link href={profile?.preferred_section ? `/${profile.preferred_section}` : '/'} className={styles.backBtn}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20">
             <path d="m15 18-6-6 6-6" />
           </svg>
@@ -280,6 +301,38 @@ export default function ProfilePage() {
               <div className={styles.statValue}>{profile.games_played}</div>
               <div className={styles.statLabel}>Partidas Jogadas</div>
             </div>
+          </div>
+
+          {/* Section Preference */}
+          <div className={styles.sectionPreference}>
+            <div className={styles.sectionPrefHeader}>
+              <span className={styles.sectionPrefLabel}>Seção Preferida</span>
+              {profile.preferred_section && (
+                <span className={styles.sectionPrefCurrent}>
+                  {profile.preferred_section === 'geek' ? '🎮 GEEK' : '🎤 POP'}
+                </span>
+              )}
+            </div>
+            <div className={styles.sectionPrefOptions}>
+              <button
+                className={`${styles.sectionPrefBtn} ${profile.preferred_section === 'geek' ? styles.sectionPrefBtnActive : ''}`}
+                onClick={() => handleSectionChange('geek')}
+              >
+                🎮 GEEK ARENA
+              </button>
+              <button
+                className={`${styles.sectionPrefBtn} ${profile.preferred_section === 'pop' ? styles.sectionPrefBtnActive : ''}`}
+                onClick={() => handleSectionChange('pop')}
+              >
+                🎤 POP STUDIO
+              </button>
+            </div>
+            {!profile.preferred_section && (
+              <p className={styles.sectionPrefHint}>Escolha sua seção preferida para acesso rápido</p>
+            )}
+            {profile.preferred_section && (
+              <p className={styles.sectionPrefHint} style={{ color: 'var(--accent-orange)' }}>Clique para alterar</p>
+            )}
           </div>
         </motion.div>
 
