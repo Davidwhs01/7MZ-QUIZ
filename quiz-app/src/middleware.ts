@@ -1,7 +1,18 @@
-import { type NextRequest } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 import { updateSession } from '@/utils/supabase/middleware'
 
 export async function middleware(request: NextRequest) {
+  const hostname = request.headers.get('host') || '';
+  const pathname = request.nextUrl.pathname;
+
+  if (pathname === '/') {
+    if (hostname.includes('poparena')) {
+      return NextResponse.redirect(new URL('/pop', request.url));
+    } else {
+      return NextResponse.redirect(new URL('/geek', request.url));
+    }
+  }
+
   return await updateSession(request)
 }
 
