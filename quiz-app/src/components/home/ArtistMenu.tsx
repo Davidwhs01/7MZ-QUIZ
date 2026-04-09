@@ -17,6 +17,7 @@ const GEEK_ARTISTS: { id: ChannelType; name: string; logo: string; desc: string 
   { id: 'M4RKIM', name: 'M4rkim', logo: '/M4rkim-Logo.jpg', desc: 'Rap nacional' },
   { id: 'ANIRAP', name: 'Anirap', logo: '/anirap-logo.jpg', desc: 'Rap nacional' },
   { id: 'DAIKINEZ', name: 'Daikinez', logo: '/Daikinez-Logo.jpg', desc: 'Rap geek' },
+  { id: 'NISHIKAY', name: 'Nishikay', logo: '/Nishikay-Logo.jpg', desc: 'Rap geek anime' },
 ];
 
 const POP_ARTISTS: { id: ChannelType; name: string; logo: string; desc: string }[] = [

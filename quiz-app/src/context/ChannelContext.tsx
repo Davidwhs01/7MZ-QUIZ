@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 export type ChannelCategory = 'GEEK' | 'POP';
-export type ChannelType = '7MZ' | 'ENYGMA' | 'MELANIE' | 'RODRIGOZIN' | 'MITSKI' | 'M4RKIM' | 'ANIRAP' | 'DAIKINEZ';
+export type ChannelType = '7MZ' | 'ENYGMA' | 'MELANIE' | 'RODRIGOZIN' | 'MITSKI' | 'M4RKIM' | 'ANIRAP' | 'DAIKINEZ' | 'NISHIKAY';
 
 interface ChannelContextProps {
   activeChannel: ChannelType;
@@ -29,8 +29,8 @@ export const ChannelProvider = ({ children }: { children: ReactNode }) => {
       setChannelCategory(savedCategory);
     }
     
-    if (savedChannel && (savedChannel === '7MZ' || savedChannel === 'ENYGMA' || savedChannel === 'MELANIE' || savedChannel === 'RODRIGOZIN' || savedChannel === 'MITSKI' || savedChannel === 'M4RKIM' || savedChannel === 'ANIRAP' || savedChannel === 'DAIKINEZ')) {
-      const isGeek = savedChannel === '7MZ' || savedChannel === 'ENYGMA' || savedChannel === 'RODRIGOZIN' || savedChannel === 'M4RKIM' || savedChannel === 'ANIRAP' || savedChannel === 'DAIKINEZ';
+    if (savedChannel && (savedChannel === '7MZ' || savedChannel === 'ENYGMA' || savedChannel === 'MELANIE' || savedChannel === 'RODRIGOZIN' || savedChannel === 'MITSKI' || savedChannel === 'M4RKIM' || savedChannel === 'ANIRAP' || savedChannel === 'DAIKINEZ' || savedChannel === 'NISHIKAY')) {
+      const isGeek = savedChannel === '7MZ' || savedChannel === 'ENYGMA' || savedChannel === 'RODRIGOZIN' || savedChannel === 'M4RKIM' || savedChannel === 'ANIRAP' || savedChannel === 'DAIKINEZ' || savedChannel === 'NISHIKAY';
       const categoryMatch = (savedCategory === 'GEEK' && isGeek) || 
                            (savedCategory === 'POP' && (savedChannel === 'MELANIE' || savedChannel === 'MITSKI'));
       
@@ -53,7 +53,7 @@ export const ChannelProvider = ({ children }: { children: ReactNode }) => {
   // Apply theme
   useEffect(() => {
     if (!isLoaded) return;
-    document.body.classList.remove('theme-7mz', 'theme-enygma', 'theme-melanie', 'theme-rodrigozin', 'theme-mitski', 'theme-m4rkim', 'theme-anirap', 'theme-daikinez');
+    document.body.classList.remove('theme-7mz', 'theme-enygma', 'theme-melanie', 'theme-rodrigozin', 'theme-mitski', 'theme-m4rkim', 'theme-anirap', 'theme-daikinez', 'theme-nishikay');
     if (activeChannel === '7MZ') {
       document.body.classList.add('theme-7mz');
     } else if (activeChannel === 'ENYGMA') {
@@ -70,6 +70,8 @@ export const ChannelProvider = ({ children }: { children: ReactNode }) => {
       document.body.classList.add('theme-anirap');
     } else if (activeChannel === 'DAIKINEZ') {
       document.body.classList.add('theme-daikinez');
+    } else if (activeChannel === 'NISHIKAY') {
+      document.body.classList.add('theme-nishikay');
     }
   }, [activeChannel, isLoaded]);
 

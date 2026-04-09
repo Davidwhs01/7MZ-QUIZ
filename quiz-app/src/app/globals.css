@@ -301,6 +301,47 @@ body.theme-daikinez {
   --scrollbar-thumb: linear-gradient(180deg, #b829ff, #00d2ff);
 }
 
+/* NISHIKAY THEME (Manga Ink & Gold / Guardian Deity) 
+   Baseado no estilo "ink sketch" da logo com acento dourado de energia. */
+body.theme-nishikay {
+  /* Primary Accent: Guardian Gold/Yellow */
+  --accent-orange: #ffcc00;
+  --accent-orange-rgb: 255, 204, 0;
+  --accent-orange-bright: #ffdd33;
+  --accent-orange-dim: #ccaa00;
+  --accent-neon: #fff3b0;
+  
+  /* Background Tones - Matte "Ink" Black */
+  --bg-primary: #000000;
+  --bg-secondary: #0a0a0a;
+  --bg-tertiary: #121212;
+  --bg-card: rgba(10, 10, 10, 0.98);
+  
+  /* Glow Effects - Sharp "Halo" Style */
+  --glow-orange: 
+    0 0 8px rgba(255, 204, 0, 0.4), 
+    0 0 20px rgba(255, 204, 0, 0.1);
+  --glow-orange-strong: 
+    0 0 15px rgba(255, 204, 0, 0.7), 
+    0 0 40px rgba(255, 255, 255, 0.2),
+    0 0 80px rgba(255, 204, 0, 0.2);
+  --border-orange: rgba(255, 204, 0, 0.5);
+  
+  /* Secondary Accent: Sharp White (Ink Highlights) */
+  --accent-blue: #ffffff;
+  --accent-blue-rgb: 255, 255, 255;
+  --accent-blue-bright: #ffffff;
+  --accent-blue-dim: #cccccc;
+  --glow-blue: 0 0 15px rgba(255, 255, 255, 0.2);
+  --border-blue: rgba(255, 255, 255, 0.3);
+
+  /* Special Selection Color */
+  --selection-bg: rgba(255, 204, 0, 0.3);
+
+  /* Scrollbar override */
+  --scrollbar-thumb: linear-gradient(180deg, #ffcc00, #ffffff);
+}
+
 /* === Reset === */
 *, *::before, *::after {
   box-sizing: border-box;

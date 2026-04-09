@@ -251,7 +251,8 @@ export default function GeekHome() {
                     activeChannel === 'RODRIGOZIN' ? 'rodrigozin' :
                     activeChannel === 'M4RKIM' ? 'm4rkim' :
                     activeChannel === 'ANIRAP' ? 'anirap' :
-                    activeChannel === 'DAIKINEZ' ? 'daikinez' : '7mz'
+                    activeChannel === 'DAIKINEZ' ? 'daikinez' :
+                    activeChannel === 'NISHIKAY' ? 'nishikay' : '7mz'
                   }`} className={styles.modeCard}>
                     <div className={styles.modeCardShine} />
                     <div className={styles.modeCardBorder} />

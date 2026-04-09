@@ -1,0 +1,14 @@
+import { Song } from '../types';
+
+export const nishikaySongs: Song[] = [
+  { id: "nishikay-aD0iZjHJZnw", title: "Promessas Vazias | Reze (Chainsaw Man) | Nishikay ft. @Daikinez", youtubeId: "aD0iZjHJZnw", duration: 0, category: 'NISHIKAY', artist: 'NISHIKAY' },
+  { id: "nishikay-MDkF9z0V1_k", title: "Iluminar | Rengoku (Kimetsu no Yaiba) | Nishikay", youtubeId: "MDkF9z0V1_k", duration: 0, category: 'NISHIKAY', artist: 'NISHIKAY' },
+  { id: "nishikay-Kxnuzg_3ebQ", title: "Seu Maior Vilão | Michael Kaiser (Blue Lock) | Nishikay", youtubeId: "Kxnuzg_3ebQ", duration: 0, category: 'NISHIKAY', artist: 'NISHIKAY' },
+  { id: "nishikay-8XrRo4y3c9w", title: "Mundo Cruel | Ekko (Arcane) | Nishikay", youtubeId: "8XrRo4y3c9w", duration: 0, category: 'NISHIKAY', artist: 'NISHIKAY' },
+  { id: "nishikay-Vng1iQQyVig", title: "No Fundo do Poço | Makima (Chainsaw Man) | Nishikay ft.@Daikinez", youtubeId: "Vng1iQQyVig", duration: 0, category: 'NISHIKAY', artist: 'NISHIKAY' },
+  { id: "nishikay-7wPZBpHncg0", title: "A Morte Não é o Fim | Singed (Arcane) | Nishikay", youtubeId: "7wPZBpHncg0", duration: 0, category: 'NISHIKAY', artist: 'NISHIKAY' },
+  { id: "nishikay-xLOYhqNnfWE", title: "Um Poder Que Não Deveria Ter | Jayce (Arcane) | Nishikay", youtubeId: "xLOYhqNnfWE", duration: 0, category: 'NISHIKAY', artist: 'NISHIKAY' },
+  { id: "nishikay-WKPLy6pL0u0", title: "Now I Am Your Enemy | Jinx (Arcane) | Nishikay", youtubeId: "WKPLy6pL0u0", duration: 0, category: 'NISHIKAY', artist: 'NISHIKAY' },
+  { id: "nishikay-RUvs0bKcTXQ", title: "Apenas Uma Engrenagem | Itadori Yuji (Jujutsu Kaisen) | Nishikay (Prod. A. Houz)", youtubeId: "RUvs0bKcTXQ", duration: 0, category: 'NISHIKAY', artist: 'NISHIKAY' },
+  { id: "nishikay-q2chJH_Ox7g", title: "Para Viver Como Rei | Doflamingo (One Piece) | Nishikay (Prod. A. Houz)", youtubeId: "q2chJH_Ox7g", duration: 0, category: 'NISHIKAY', artist: 'NISHIKAY' },
+];

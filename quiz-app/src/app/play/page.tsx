@@ -63,6 +63,11 @@ function useGameArtistFromURL(activeChannel: Artist): Artist {
       setIsDetected(true);
       return;
     }
+    if (artistParam === 'nishikay') {
+      setDetectedArtist('NISHIKAY');
+      setIsDetected(true);
+      return;
+    }
     
     // Check path to determine section
     if (path.includes('/pop') || path.startsWith('/pop')) {
@@ -72,7 +77,7 @@ function useGameArtistFromURL(activeChannel: Artist): Artist {
     }
     
     // Use activeChannel from context, but validate it's valid
-    if (activeChannel === '7MZ' || activeChannel === 'ENYGMA' || activeChannel === 'MELANIE' || activeChannel === 'RODRIGOZIN' || activeChannel === 'MITSKI' || activeChannel === 'M4RKIM' || activeChannel === 'ANIRAP' || activeChannel === 'DAIKINEZ') {
+    if (activeChannel === '7MZ' || activeChannel === 'ENYGMA' || activeChannel === 'MELANIE' || activeChannel === 'RODRIGOZIN' || activeChannel === 'MITSKI' || activeChannel === 'M4RKIM' || activeChannel === 'ANIRAP' || activeChannel === 'DAIKINEZ' || activeChannel === 'NISHIKAY') {
       setDetectedArtist(activeChannel);
     } else {
       // Default to 7MZ if activeChannel is invalid
@@ -92,7 +97,7 @@ export default function PlayPage() {
   // Apply theme based on gameArtist - force immediately on mount
   useEffect(() => {
     // Clear all theme classes first
-    document.body.classList.remove('theme-7mz', 'theme-enygma', 'theme-melanie', 'theme-geek', 'theme-pop', 'theme-rodrigozin', 'theme-mitski', 'theme-m4rkim', 'theme-anirap', 'theme-daikinez');
+    document.body.classList.remove('theme-7mz', 'theme-enygma', 'theme-melanie', 'theme-geek', 'theme-pop', 'theme-rodrigozin', 'theme-mitski', 'theme-m4rkim', 'theme-anirap', 'theme-daikinez', 'theme-nishikay');
     
     // Apply theme based on detected artist
     switch (gameArtist) {
@@ -119,6 +124,9 @@ export default function PlayPage() {
         break;
       case 'DAIKINEZ':
         document.body.classList.add('theme-daikinez');
+        break;
+      case 'NISHIKAY':
+        document.body.classList.add('theme-nishikay');
         break;
     }
     console.log('Theme applied:', gameArtist);
@@ -393,6 +401,9 @@ export default function PlayPage() {
           {gameArtist === 'MITSKI' && (
             <Image src="/Mitski-Logo.jpg" alt="Mitski Logo" width={36} height={36} className={styles.logoHeaderImg} />
           )}
+          {gameArtist === 'RODRIGOZIN' && (
+            <Image src="/RodrigoZin-Logo.jpg" alt="Rodrigo Zin Logo" width={36} height={36} className={styles.logoHeaderImg} />
+          )}
           {gameArtist === 'M4RKIM' && (
             <Image src="/M4rkim-Logo.jpg" alt="M4rkim Logo" width={36} height={36} className={styles.logoHeaderImg} />
           )}
@@ -402,8 +413,11 @@ export default function PlayPage() {
           {gameArtist === 'DAIKINEZ' && (
             <Image src="/Daikinez-Logo.jpg" alt="Daikinez Logo" width={36} height={36} className={styles.logoHeaderImg} />
           )}
+          {gameArtist === 'NISHIKAY' && (
+            <Image src="/Nishikay-Logo.jpg" alt="Nishikay Logo" width={36} height={36} className={styles.logoHeaderImg} />
+          )}
           <h1 className={styles.logo}>
-            {gameArtist === '7MZ' ? '7 MINUTOZ' : gameArtist === 'MELANIE' ? 'MELANIE' : gameArtist === 'RODRIGOZIN' ? 'RODRIGO ZIN' : gameArtist === 'MITSKI' ? 'MITSKI' : gameArtist === 'M4RKIM' ? 'M4RKIM' : gameArtist === 'ANIRAP' ? 'ANIRAP' : gameArtist === 'DAIKINEZ' ? 'DAIKINEZ' : 'ENYGMA'} <span>ARENA</span>
+            {gameArtist === '7MZ' ? '7 MINUTOZ' : gameArtist === 'MELANIE' ? 'MELANIE' : gameArtist === 'RODRIGOZIN' ? 'RODRIGO ZIN' : gameArtist === 'MITSKI' ? 'MITSKI' : gameArtist === 'M4RKIM' ? 'M4RKIM' : gameArtist === 'ANIRAP' ? 'ANIRAP' : gameArtist === 'DAIKINEZ' ? 'DAIKINEZ' : gameArtist === 'NISHIKAY' ? 'NISHIKAY' : 'ENYGMA'} <span>ARENA</span>
           </h1>
         </div>
         {state.phase !== 'IDLE' && state.phase !== 'GAME_OVER' && (
@@ -911,6 +925,51 @@ export default function PlayPage() {
                 <div className={styles.statCard}>
                   <span className={styles.statValue}>{state.totalHintsUsed}</span>
                   <span className={styles.statLabel}>Dicas Usadas</span>
+                </div>
+              </div>
+
+              <div className={styles.gameOverActions}>
+                <button className={styles.playAgainBtn} onClick={handlePlayAgain}>
+                  JOGAR NOVAMENTE
+                </button>
+                <Link href="/" className={styles.homeBtn}>
+                  Voltar ao Início
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* CATEGORY COMPLETE */}
+        {state.phase === 'CATEGORY_COMPLETE' && (
+          <div className={styles.gameOverScreen}>
+            <div 
+              className={styles.feedbackBg} 
+              style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)' }} 
+            />
+            <div className={styles.gameOverContent}>
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: 'spring', stiffness: 200, damping: 15 }}
+              >
+                <div className={styles.gameOverIcon} style={{ fontSize: '4rem' }}>🏆</div>
+              </motion.div>
+              <h2 className={styles.gameOverTitle}>CATEGORIA COMPLETA!</h2>
+              <p className={styles.correctAnswerLabel}>Você acertou todas as músicas!</p>
+
+              <div className={styles.statsGrid}>
+                <div className={styles.statCard}>
+                  <span className={styles.statValue}>{state.score}</span>
+                  <span className={styles.statLabel}>Pontos</span>
+                </div>
+                <div className={styles.statCard}>
+                  <span className={styles.statValue}>{state.streak}</span>
+                  <span className={styles.statLabel}>Músicas Acertadas</span>
+                </div>
+                <div className={styles.statCard}>
+                  <span className={styles.statValue}>{state.bestStreak}</span>
+                  <span className={styles.statLabel}>Melhor Sequência</span>
                 </div>
               </div>
 

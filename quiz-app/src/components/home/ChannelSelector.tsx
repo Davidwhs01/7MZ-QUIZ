@@ -7,7 +7,7 @@ import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useChannel } from '@/context/ChannelContext';
 
-export type ChannelType = '7MZ' | 'ENYGMA' | 'MELANIE' | 'RODRIGOZIN' | 'MITSKI' | 'M4RKIM' | 'ANIRAP' | 'DAIKINEZ';
+export type ChannelType = '7MZ' | 'ENYGMA' | 'MELANIE' | 'RODRIGOZIN' | 'MITSKI' | 'M4RKIM' | 'ANIRAP' | 'DAIKINEZ' | 'NISHIKAY';
 
 const CHANNELS = {
   '7MZ': { id: '7MZ', name: '7 Minutoz', logo: '/7mz-logo.jpg' },
@@ -18,10 +18,11 @@ const CHANNELS = {
   'M4RKIM': { id: 'M4RKIM', name: 'M4rkim', logo: '/M4rkim-Logo.jpg' },
   'ANIRAP': { id: 'ANIRAP', name: 'Anirap', logo: '/anirap-logo.jpg' },
   'DAIKINEZ': { id: 'DAIKINEZ', name: 'Daikinez', logo: '/Daikinez-Logo.jpg' },
+  'NISHIKAY': { id: 'NISHIKAY', name: 'Nishikay', logo: '/Nishikay-Logo.jpg' },
 } as const;
 
 const SECTION_CHANNELS: Record<string, ChannelType[]> = {
-  'geek': ['7MZ', 'ENYGMA', 'RODRIGOZIN', 'M4RKIM', 'ANIRAP', 'DAIKINEZ'],
+  'geek': ['7MZ', 'ENYGMA', 'RODRIGOZIN', 'M4RKIM', 'ANIRAP', 'DAIKINEZ', 'NISHIKAY'],
   'pop': ['MELANIE', 'MITSKI'],
 };
 
@@ -76,7 +77,10 @@ export default function ChannelSelector({ onChannelChange }: ChannelSelectorProp
     ]);
   }, [currentChannel]);
 
+  const [direction, setDirection] = useState<number>(0);
+
   const slideRight = () => {
+    setDirection(1);
     const newActiveId = items[2].id;
     setItems((prev) => [
       prev[1],
@@ -88,6 +92,7 @@ export default function ChannelSelector({ onChannelChange }: ChannelSelectorProp
   };
 
   const slideLeft = () => {
+    setDirection(-1);
     const newActiveId = items[0].id;
     setItems((prev) => [
       { uid: uidCounter++, id: prev[1].id },
@@ -176,18 +181,36 @@ export default function ChannelSelector({ onChannelChange }: ChannelSelectorProp
             
             const xPos = index === 0 ? -160 : index === 2 ? 160 : 0;
 
+            const getInitialX = () => {
+              if (direction === 1) {
+                return index === 0 ? -160 : index === 2 ? 240 : 0;
+              } else if (direction === -1) {
+                return index === 0 ? -240 : index === 2 ? 160 : 0;
+              }
+              return index === 0 ? -160 : 160;
+            };
+
+            const getTargetX = () => {
+              if (direction === 1) {
+                return index === 0 ? -160 : index === 2 ? 160 : 0;
+              } else if (direction === -1) {
+                return index === 0 ? -160 : index === 2 ? 160 : 0;
+              }
+              return xPos;
+            };
+
             return (
               <motion.div
                 key={item.uid}
                 className={`${styles.channelItem} ${isCenter ? styles.active : styles.inactive}`}
                 onClick={() => handleSelect(index)}
-                initial={{ opacity: 0, scale: 0.8, x: index === 0 ? -240 : 240 }}
+                initial={{ opacity: 0, scale: 0.8, x: getInitialX() }}
                 animate={{
                   opacity: isCenter ? 1 : 0.5,
                   scale: isCenter ? 1 : 0.8,
                   filter: isCenter ? 'blur(0px) grayscale(0%)' : 'blur(4px) grayscale(50%)',
                   zIndex: isCenter ? 10 : 1,
-                  x: xPos,
+                  x: getTargetX(),
                 }}
                 exit={{ opacity: 0, scale: 0.5, transition: { duration: 0.2 } }}
                 transition={{

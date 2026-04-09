@@ -10,7 +10,7 @@ import {
   Milestone,
 } from '@/lib/game-logic';
 
-export type GamePhase = 'IDLE' | 'LOADING' | 'PLAYING' | 'CORRECT' | 'GAME_OVER';
+export type GamePhase = 'IDLE' | 'LOADING' | 'PLAYING' | 'CORRECT' | 'GAME_OVER' | 'CATEGORY_COMPLETE';
 
 export interface GameState {
   phase: GamePhase;
@@ -35,7 +35,8 @@ type GameAction =
   | { type: 'WRONG_ANSWER' }
   | { type: 'NEXT_ROUND' }
   | { type: 'CLEAR_MILESTONE' }
-  | { type: 'RESET' };
+  | { type: 'RESET' }
+  | { type: 'CATEGORY_COMPLETE' };
 
 const initialState: GameState = {
   phase: 'IDLE',
@@ -134,6 +135,13 @@ function gameReducer(state: GameState, action: GameAction): GameState {
     case 'RESET':
       return initialState;
 
+    case 'CATEGORY_COMPLETE':
+      return {
+        ...state,
+        phase: 'CATEGORY_COMPLETE',
+        bestStreak: Math.max(state.bestStreak, state.streak),
+      };
+
     default:
       return state;
   }
@@ -150,7 +158,7 @@ export function useGameState() {
     const song = getRandomSong(state.playedSongIds, selo, artist);
     
     if (!song) {
-      dispatch({ type: 'WRONG_ANSWER' }); // Ends the game
+      dispatch({ type: 'CATEGORY_COMPLETE' }); // Category completed!
       return null;
     }
 
@@ -190,6 +198,10 @@ export function useGameState() {
     dispatch({ type: 'RESET' });
   }, []);
 
+  const completeCategory = useCallback(() => {
+    dispatch({ type: 'CATEGORY_COMPLETE' });
+  }, []);
+
   return {
     state,
     startGame,
@@ -199,5 +211,6 @@ export function useGameState() {
     nextRound,
     clearMilestone,
     resetGame,
+    completeCategory,
   };
 }
