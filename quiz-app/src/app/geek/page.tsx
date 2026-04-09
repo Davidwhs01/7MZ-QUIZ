@@ -3,7 +3,7 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import styles from '../page.module.css';
+import styles from './page.module.css';
 import BottomDrawer from '@/components/home/BottomDrawer';
 import LoginProfileCard from '@/components/home/LoginProfileCard';
 import GlobalRankingCard from '@/components/home/GlobalRankingCard';
@@ -122,9 +122,17 @@ export default function GeekHome() {
     return (
       <div className={styles.page}>
         <div className={styles.bgLayer}>
+          <div className={styles.wallpaper} />
+          <div className={`${styles.orb} ${styles.orb1}`} />
+          <div className={`${styles.orb} ${styles.orb2}`} />
+          <div className={`${styles.orb} ${styles.orb3}`} />
           <div className={`${styles.splatter} ${styles.splatterOrange}`} />
           <div className={`${styles.splatter} ${styles.splatterBlue}`} />
           <div className={`${styles.splatter} ${styles.splatterGreen}`} />
+          <div className={`${styles.geometric} ${styles.triangle}`} />
+          <div className={`${styles.geometric} ${styles.circle}`} />
+          <div className={`${styles.geometric} ${styles.diamond}`} />
+          <div className={styles.noise} />
         </div>
         <div style={{ 
           display: 'flex', 
@@ -144,9 +152,17 @@ export default function GeekHome() {
   return (
     <div className={styles.page}>
       <div className={styles.bgLayer}>
+        <div className={styles.wallpaper} />
+        <div className={`${styles.orb} ${styles.orb1}`} />
+        <div className={`${styles.orb} ${styles.orb2}`} />
+        <div className={`${styles.orb} ${styles.orb3}`} />
         <div className={`${styles.splatter} ${styles.splatterOrange}`} />
         <div className={`${styles.splatter} ${styles.splatterBlue}`} />
         <div className={`${styles.splatter} ${styles.splatterGreen}`} />
+        <div className={`${styles.geometric} ${styles.triangle}`} />
+        <div className={`${styles.geometric} ${styles.circle}`} />
+        <div className={`${styles.geometric} ${styles.diamond}`} />
+        <div className={styles.noise} />
         <div className={styles.gridFloor} />
         <div className={styles.diagonalLine} />
         <div className={`${styles.diagonalLine} ${styles.diagonalLine2}`} />
@@ -162,7 +178,7 @@ export default function GeekHome() {
             <LoginProfileCard />
             <Link href="/pop" className={styles.sectionSwitch}>
               <span className={styles.sectionSwitchIcon}>🎤</span>
-              <span className={styles.sectionSwitchText}>Ir para STUDIO</span>
+              <span className={styles.sectionSwitchText}>Ir para POP</span>
             </Link>
           </div>
         </aside>

@@ -32,8 +32,8 @@ export async function generateMetadata(): Promise<Metadata> {
     description,
     keywords,
     icons: {
-      icon: "/geek-logo.svg",
-      apple: "/geek-logo.svg",
+      icon: isPop ? "/pop-logo.jpg" : "/geek-logo.svg",
+      apple: isPop ? "/pop-logo.jpg" : "/geek-logo.svg",
     },
     openGraph: {
       title,
@@ -44,7 +44,7 @@ export async function generateMetadata(): Promise<Metadata> {
       type: "website",
       images: [
         {
-          url: "/geek-banner.jpg",
+          url: isPop ? "/pop-banner.jpg" : "/geek-banner.jpg",
           width: 1200,
           height: 630,
           alt: `${siteName} - Quiz`,
@@ -55,7 +55,7 @@ export async function generateMetadata(): Promise<Metadata> {
       card: "summary_large_image",
       title,
       description,
-      images: ["/geek-banner.jpg"],
+      images: [isPop ? "/pop-banner.jpg" : "/geek-banner.jpg"],
     },
   };
 }

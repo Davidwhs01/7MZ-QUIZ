@@ -20,11 +20,11 @@ export const SECTIONS: Record<AppSection, SectionConfig> = {
   },
   pop: {
     id: 'pop',
-    name: 'STUDIO',
-    title: 'STUDIO ARENA',
+    name: 'POP',
+    title: 'POP ARENA',
     subtitle: 'O QUIZ DEFINITIVO DA MÚSICA POP',
     theme: 'theme-pop',
-    artists: ['MELANIE'],
+    artists: ['MELANIE', 'MITSKI'],
   },
 };
 

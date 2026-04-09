@@ -86,8 +86,16 @@ export default function PopHome() {
     return (
       <div className={styles.page}>
         <div className={styles.bgLayer}>
+          <div className={`${styles.orb} ${styles.orb1}`} />
+          <div className={`${styles.orb} ${styles.orb2}`} />
+          <div className={`${styles.orb} ${styles.orb3}`} />
           <div className={`${styles.splatter} ${styles.splatterPink}`} />
           <div className={`${styles.splatter} ${styles.splatterPurple}`} />
+          <div className={`${styles.splatter} ${styles.splatterHotPink}`} />
+          <div className={`${styles.geometric} ${styles.triangle}`} />
+          <div className={`${styles.geometric} ${styles.circle}`} />
+          <div className={`${styles.geometric} ${styles.diamond}`} />
+          <div className={styles.noise} />
         </div>
         <div style={{ 
           display: 'flex', 
@@ -107,10 +115,18 @@ export default function PopHome() {
   return (
     <div className={styles.page}>
       <div className={styles.bgLayer}>
+        <div className={`${styles.orb} ${styles.orb1}`} />
+        <div className={`${styles.orb} ${styles.orb2}`} />
+        <div className={`${styles.orb} ${styles.orb3}`} />
         <div className={`${styles.splatter} ${styles.splatterPink}`} />
         <div className={`${styles.splatter} ${styles.splatterPurple}`} />
+        <div className={`${styles.splatter} ${styles.splatterHotPink}`} />
+        <div className={`${styles.geometric} ${styles.triangle}`} />
+        <div className={`${styles.geometric} ${styles.circle}`} />
+        <div className={`${styles.geometric} ${styles.diamond}`} />
         <div className={styles.gridFloor} />
         <div className={styles.diagonalLine} />
+        <div className={styles.noise} />
       </div>
 
       <div className={styles.lobbyContainer}>

@@ -18,6 +18,57 @@
   inset: 0;
   z-index: 0;
   overflow: hidden;
+  background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+}
+
+/* Wallpaper base - atrás de tudo */
+.wallpaper {
+  position: absolute;
+  inset: 0;
+  background-image: url('/background.jpg');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.1;
+  filter: saturate(0.5) hue-rotate(-30deg);
+  z-index: 0;
+}
+
+/* Ambient glow orbs */
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  animation: orbFloat 15s ease-in-out infinite;
+}
+
+.orb1 {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, var(--accent-orange) 0%, transparent 70%);
+  top: 5%;
+  left: 5%;
+  opacity: 0.25;
+  animation-delay: 0s;
+}
+
+.orb2 {
+  width: 450px;
+  height: 450px;
+  background: radial-gradient(circle, var(--accent-blue) 0%, transparent 70%);
+  top: 55%;
+  right: 10%;
+  opacity: 0.2;
+  animation-delay: -5s;
+}
+
+.orb3 {
+  width: 350px;
+  height: 350px;
+  background: radial-gradient(circle, var(--accent-neon) 0%, transparent 70%);
+  bottom: 15%;
+  left: 25%;
+  opacity: 0.15;
+  animation-delay: -10s;
 }
 
 /* Paint splatters — 7MZ brand colors */
@@ -55,6 +106,50 @@
   left: 60%;
   opacity: 0.06;
   animation-delay: -13s;
+}
+
+/* Floating geometric shapes */
+.geometric {
+  position: absolute;
+  opacity: 0.15;
+  animation: geometricFloat 25s ease-in-out infinite;
+}
+
+.triangle {
+  width: 0;
+  height: 0;
+  border-left: 80px solid transparent;
+  border-right: 80px solid transparent;
+  border-bottom: 140px solid var(--accent-orange);
+  top: 15%;
+  left: 15%;
+}
+
+.circle {
+  width: 120px;
+  height: 120px;
+  border: 3px solid var(--accent-blue);
+  border-radius: 50%;
+  top: 65%;
+  right: 20%;
+}
+
+.diamond {
+  width: 80px;
+  height: 80px;
+  background: var(--accent-orange);
+  transform: rotate(45deg);
+  top: 35%;
+  left: 65%;
+}
+
+/* Noise overlay */
+.noise {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  opacity: 0.06;
+  pointer-events: none;
 }
 
 /* Neon grid floor */
@@ -1230,4 +1325,37 @@
   .splatterOrange { width: 200px; height: 200px; filter: blur(80px); }
   .splatterBlue { width: 180px; height: 180px; filter: blur(80px); }
   .splatterGreen { display: none; }
+}
+
+/* Section Switch Button */
+.sectionSwitch {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s;
+  margin-top: 12px;
+  width: 100%;
+}
+
+.sectionSwitch:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.sectionSwitchIcon {
+  font-size: 14px;
+}
+
+.sectionSwitchText {
+  white-space: nowrap;
 }
