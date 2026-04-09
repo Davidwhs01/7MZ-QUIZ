@@ -53,6 +53,16 @@ function useGameArtistFromURL(activeChannel: Artist): Artist {
       setIsDetected(true);
       return;
     }
+    if (artistParam === 'daikinez') {
+      setDetectedArtist('DAIKINEZ');
+      setIsDetected(true);
+      return;
+    }
+    if (artistParam === 'anirap') {
+      setDetectedArtist('ANIRAP');
+      setIsDetected(true);
+      return;
+    }
     
     // Check path to determine section
     if (path.includes('/pop') || path.startsWith('/pop')) {
@@ -62,7 +72,7 @@ function useGameArtistFromURL(activeChannel: Artist): Artist {
     }
     
     // Use activeChannel from context, but validate it's valid
-    if (activeChannel === '7MZ' || activeChannel === 'ENYGMA' || activeChannel === 'MELANIE' || activeChannel === 'RODRIGOZIN' || activeChannel === 'MITSKI' || activeChannel === 'M4RKIM' || activeChannel === 'ANIRAP') {
+    if (activeChannel === '7MZ' || activeChannel === 'ENYGMA' || activeChannel === 'MELANIE' || activeChannel === 'RODRIGOZIN' || activeChannel === 'MITSKI' || activeChannel === 'M4RKIM' || activeChannel === 'ANIRAP' || activeChannel === 'DAIKINEZ') {
       setDetectedArtist(activeChannel);
     } else {
       // Default to 7MZ if activeChannel is invalid
@@ -82,7 +92,7 @@ export default function PlayPage() {
   // Apply theme based on gameArtist - force immediately on mount
   useEffect(() => {
     // Clear all theme classes first
-    document.body.classList.remove('theme-7mz', 'theme-enygma', 'theme-melanie', 'theme-geek', 'theme-pop', 'theme-rodrigozin', 'theme-mitski', 'theme-m4rkim');
+    document.body.classList.remove('theme-7mz', 'theme-enygma', 'theme-melanie', 'theme-geek', 'theme-pop', 'theme-rodrigozin', 'theme-mitski', 'theme-m4rkim', 'theme-anirap', 'theme-daikinez');
     
     // Apply theme based on detected artist
     switch (gameArtist) {
@@ -106,6 +116,9 @@ export default function PlayPage() {
         break;
       case 'ANIRAP':
         document.body.classList.add('theme-anirap');
+        break;
+      case 'DAIKINEZ':
+        document.body.classList.add('theme-daikinez');
         break;
     }
     console.log('Theme applied:', gameArtist);
@@ -386,8 +399,11 @@ export default function PlayPage() {
           {gameArtist === 'ANIRAP' && (
             <Image src="/anirap-logo.jpg" alt="Anirap Logo" width={36} height={36} className={styles.logoHeaderImg} />
           )}
+          {gameArtist === 'DAIKINEZ' && (
+            <Image src="/Daikinez-Logo.jpg" alt="Daikinez Logo" width={36} height={36} className={styles.logoHeaderImg} />
+          )}
           <h1 className={styles.logo}>
-            {gameArtist === '7MZ' ? '7 MINUTOZ' : gameArtist === 'MELANIE' ? 'MELANIE' : gameArtist === 'RODRIGOZIN' ? 'RODRIGO ZIN' : gameArtist === 'MITSKI' ? 'MITSKI' : gameArtist === 'M4RKIM' ? 'M4RKIM' : gameArtist === 'ANIRAP' ? 'ANIRAP' : 'ENYGMA'} <span>ARENA</span>
+            {gameArtist === '7MZ' ? '7 MINUTOZ' : gameArtist === 'MELANIE' ? 'MELANIE' : gameArtist === 'RODRIGOZIN' ? 'RODRIGO ZIN' : gameArtist === 'MITSKI' ? 'MITSKI' : gameArtist === 'M4RKIM' ? 'M4RKIM' : gameArtist === 'ANIRAP' ? 'ANIRAP' : gameArtist === 'DAIKINEZ' ? 'DAIKINEZ' : 'ENYGMA'} <span>ARENA</span>
           </h1>
         </div>
         {state.phase !== 'IDLE' && state.phase !== 'GAME_OVER' && (
@@ -571,6 +587,25 @@ export default function PlayPage() {
                 </>
               )}
 
+              {gameArtist === 'DAIKINEZ' && (
+                <>
+                  <motion.button
+                    variants={{
+                      hidden: { y: 20, opacity: 0 },
+                      visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 300 } }
+                    }}
+                    whileHover={{ scale: 1.05, y: -5 }}
+                    whileTap={{ scale: 0.95 }}
+                    className={`${styles.categoryCard} ${selectedCategory === 'DAIKINEZ' ? styles.categoryCardActive : ''}`}
+                    onClick={() => setSelectedCategory('DAIKINEZ')}
+                  >
+                    <span className={styles.categoryEmoji}>🎤</span>
+                    <span className={styles.categoryName}>DAIKINEZ</span>
+                    <span className={styles.categoryCount}>{songs.filter(s => s.artist === 'DAIKINEZ').length} músicas</span>
+                  </motion.button>
+                </>
+              )}
+
               {gameArtist === 'RODRIGOZIN' && (
                 <>
                   <motion.button
@@ -617,7 +652,7 @@ export default function PlayPage() {
               >
                 <span className={styles.categoryEmoji}>🌌</span>
                 <span className={styles.categoryName}>TODAS AS MÚSICAS</span>
-                <span className={styles.categoryCount}>{gameArtist === '7MZ' ? songs.filter(s => s.artist === '7MZ').length : gameArtist === 'RODRIGOZIN' ? songs.filter(s => s.artist === 'RODRIGOZIN').length : gameArtist === 'MELANIE' ? songs.filter(s => s.artist === 'MELANIE').length : gameArtist === 'MITSKI' ? songs.filter(s => s.artist === 'MITSKI').length : gameArtist === 'M4RKIM' ? songs.filter(s => s.artist === 'M4RKIM').length : gameArtist === 'ANIRAP' ? songs.filter(s => s.artist === 'ANIRAP').length : songs.filter(s => s.artist === 'ENYGMA').length} músicas</span>
+                <span className={styles.categoryCount}>{gameArtist === '7MZ' ? songs.filter(s => s.artist === '7MZ').length : gameArtist === 'RODRIGOZIN' ? songs.filter(s => s.artist === 'RODRIGOZIN').length : gameArtist === 'MELANIE' ? songs.filter(s => s.artist === 'MELANIE').length : gameArtist === 'MITSKI' ? songs.filter(s => s.artist === 'MITSKI').length : gameArtist === 'M4RKIM' ? songs.filter(s => s.artist === 'M4RKIM').length : gameArtist === 'ANIRAP' ? songs.filter(s => s.artist === 'ANIRAP').length : gameArtist === 'DAIKINEZ' ? songs.filter(s => s.artist === 'DAIKINEZ').length : songs.filter(s => s.artist === 'ENYGMA').length} músicas</span>
               </motion.button>
             </motion.div>
 

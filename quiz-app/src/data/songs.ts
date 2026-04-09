@@ -1,6 +1,6 @@
-export type SongCategory = 'NERD HITS' | '7MZ RECORDS' | 'ENYGMA' | 'POP' | 'GEEKS' | 'AUTORAIS' | 'M4RKIM' | 'ANIRAP';
+export type SongCategory = 'NERD HITS' | '7MZ RECORDS' | 'ENYGMA' | 'POP' | 'GEEKS' | 'AUTORAIS' | 'M4RKIM' | 'ANIRAP' | 'DAIKINEZ';
 export type SeloKey = SongCategory | 'PÓS REVELAÇÃO';
-export type Artist = '7MZ' | 'ENYGMA' | 'MELANIE' | 'RODRIGOZIN' | 'MITSKI' | 'M4RKIM' | 'ANIRAP';
+export type Artist = '7MZ' | 'ENYGMA' | 'MELANIE' | 'RODRIGOZIN' | 'MITSKI' | 'M4RKIM' | 'ANIRAP' | 'DAIKINEZ';
 export type AppSection = 'geek' | 'pop';
 
 export interface Song {
@@ -1178,6 +1178,21 @@ export const songs: Song[] = [
   { id: "anirap-x-0ABAPBdco", title: "Rap - Chara e Frisk  『 Undertale 』Feat: Thelfos | AniRap", youtubeId: "x-0ABAPBdco", duration: 0, category: 'ANIRAP', artist: 'ANIRAP' },
   { id: "anirap-yQ6yz0fUXNA", title: "Rap da Geração Milagrosa 『 Kuroko no Basket 』Feat : Descrição | ESPECIAL DE 1K !!!", youtubeId: "yQ6yz0fUXNA", duration: 0, category: 'ANIRAP', artist: 'ANIRAP' },
   { id: "anirap-15tKncMoxDc", title: "Rap do Basil 『 Dragon Ball Super 』|Chutador do 9º Universo| AniRap", youtubeId: "15tKncMoxDc", duration: 0, category: 'ANIRAP', artist: 'ANIRAP' },
+
+  // --- DAIKINEZ UPLOADS ---
+  { id: "daikinez-wYOmfiMrrUg", title: "Daikinez - Correntes Atemporais (Ekko & Jinx)", youtubeId: "wYOmfiMrrUg", duration: 0, category: 'DAIKINEZ', artist: 'DAIKINEZ' },
+  { id: "daikinez-3usWjQ48tSk", title: "Daikinez - Pela Honra (Zenitsu) ", youtubeId: "3usWjQ48tSk", duration: 0, category: 'DAIKINEZ', artist: 'DAIKINEZ' },
+  { id: "daikinez-P6J1-ncXwpE", title: "Daikinez - Viverei até o fim (Akaza) ", youtubeId: "P6J1-ncXwpE", duration: 0, category: 'DAIKINEZ', artist: 'DAIKINEZ' },
+  { id: "daikinez-qYWsZK7V8eo", title: "Daikinez - Perfeita Destruição (Itoshi Rin) ", youtubeId: "qYWsZK7V8eo", duration: 0, category: 'DAIKINEZ', artist: 'DAIKINEZ' },
+  { id: "daikinez-ojJMIA7Ohcw", title: "Daikinez - Envolto em Grades (Neji Hyuga)", youtubeId: "ojJMIA7Ohcw", duration: 0, category: 'DAIKINEZ', artist: 'DAIKINEZ' },
+  { id: "daikinez-rD-vM5NQmww", title: "Daikinez - Ordenar (Sung Jin Woo)", youtubeId: "rD-vM5NQmww", duration: 0, category: 'DAIKINEZ', artist: 'DAIKINEZ' },
+  { id: "daikinez-kl3mmFtXt6c", title: "Daikinez - Segunda Chance (Rudeus)", youtubeId: "kl3mmFtXt6c", duration: 0, category: 'DAIKINEZ', artist: 'DAIKINEZ' },
+  { id: "daikinez-Z-v6LseYWw8", title: "Daikinez - Perdas ft. @Raphyxz e @MavizinOficial ", youtubeId: "Z-v6LseYWw8", duration: 0, category: 'DAIKINEZ', artist: 'DAIKINEZ' },
+  { id: "daikinez-zsINtQltRc4", title: "Daikinez - Dor  (Aki Hayakawa)", youtubeId: "zsINtQltRc4", duration: 0, category: 'DAIKINEZ', artist: 'DAIKINEZ' },
+  { id: "daikinez-_5OOLQ3b4GQ", title: "Daikinez - Clamar das Almas (Belzebub)", youtubeId: "_5OOLQ3b4GQ", duration: 0, category: 'DAIKINEZ', artist: 'DAIKINEZ' },
+  { id: "daikinez--yK4JJNutZ8", title: "Daikinez - Brisa Hostil (Sanemi)", youtubeId: "-yK4JJNutZ8", duration: 0, category: 'DAIKINEZ', artist: 'DAIKINEZ' },
+  { id: "daikinez-_jh8qCV5mUQ", title: "Daikinez - Luz (Yuta Okkotsu)", youtubeId: "_jh8qCV5mUQ", duration: 0, category: 'DAIKINEZ', artist: 'DAIKINEZ' },
+  { id: "daikinez-LEoW8AjN9JA", title: "Daikinez - Colapso (Gabimaru)", youtubeId: "LEoW8AjN9JA", duration: 0, category: 'DAIKINEZ', artist: 'DAIKINEZ' },
 ];
 
 export function getRandomSong(excludeIds: string[] = [], selo?: SeloKey | SeloKey[], artist?: Artist): Song | null {

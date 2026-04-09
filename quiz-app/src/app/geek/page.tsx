@@ -62,6 +62,7 @@ export default function GeekHome() {
     else if (isLoaded && activeChannel === 'RODRIGOZIN') setSelectedSelo('GEEKS');
     else if (isLoaded && activeChannel === 'M4RKIM') setSelectedSelo('M4RKIM');
     else if (isLoaded && activeChannel === 'ANIRAP') setSelectedSelo('ANIRAP');
+    else if (isLoaded && activeChannel === 'DAIKINEZ') setSelectedSelo('DAIKINEZ');
   }, [activeChannel, isLoaded]);
 
   const selloOptions: { key: SongCategory | 'PÓS REVELAÇÃO'; label: string }[] = activeChannel === 'RODRIGOZIN'
@@ -81,6 +82,10 @@ export default function GeekHome() {
     : activeChannel === 'ANIRAP'
     ? [
         { key: 'ANIRAP', label: 'ANIRAP' },
+      ]
+    : activeChannel === 'DAIKINEZ'
+    ? [
+        { key: 'DAIKINEZ', label: 'DAIKINEZ' },
       ]
     : [
         { key: 'ENYGMA', label: 'ENYGMA' },
@@ -245,7 +250,8 @@ export default function GeekHome() {
                     activeChannel === 'ENYGMA' ? 'enygma' : 
                     activeChannel === 'RODRIGOZIN' ? 'rodrigozin' :
                     activeChannel === 'M4RKIM' ? 'm4rkim' :
-                    activeChannel === 'ANIRAP' ? 'anirap' : '7mz'
+                    activeChannel === 'ANIRAP' ? 'anirap' :
+                    activeChannel === 'DAIKINEZ' ? 'daikinez' : '7mz'
                   }`} className={styles.modeCard}>
                     <div className={styles.modeCardShine} />
                     <div className={styles.modeCardBorder} />
