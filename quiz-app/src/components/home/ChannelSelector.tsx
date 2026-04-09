@@ -17,7 +17,7 @@ const CHANNELS = {
   'MITSKI': { id: 'MITSKI', name: 'Mitski', logo: '/Mitski-Logo.jpg' },
   'M4RKIM': { id: 'M4RKIM', name: 'M4rkim', logo: '/M4rkim-Logo.jpg' },
   'ANIRAP': { id: 'ANIRAP', name: 'Anirap', logo: '/anirap-logo.jpg' },
-  'DAIKINEZ': { id: 'DAIKINEZ', name: 'Daikinez', logo: '/daikinez-logo.jpg' },
+  'DAIKINEZ': { id: 'DAIKINEZ', name: 'Daikinez', logo: '/Daikinez-Logo.jpg' },
 } as const;
 
 const SECTION_CHANNELS: Record<string, ChannelType[]> = {
