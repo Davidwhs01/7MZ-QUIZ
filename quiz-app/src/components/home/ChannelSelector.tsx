@@ -6,25 +6,9 @@ import styles from './ChannelSelector.module.css';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useChannel } from '@/context/ChannelContext';
+import type { ArtistRecord } from '@/lib/artists-store';
 
-export type ChannelType = '7MZ' | 'ENYGMA' | 'MELANIE' | 'RODRIGOZIN' | 'MITSKI' | 'M4RKIM' | 'ANIRAP' | 'DAIKINEZ' | 'NISHIKAY';
-
-const CHANNELS = {
-  '7MZ': { id: '7MZ', name: '7 Minutoz', logo: '/7mz-logo.jpg' },
-  'ENYGMA': { id: 'ENYGMA', name: 'Enygma', logo: '/enygma-logo.jpg' },
-  'MELANIE': { id: 'MELANIE', name: 'Melanie Martinez', logo: '/Melanie-Logo.jpg' },
-  'RODRIGOZIN': { id: 'RODRIGOZIN', name: 'Rodrigo Zin', logo: '/RodrigoZin-Logo.jpg' },
-  'MITSKI': { id: 'MITSKI', name: 'Mitski', logo: '/Mitski-Logo.jpg' },
-  'M4RKIM': { id: 'M4RKIM', name: 'M4rkim', logo: '/M4rkim-Logo.jpg' },
-  'ANIRAP': { id: 'ANIRAP', name: 'Anirap', logo: '/anirap-logo.jpg' },
-  'DAIKINEZ': { id: 'DAIKINEZ', name: 'Daikinez', logo: '/Daikinez-Logo.jpg' },
-  'NISHIKAY': { id: 'NISHIKAY', name: 'Nishikay', logo: '/Nishikay-Logo.jpg' },
-} as const;
-
-const SECTION_CHANNELS: Record<string, ChannelType[]> = {
-  'geek': ['7MZ', 'ENYGMA', 'RODRIGOZIN', 'M4RKIM', 'ANIRAP', 'DAIKINEZ', 'NISHIKAY'],
-  'pop': ['MELANIE', 'MITSKI'],
-};
+export type ChannelType = string;
 
 let uidCounter = 10;
 
@@ -34,103 +18,87 @@ interface ChannelSelectorProps {
 
 export default function ChannelSelector({ onChannelChange }: ChannelSelectorProps) {
   const pathname = usePathname();
-  const { activeChannel, setActiveChannel, isLoaded } = useChannel();
+  const { activeChannel, setActiveChannel, isLoaded, artists } = useChannel();
 
-  // Get current section from URL
-  const section = pathname === '/pop' ? 'pop' : 
-                  pathname.startsWith('/pop') ? 'pop' : 
-                  pathname === '/geek' ? 'geek' : 
-                  pathname.startsWith('/geek') ? 'geek' : 'geek';
+  // Current section from URL
+  const section: 'geek' | 'pop' = pathname.startsWith('/pop') ? 'pop' : 'geek';
 
-  const availableChannels = useMemo(() => SECTION_CHANNELS[section] || ['7MZ'], [section]);
+  // Artists for this section, from Supabase
+  const availableArtists = useMemo<ArtistRecord[]>(
+    () => artists.filter(a => a.section === section),
+    [artists, section]
+  );
+  const availableIds = useMemo(() => availableArtists.map(a => a.id), [availableArtists]);
 
-  // Validate activeChannel for current section
-  const currentChannel = availableChannels.includes(activeChannel) 
-    ? activeChannel 
-    : availableChannels[0];
+  const getArtistInfo = (id: string): ArtistRecord | null =>
+    availableArtists.find(a => a.id === id) ?? null;
 
-  const getNextChannel = (current: ChannelType): ChannelType => {
-    const idx = availableChannels.indexOf(current);
-    const nextIdx = (idx + 1) % availableChannels.length;
-    return availableChannels[nextIdx];
+  const getLogo = (artist: ArtistRecord | null): string => {
+    if (!artist) return '/7mz-logo.jpg';
+    // Prefer local logo_url (e.g. /daikinez-logo.jpg), fall back to avatar_url (YouTube CDN)
+    return artist.logo_url ?? artist.avatar_url ?? '/7mz-logo.jpg';
   };
 
-  const getPrevChannel = (current: ChannelType): ChannelType => {
-    const idx = availableChannels.indexOf(current);
-    const prevIdx = (idx - 1 + availableChannels.length) % availableChannels.length;
-    return availableChannels[prevIdx];
+  // Validate active channel for current section
+  const currentId = availableIds.includes(activeChannel) ? activeChannel : availableIds[0] ?? '7MZ';
+
+  const getNext = (id: string) => {
+    const idx = availableIds.indexOf(id);
+    return availableIds[(idx + 1) % availableIds.length];
+  };
+  const getPrev = (id: string) => {
+    const idx = availableIds.indexOf(id);
+    return availableIds[(idx - 1 + availableIds.length) % availableIds.length];
   };
 
-  const [items, setItems] = useState(() => {
-    return [
-      { uid: 1, id: getPrevChannel(currentChannel) },
-      { uid: 2, id: currentChannel },
-      { uid: 3, id: getNextChannel(currentChannel) },
-    ];
-  });
+  const [items, setItems] = useState(() => [
+    { uid: 1, id: currentId },
+    { uid: 2, id: currentId },
+    { uid: 3, id: currentId },
+  ]);
 
   useEffect(() => {
+    if (availableIds.length === 0) return;
+    const safe = availableIds.includes(currentId) ? currentId : availableIds[0];
     setItems([
-      { uid: uidCounter++, id: getPrevChannel(currentChannel) },
-      { uid: uidCounter++, id: currentChannel },
-      { uid: uidCounter++, id: getNextChannel(currentChannel) }
+      { uid: uidCounter++, id: getPrev(safe) },
+      { uid: uidCounter++, id: safe },
+      { uid: uidCounter++, id: getNext(safe) },
     ]);
-  }, [currentChannel]);
+  }, [currentId, availableIds.join(',')]);
 
-  const [direction, setDirection] = useState<number>(0);
+  const [direction, setDirection] = useState(0);
 
   const slideRight = () => {
     setDirection(1);
-    const newActiveId = items[2].id;
-    setItems((prev) => [
-      prev[1],
-      prev[2],
-      { uid: uidCounter++, id: prev[1].id }
-    ]);
-    setActiveChannel(newActiveId);
-    onChannelChange?.(newActiveId);
+    const newId = items[2].id;
+    setItems(prev => [prev[1], prev[2], { uid: uidCounter++, id: prev[1].id }]);
+    setActiveChannel(newId);
+    onChannelChange?.(newId);
   };
-
   const slideLeft = () => {
     setDirection(-1);
-    const newActiveId = items[0].id;
-    setItems((prev) => [
-      { uid: uidCounter++, id: prev[1].id },
-      prev[0],
-      prev[1]
-    ]);
-    setActiveChannel(newActiveId);
-    onChannelChange?.(newActiveId);
+    const newId = items[0].id;
+    setItems(prev => [{ uid: uidCounter++, id: prev[1].id }, prev[0], prev[1]]);
+    setActiveChannel(newId);
+    onChannelChange?.(newId);
   };
-
   const handleSelect = (index: number) => {
     if (index === 0) slideLeft();
     if (index === 2) slideRight();
   };
 
-  // Don't render carousel until context is loaded from localStorage
-  if (!isLoaded) {
+  // Loading skeleton
+  if (!isLoaded || availableArtists.length === 0) {
     return (
       <div className={styles.selectorContainer}>
         <div className={styles.carousel}>
-          <motion.div
-            className={`${styles.channelItem} ${styles.active}`}
-          >
+          <motion.div className={`${styles.channelItem} ${styles.active}`}>
             <div className={styles.avatarWrapper}>
               <motion.div className={styles.glowRing} style={{ opacity: 1, scale: 1 }} />
-              <Image
-                src={CHANNELS['7MZ'].logo}
-                alt="Loading"
-                fill
-                style={{ objectFit: 'cover' }}
-                priority
-                className={styles.avatar}
-              />
+              <Image src="/7mz-logo.jpg" alt="Loading" fill style={{ objectFit: 'cover' }} priority className={styles.avatar} />
             </div>
-            <motion.span
-              className={styles.channelName}
-              style={{ position: 'absolute', bottom: -55, whiteSpace: 'nowrap' }}
-            >
+            <motion.span className={styles.channelName} style={{ position: 'absolute', bottom: -55, whiteSpace: 'nowrap' }}>
               Carregando...
             </motion.span>
           </motion.div>
@@ -139,31 +107,19 @@ export default function ChannelSelector({ onChannelChange }: ChannelSelectorProp
     );
   }
 
-  // Only show selector if there are multiple channels in section
-  if (availableChannels.length <= 1) {
-    const channelInfo = CHANNELS[availableChannels[0]];
+  // Single channel — no carousel needed
+  if (availableArtists.length <= 1) {
+    const artist = availableArtists[0];
     return (
       <div className={styles.selectorContainer}>
         <div className={styles.carousel}>
-          <motion.div
-            className={`${styles.channelItem} ${styles.active}`}
-          >
+          <motion.div className={`${styles.channelItem} ${styles.active}`}>
             <div className={styles.avatarWrapper}>
               <motion.div className={styles.glowRing} style={{ opacity: 1, scale: 1 }} />
-              <Image
-                src={channelInfo.logo}
-                alt={`${channelInfo.name} Logo`}
-                fill
-                style={{ objectFit: 'cover' }}
-                priority
-                className={styles.avatar}
-              />
+              <Image src={getLogo(artist)} alt={artist?.name ?? ''} fill style={{ objectFit: 'cover' }} priority className={styles.avatar} unoptimized={!getLogo(artist).startsWith('/')} />
             </div>
-            <motion.span
-              className={styles.channelName}
-              style={{ position: 'absolute', bottom: -55, whiteSpace: 'nowrap' }}
-            >
-              {channelInfo.name}
+            <motion.span className={styles.channelName} style={{ position: 'absolute', bottom: -55, whiteSpace: 'nowrap' }}>
+              {artist?.name}
             </motion.span>
           </motion.div>
         </div>
@@ -177,26 +133,14 @@ export default function ChannelSelector({ onChannelChange }: ChannelSelectorProp
         <AnimatePresence initial={false}>
           {items.map((item, index) => {
             const isCenter = index === 1;
-            const channelInfo = CHANNELS[item.id];
-            
+            const artist = getArtistInfo(item.id);
+            const logo = getLogo(artist);
             const xPos = index === 0 ? -160 : index === 2 ? 160 : 0;
 
             const getInitialX = () => {
-              if (direction === 1) {
-                return index === 0 ? -160 : index === 2 ? 240 : 0;
-              } else if (direction === -1) {
-                return index === 0 ? -240 : index === 2 ? 160 : 0;
-              }
+              if (direction === 1) return index === 0 ? -160 : index === 2 ? 240 : 0;
+              if (direction === -1) return index === 0 ? -240 : index === 2 ? 160 : 0;
               return index === 0 ? -160 : 160;
-            };
-
-            const getTargetX = () => {
-              if (direction === 1) {
-                return index === 0 ? -160 : index === 2 ? 160 : 0;
-              } else if (direction === -1) {
-                return index === 0 ? -160 : index === 2 ? 160 : 0;
-              }
-              return xPos;
             };
 
             return (
@@ -210,15 +154,10 @@ export default function ChannelSelector({ onChannelChange }: ChannelSelectorProp
                   scale: isCenter ? 1 : 0.8,
                   filter: isCenter ? 'blur(0px) grayscale(0%)' : 'blur(4px) grayscale(50%)',
                   zIndex: isCenter ? 10 : 1,
-                  x: getTargetX(),
+                  x: xPos,
                 }}
                 exit={{ opacity: 0, scale: 0.5, transition: { duration: 0.2 } }}
-                transition={{
-                  type: 'spring',
-                  stiffness: 280,
-                  damping: 30,
-                  mass: 0.8
-                }}
+                transition={{ type: 'spring', stiffness: 280, damping: 30, mass: 0.8 }}
                 whileHover={{ scale: isCenter ? 1.02 : 0.85, opacity: isCenter ? 1 : 0.7 }}
                 whileTap={{ scale: isCenter ? 0.98 : 0.8 }}
               >
@@ -229,16 +168,16 @@ export default function ChannelSelector({ onChannelChange }: ChannelSelectorProp
                     transition={{ duration: 0.3 }}
                   />
                   <Image
-                    src={channelInfo.logo}
-                    alt={`${channelInfo.name} Logo`}
+                    src={logo}
+                    alt={artist?.name ?? item.id}
                     fill
                     sizes="(max-width: 768px) 150px, 200px"
                     style={{ objectFit: 'cover' }}
                     priority={isCenter}
                     className={styles.avatar}
+                    unoptimized={!logo.startsWith('/')}
                   />
                 </div>
-                
                 <motion.span
                   className={styles.channelName}
                   style={{ position: 'absolute', bottom: -55, whiteSpace: 'nowrap' }}
@@ -246,7 +185,7 @@ export default function ChannelSelector({ onChannelChange }: ChannelSelectorProp
                   animate={{ opacity: isCenter ? 1 : 0, y: isCenter ? 0 : 10 }}
                   transition={{ duration: 0.2 }}
                 >
-                  {channelInfo.name}
+                  {artist?.name ?? item.id}
                 </motion.span>
               </motion.div>
             );

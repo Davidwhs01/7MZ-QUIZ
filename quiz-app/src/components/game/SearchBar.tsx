@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { Song, SeloKey, searchSongs, type Artist } from '@/data/songs';
+import { Song, SeloKey, type Artist } from '@/data/songs';
+import { searchSongsAsync } from '@/lib/songs-store';
 import styles from './SearchBar.module.css';
 
 interface SearchBarProps {
@@ -21,13 +22,13 @@ export default function SearchBar({ onSelect, disabled = false, placeholder = "D
   const dropdownRef = useRef<HTMLDivElement>(null);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
-  const doSearch = useCallback((q: string) => {
+  const doSearch = useCallback(async (q: string) => {
     if (q.length < 2) {
       setResults([]);
       setIsOpen(false);
       return;
     }
-    const found = searchSongs(q, category, artist);
+    const found = await searchSongsAsync(q, category, artist);
     setResults(found);
     setIsOpen(found.length > 0);
     setSelectedIndex(-1);

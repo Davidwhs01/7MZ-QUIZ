@@ -10,6 +10,7 @@ import GlobalRankingCard from '@/components/home/GlobalRankingCard';
 import ChannelSelector from '@/components/home/ChannelSelector';
 import { songs, type SongCategory, type Song, type Artist, getSongsBySection } from '@/data/songs';
 import { useChannel } from '@/context/ChannelContext';
+import { getAllSongs } from '@/lib/songs-store';
 import { createClient } from '@/utils/supabase/client';
 import { createRoom, joinRoom } from '@/utils/supabase/battle';
 import { SECTIONS } from '@/data/sections';
@@ -57,40 +58,35 @@ export default function GeekHome() {
   }, [isLoggedIn]);
 
   useEffect(() => {
-    if (isLoaded && activeChannel === 'ENYGMA') setSelectedSelo('ENYGMA');
-    else if (isLoaded && activeChannel === '7MZ') setSelectedSelo('NERD HITS');
-    else if (isLoaded && activeChannel === 'RODRIGOZIN') setSelectedSelo('GEEKS');
-    else if (isLoaded && activeChannel === 'M4RKIM') setSelectedSelo('M4RKIM');
-    else if (isLoaded && activeChannel === 'ANIRAP') setSelectedSelo('ANIRAP');
-    else if (isLoaded && activeChannel === 'DAIKINEZ') setSelectedSelo('DAIKINEZ');
+    // Set default selected selo when artist changes
+    getAllSongs().then(allSongs => {
+      const artistSongs = allSongs.filter(s => s.artist === activeChannel);
+      const categories = [...new Set(artistSongs.map(s => s.category))].filter(Boolean);
+      if (categories.length > 0) {
+        setSelectedSelo(categories[0] as SongCategory);
+      }
+    });
   }, [activeChannel, isLoaded]);
 
-  const selloOptions: { key: SongCategory | 'PÓS REVELAÇÃO'; label: string }[] = activeChannel === 'RODRIGOZIN'
-    ? [
-        { key: 'GEEKS', label: 'GEEKS' },
-        { key: 'AUTORAIS', label: 'AUTORAIS' },
-      ]
-    : activeChannel === '7MZ'
-    ? [
-        { key: 'NERD HITS', label: 'NERD HITS' },
-        { key: '7MZ RECORDS', label: '7MZ RECORDS' },
-      ]
-    : activeChannel === 'M4RKIM'
-    ? [
-        { key: 'M4RKIM', label: 'M4RKIM' },
-      ]
-    : activeChannel === 'ANIRAP'
-    ? [
-        { key: 'ANIRAP', label: 'ANIRAP' },
-      ]
-    : activeChannel === 'DAIKINEZ'
-    ? [
-        { key: 'DAIKINEZ', label: 'DAIKINEZ' },
-      ]
-    : [
-        { key: 'ENYGMA', label: 'ENYGMA' },
-        { key: 'PÓS REVELAÇÃO', label: 'PÓS REVELAÇÃO' },
-      ];
+  // Derive selo options dynamically from songs in cache
+  const [cachedSongs, setCachedSongs] = useState<Song[]>([]);
+  useEffect(() => {
+    getAllSongs().then(setCachedSongs);
+  }, []);
+
+  const artistSongs = useMemo(
+    () => cachedSongs.filter(s => s.artist === activeChannel),
+    [cachedSongs, activeChannel]
+  );
+
+  const selloOptions = useMemo(() => {
+    const categories = [...new Set(artistSongs.map(s => s.category))].filter(Boolean);
+    const hasPosRevelacao = artistSongs.some(s => s.selos?.includes('PÓS REVELAÇÃO'));
+    const opts: { key: string; label: string }[] = categories.map(cat => ({ key: cat, label: cat }));
+    if (hasPosRevelacao) opts.push({ key: 'PÓS REVELAÇÃO', label: 'PÓS REVELAÇÃO' });
+    return opts;
+  }, [artistSongs]);
+
 
   const handleCreateRoom = useCallback(async () => {
     if (!isLoggedIn) return;
@@ -205,7 +201,7 @@ export default function GeekHome() {
             <div className={styles.statsBar}>
               <div className={styles.statItem}>
                 <span className={styles.statNumber}>
-                  {sectionSongs.filter(s => s.artist === activeChannel).length}+
+                  {artistSongs.length}+
                 </span>
                 <span className={styles.statLabel}>Músicas</span>
               </div>
@@ -218,8 +214,8 @@ export default function GeekHome() {
               <div className={styles.statItem}>
                 <span className={styles.statNumber}>
                   {new Set([
-                    ...sectionSongs.filter(s => s.artist === activeChannel).map(s => s.category),
-                    ...sectionSongs.filter(s => s.artist === activeChannel).flatMap(s => s.selos || [])
+                    ...artistSongs.map(s => s.category),
+                    ...artistSongs.flatMap(s => s.selos || [])
                   ]).size}
                 </span>
                 <span className={styles.statLabel}>Selos</span>
@@ -262,14 +258,7 @@ export default function GeekHome() {
 
             {gameMode === 'single' ? (
                 <div key="single-panel" className={`${styles.modesGrid} ${styles.panelEnter}`}>
-                  <Link href={`/play?artist=${
-                    activeChannel === 'ENYGMA' ? 'enygma' : 
-                    activeChannel === 'RODRIGOZIN' ? 'rodrigozin' :
-                    activeChannel === 'M4RKIM' ? 'm4rkim' :
-                    activeChannel === 'ANIRAP' ? 'anirap' :
-                    activeChannel === 'DAIKINEZ' ? 'daikinez' :
-                    activeChannel === 'NISHIKAY' ? 'nishikay' : '7mz'
-                  }`} className={styles.modeCard}>
+                  <Link href={`/play?artist=${activeChannel.toLowerCase()}`} className={styles.modeCard}>
                     <div className={styles.modeCardShine} />
                     <div className={styles.modeCardBorder} />
                     <div className={styles.modeCardInner}>
@@ -334,7 +323,9 @@ export default function GeekHome() {
                   <div className={styles.multiSection}>
                     <div className={styles.multiLabel}>Selo</div>
                     <div className={styles.seloRow}>
-                      {selloOptions.map(opt => (
+                      {selloOptions.length === 0 ? (
+                        <span style={{ opacity: 0.5, fontSize: '0.85rem' }}>Carregando...</span>
+                      ) : selloOptions.map(opt => (
                         <button
                           key={opt.key}
                           className={`${styles.seloBtn} ${selectedSelo === opt.key ? styles.seloBtnActive : ''}`}
@@ -343,8 +334,8 @@ export default function GeekHome() {
                           <span className={styles.seloBtnName}>{opt.label}</span>
                           <span className={styles.seloBtnCount}>
                             {opt.key === 'PÓS REVELAÇÃO'
-                              ? sectionSongs.filter(s => s.selos?.includes('PÓS REVELAÇÃO')).length
-                              : sectionSongs.filter(s => s.category === opt.key).length} músicas
+                              ? artistSongs.filter(s => s.selos?.includes('PÓS REVELAÇÃO')).length
+                              : artistSongs.filter(s => s.category === opt.key).length} músicas
                           </span>
                         </button>
                       ))}

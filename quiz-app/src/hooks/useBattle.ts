@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { createClient } from '@/utils/supabase/client';
-import { getRandomSong, type Song, type Artist } from '@/data/songs';
+import { getRandomSongAsync } from '@/lib/songs-store';
+import type { Song, Artist } from '@/data/songs';
 import { generateRandomTimestamp, getAudioDuration } from '@/lib/game-logic';
 import type { RealtimeChannel } from '@supabase/supabase-js';
 
@@ -161,7 +162,7 @@ export function useBattle(roomId: string | null, artist?: Artist) {
           await new Promise(r => setTimeout(r, 1000));
         }
 
-        const roundData = generateRound();
+        const roundData = await generateRound();
         const payload = { ...roundData, round: 1 };
 
         channel.send({ type: 'broadcast', event: 'round_start', payload });
@@ -336,10 +337,10 @@ export function useBattle(roomId: string | null, artist?: Artist) {
   }, [roomId, supabase, update]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ---- HOST: generate round song ----
-  const generateRound = useCallback((): Record<string, unknown> => {
-    const song = getRandomSong(
+  const generateRound = useCallback(async (): Promise<Record<string, unknown>> => {
+    const song = await getRandomSongAsync(
       Array.from(playedSongsRef.current),
-      state.battleMode === 'inferno' ? undefined : undefined,
+      undefined,
       state.artist as Artist,
     );
     if (!song) {
@@ -490,7 +491,7 @@ export function useBattle(roomId: string | null, artist?: Artist) {
         return;
       }
 
-      const roundData = generateRound();
+      const roundData = await generateRound();
       const payload = { ...roundData, round: nextRoundNum };
 
       channelRef.current?.send({ type: 'broadcast', event: 'next_round', payload });

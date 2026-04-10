@@ -1,7 +1,8 @@
 'use client';
 
 import { useCallback, useReducer } from 'react';
-import { Song, SeloKey, getRandomSong, type Artist } from '@/data/songs';
+import { Song, SeloKey, type Artist } from '@/data/songs';
+import { getRandomSongAsync } from '@/lib/songs-store';
 import {
   getAudioDuration,
   generateRandomTimestamp,
@@ -154,8 +155,8 @@ export function useGameState() {
     dispatch({ type: 'START_GAME' });
   }, []);
 
-  const loadNextSong = useCallback((selo?: SeloKey | SeloKey[], artist?: Artist) => {
-    const song = getRandomSong(state.playedSongIds, selo, artist);
+  const loadNextSong = useCallback(async (selo?: SeloKey | SeloKey[], artist?: Artist) => {
+    const song = await getRandomSongAsync(state.playedSongIds, selo, artist);
     
     if (!song) {
       dispatch({ type: 'CATEGORY_COMPLETE' }); // Category completed!

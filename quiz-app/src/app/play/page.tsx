@@ -15,122 +15,74 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { useChannel } from '@/context/ChannelContext';
+import { getAllArtists } from '@/lib/artists-store';
 
-// Detect artist from URL - more robust logic
+// Detect artist from URL — reads synchronously to avoid race conditions
 function useGameArtistFromURL(activeChannel: Artist): Artist {
-  const [detectedArtist, setDetectedArtist] = useState<Artist>(activeChannel);
-  const [isDetected, setIsDetected] = useState(false);
-  
+  // Lazy initializer: reads URL param on first render (client-only, safe since this is 'use client')
+  const [detectedArtist, setDetectedArtist] = useState<Artist>(() => {
+    if (typeof window === 'undefined') return activeChannel;
+    const param = new URLSearchParams(window.location.search).get('artist');
+    return param ? param.toUpperCase() : (activeChannel || '7MZ');
+  });
+
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const url = window.location.href;
-    const path = window.location.pathname;
-    
-    // Check URL params first (highest priority)
-    const artistParam = urlParams.get('artist');
-    if (artistParam === 'meln') {
-      setDetectedArtist('MELANIE');
-      setIsDetected(true);
-      return;
-    }
-    if (artistParam === 'enygma') {
-      setDetectedArtist('ENYGMA');
-      setIsDetected(true);
-      return;
-    }
-    if (artistParam === '7mz') {
-      setDetectedArtist('7MZ');
-      setIsDetected(true);
-      return;
-    }
-    if (artistParam === 'rodrigozin') {
-      setDetectedArtist('RODRIGOZIN');
-      setIsDetected(true);
-      return;
-    }
-    if (artistParam === 'm4rkim') {
-      setDetectedArtist('M4RKIM');
-      setIsDetected(true);
-      return;
-    }
-    if (artistParam === 'daikinez') {
-      setDetectedArtist('DAIKINEZ');
-      setIsDetected(true);
-      return;
-    }
-    if (artistParam === 'anirap') {
-      setDetectedArtist('ANIRAP');
-      setIsDetected(true);
-      return;
-    }
-    if (artistParam === 'nishikay') {
-      setDetectedArtist('NISHIKAY');
-      setIsDetected(true);
-      return;
-    }
-    
-    // Check path to determine section
-    if (path.includes('/pop') || path.startsWith('/pop')) {
-      setDetectedArtist('MELANIE');
-      setIsDetected(true);
-      return;
-    }
-    
-    // Use activeChannel from context, but validate it's valid
-    if (activeChannel === '7MZ' || activeChannel === 'ENYGMA' || activeChannel === 'MELANIE' || activeChannel === 'RODRIGOZIN' || activeChannel === 'MITSKI' || activeChannel === 'M4RKIM' || activeChannel === 'ANIRAP' || activeChannel === 'DAIKINEZ' || activeChannel === 'NISHIKAY') {
-      setDetectedArtist(activeChannel);
-    } else {
-      // Default to 7MZ if activeChannel is invalid
-      setDetectedArtist('7MZ');
-    }
-    setIsDetected(true);
+    const artistParam = new URLSearchParams(window.location.search).get('artist');
+    const resolved = artistParam ? artistParam.toUpperCase() : (activeChannel || '7MZ');
+    setDetectedArtist(resolved);
   }, [activeChannel]);
-  
+
   return detectedArtist;
 }
 
+// Hardcoded CSS theme classes (curated themes, not auto-extracted)
+const HARDCODED_THEME_IDS = new Set([
+  '7MZ', 'ENYGMA', 'MELANIE', 'RODRIGOZIN', 'MITSKI',
+  'M4RKIM', 'ANIRAP', 'DAIKINEZ', 'NISHIKAY',
+]);
+
 export default function PlayPage() {
   const router = useRouter();
-  const { activeChannel } = useChannel();
+  const { activeChannel, artists } = useChannel();
   const gameArtist = useGameArtistFromURL(activeChannel);
-  
-  // Apply theme based on gameArtist - force immediately on mount
+
+  // Apply theme — CSS class for curated artists, dynamic CSS vars for new ones
   useEffect(() => {
-    // Clear all theme classes first
-    document.body.classList.remove('theme-7mz', 'theme-enygma', 'theme-melanie', 'theme-geek', 'theme-pop', 'theme-rodrigozin', 'theme-mitski', 'theme-m4rkim', 'theme-anirap', 'theme-daikinez', 'theme-nishikay');
-    
-    // Apply theme based on detected artist
-    switch (gameArtist) {
-      case '7MZ':
-        document.body.classList.add('theme-7mz');
-        break;
-      case 'ENYGMA':
-        document.body.classList.add('theme-enygma');
-        break;
-      case 'MELANIE':
-        document.body.classList.add('theme-melanie');
-        break;
-      case 'RODRIGOZIN':
-        document.body.classList.add('theme-rodrigozin');
-        break;
-      case 'MITSKI':
-        document.body.classList.add('theme-mitski');
-        break;
-      case 'M4RKIM':
-        document.body.classList.add('theme-m4rkim');
-        break;
-      case 'ANIRAP':
-        document.body.classList.add('theme-anirap');
-        break;
-      case 'DAIKINEZ':
-        document.body.classList.add('theme-daikinez');
-        break;
-      case 'NISHIKAY':
-        document.body.classList.add('theme-nishikay');
-        break;
+    const allThemeClasses = [
+      'theme-7mz', 'theme-enygma', 'theme-melanie', 'theme-rodrigozin',
+      'theme-mitski', 'theme-m4rkim', 'theme-anirap', 'theme-daikinez', 'theme-nishikay',
+      ...artists.map(a => a.theme_class).filter(Boolean) as string[],
+    ];
+    document.body.classList.remove(...allThemeClasses);
+
+    if (HARDCODED_THEME_IDS.has(gameArtist)) {
+      // Clear any dynamic inline vars and apply CSS class
+      const vars = ['--accent-orange','--accent-orange-bright','--accent-orange-dim','--accent-neon',
+        '--accent-orange-rgb','--glow-orange','--glow-orange-strong','--border-orange',
+        '--accent-blue','--accent-blue-rgb','--accent-blue-dim'];
+      vars.forEach(v => document.body.style.removeProperty(v));
+      document.body.classList.add(`theme-${gameArtist.toLowerCase()}`);
+    } else {
+      // Dynamic artist — inject CSS vars from Supabase colors
+      const artist = artists.find(a => a.id === gameArtist);
+      if (artist?.primary_color) {
+        const [r, g, b] = (artist.primary_color_rgb ?? '255,107,43').split(',').map(Number);
+        document.body.style.setProperty('--accent-orange', artist.primary_color);
+        document.body.style.setProperty('--accent-orange-bright', artist.primary_color);
+        document.body.style.setProperty('--accent-orange-dim', artist.primary_color);
+        document.body.style.setProperty('--accent-neon', artist.primary_color);
+        document.body.style.setProperty('--accent-orange-rgb', artist.primary_color_rgb ?? '255, 107, 43');
+        document.body.style.setProperty('--glow-orange', `0 0 20px rgba(${r},${g},${b},0.25), 0 0 60px rgba(${r},${g},${b},0.08)`);
+        document.body.style.setProperty('--glow-orange-strong', `0 0 30px rgba(${r},${g},${b},0.5), 0 0 80px rgba(${r},${g},${b},0.15)`);
+        document.body.style.setProperty('--border-orange', `rgba(${r},${g},${b},0.25)`);
+        if (artist.secondary_color) {
+          document.body.style.setProperty('--accent-blue', artist.secondary_color);
+          document.body.style.setProperty('--accent-blue-rgb', artist.secondary_color_rgb ?? '59, 130, 246');
+        }
+      }
     }
-    console.log('Theme applied:', gameArtist);
-  }, [gameArtist]);
+  }, [gameArtist, artists]);
+
   
   const {
     state,
@@ -163,10 +115,32 @@ export default function PlayPage() {
   const [selectedCategory, setSelectedCategory] = useState<SeloKey | 'ALL' | null>(null);
   const [isViewingVideo, setIsViewingVideo] = useState(false);
   const [videoData, setVideoData] = useState<{ id: string; start: number } | null>(null);
-  
+
+  // Dynamic artist data from Supabase cache
+  const artistInfo = useMemo(
+    () => artists.find(a => a.id === gameArtist) ?? null,
+    [artists, gameArtist]
+  );
+  const [artistSongs, setArtistSongs] = useState<Song[]>([]);
   useEffect(() => {
-    setSelectedCategory(null);
-  }, [activeChannel]);
+    import('@/lib/songs-store').then(({ getAllSongs }) =>
+      getAllSongs().then(all => setArtistSongs(all.filter(s => s.artist === gameArtist)))
+    );
+  }, [gameArtist]);
+
+  // Derive categories for the current artist
+  const artistCategories = useMemo(() => {
+    const cats = [...new Set(artistSongs.map(s => s.category))].filter(Boolean);
+    const hasPosRev = artistSongs.some(s => s.selos?.includes('PÓS REVELAÇÃO'));
+    const opts: { key: string; label: string; emoji: string }[] = cats.map(cat => ({
+      key: cat,
+      label: cat,
+      emoji: cat === 'NERD HITS' ? '⚡' : cat === '7MZ RECORDS' ? '🎤' : cat === 'GEEKS' ? '🎮' : cat === 'AUTORAIS' ? '🎵' : cat === 'ENYGMA' ? '🔮' : '🎤',
+    }));
+    if (hasPosRev) opts.push({ key: 'PÓS REVELAÇÃO', label: 'PÓS REVELAÇÃO', emoji: '🔥' });
+    return opts;
+  }, [artistSongs]);
+
 
   const nextSongDataRef = useRef<{ song: Song; timestamp: number; duration: number } | null>(null);
   const feedbackTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -175,9 +149,9 @@ export default function PlayPage() {
   const categoryRef = useRef<SeloKey | SeloKey[] | undefined>(undefined);
 
   // Start new round: use duration from database (or fallback 180s) - no polling needed
-  const startNewRound = useCallback(() => {
+  const startNewRound = useCallback(async () => {
     const cat = categoryRef.current;
-    const data = loadNextSong(cat, gameArtist);
+    const data = await loadNextSong(cat, gameArtist);
     
     if (!data) {
       return;
@@ -255,27 +229,17 @@ export default function PlayPage() {
     if (hasStartedRef.current || !selectedCategory) return;
     hasStartedRef.current = true;
     scoreSubmittedRef.current = false;
-    
-    // Handle ALL: for each artist, use their categories combined
+
     if (selectedCategory === 'ALL') {
-      if (gameArtist === '7MZ') {
-        categoryRef.current = ['NERD HITS', '7MZ RECORDS'];
-      } else if (gameArtist === 'RODRIGOZIN') {
-        categoryRef.current = ['GEEKS', 'AUTORAIS'];
-      } else if (gameArtist === 'ENYGMA') {
-        categoryRef.current = 'ENYGMA';
-      } else if (gameArtist === 'MELANIE') {
-        categoryRef.current = 'POP';
-      } else if (gameArtist === 'MITSKI') {
-        categoryRef.current = 'POP';
-      } else {
-        categoryRef.current = undefined;
-      }
+      // Use all categories for this artist dynamically
+      const cats = [...new Set(artistSongs.map(s => s.category))].filter(Boolean);
+      categoryRef.current = cats.length > 1 ? cats : (cats[0] ?? undefined);
     } else {
       categoryRef.current = selectedCategory;
     }
     startGame();
   };
+
 
   const handleAnswer = useCallback((song: Song) => {
     if (state.phase !== 'PLAYING') return;
@@ -389,36 +353,20 @@ export default function PlayPage() {
           </svg>
         </Link>
         <div className={styles.logoHeader}>
-          {gameArtist === '7MZ' && (
-            <Image src="/7mz-logo.jpg" alt="7MZ Logo" width={36} height={36} className={styles.logoHeaderImg} />
-          )}
-          {gameArtist === 'ENYGMA' && (
-            <Image src="/enygma-logo.jpg" alt="Enygma Logo" width={36} height={36} className={styles.logoHeaderImg} />
-          )}
-          {gameArtist === 'MELANIE' && (
-            <Image src="/Melanie-Logo.jpg" alt="Melanie Logo" width={36} height={36} className={styles.logoHeaderImg} />
-          )}
-          {gameArtist === 'MITSKI' && (
-            <Image src="/Mitski-Logo.jpg" alt="Mitski Logo" width={36} height={36} className={styles.logoHeaderImg} />
-          )}
-          {gameArtist === 'RODRIGOZIN' && (
-            <Image src="/RodrigoZin-Logo.jpg" alt="Rodrigo Zin Logo" width={36} height={36} className={styles.logoHeaderImg} />
-          )}
-          {gameArtist === 'M4RKIM' && (
-            <Image src="/M4rkim-Logo.jpg" alt="M4rkim Logo" width={36} height={36} className={styles.logoHeaderImg} />
-          )}
-          {gameArtist === 'ANIRAP' && (
-            <Image src="/anirap-logo.jpg" alt="Anirap Logo" width={36} height={36} className={styles.logoHeaderImg} />
-          )}
-          {gameArtist === 'DAIKINEZ' && (
-            <Image src="/Daikinez-Logo.jpg" alt="Daikinez Logo" width={36} height={36} className={styles.logoHeaderImg} />
-          )}
-          {gameArtist === 'NISHIKAY' && (
-            <Image src="/Nishikay-Logo.jpg" alt="Nishikay Logo" width={36} height={36} className={styles.logoHeaderImg} />
-          )}
+          {artistInfo?.logo_url ? (
+            <Image
+              src={artistInfo.logo_url}
+              alt={`${artistInfo.name} Logo`}
+              width={36}
+              height={36}
+              className={styles.logoHeaderImg}
+              unoptimized={!artistInfo.logo_url.startsWith('/')}
+            />
+          ) : null}
           <h1 className={styles.logo}>
-            {gameArtist === '7MZ' ? '7 MINUTOZ' : gameArtist === 'MELANIE' ? 'MELANIE' : gameArtist === 'RODRIGOZIN' ? 'RODRIGO ZIN' : gameArtist === 'MITSKI' ? 'MITSKI' : gameArtist === 'M4RKIM' ? 'M4RKIM' : gameArtist === 'ANIRAP' ? 'ANIRAP' : gameArtist === 'DAIKINEZ' ? 'DAIKINEZ' : gameArtist === 'NISHIKAY' ? 'NISHIKAY' : 'ENYGMA'} <span>ARENA</span>
+            {artistInfo?.name ?? gameArtist} <span>ARENA</span>
           </h1>
+
         </div>
         {state.phase !== 'IDLE' && state.phase !== 'GAME_OVER' && (
           <div className={styles.headerStats}>
@@ -457,202 +405,29 @@ export default function PlayPage() {
                 }
               }}
             >
-              {gameArtist === '7MZ' && (
-                <>
-                  <motion.button
-                    variants={{
-                      hidden: { y: 20, opacity: 0 },
-                      visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 300 } }
-                    }}
-                    whileHover={{ scale: 1.05, y: -5 }}
-                    whileTap={{ scale: 0.95 }}
-                    className={`${styles.categoryCard} ${selectedCategory === 'NERD HITS' ? styles.categoryCardActive : ''}`}
-                    onClick={() => setSelectedCategory('NERD HITS')}
-                  >
-                    <span className={styles.categoryEmoji}>⚡</span>
-                    <span className={styles.categoryName}>NERD HITS</span>
-                    <span className={styles.categoryCount}>{songs.filter(s => s.category === 'NERD HITS').length} músicas</span>
-                  </motion.button>
-
-                  <motion.button
-                    variants={{
-                      hidden: { y: 20, opacity: 0 },
-                      visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 300 } }
-                    }}
-                    whileHover={{ scale: 1.05, y: -5 }}
-                    whileTap={{ scale: 0.95 }}
-                    className={`${styles.categoryCard} ${selectedCategory === '7MZ RECORDS' ? styles.categoryCardActive : ''}`}
-                    onClick={() => setSelectedCategory('7MZ RECORDS')}
-                  >
-                    <span className={styles.categoryEmoji}>🎤</span>
-                    <span className={styles.categoryName}>7MZ RECORDS</span>
-                    <span className={styles.categoryCount}>{songs.filter(s => s.category === '7MZ RECORDS').length} músicas</span>
-                  </motion.button>
-                </>
-              )}
-
-              {gameArtist === 'ENYGMA' && (
-                <>
-                  <motion.button
-                    variants={{
-                      hidden: { y: 20, opacity: 0 },
-                      visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 300 } }
-                    }}
-                    whileHover={{ scale: 1.05, y: -5 }}
-                    whileTap={{ scale: 0.95 }}
-                    className={`${styles.categoryCard} ${selectedCategory === 'ENYGMA' ? styles.categoryCardActive : ''}`}
-                    onClick={() => setSelectedCategory('ENYGMA')}
-                  >
-                    <span className={styles.categoryEmoji}>🔮</span>
-                    <span className={styles.categoryName}>ENYGMA</span>
-                    <span className={styles.categoryCount}>{songs.filter(s => s.category === 'ENYGMA').length} músicas</span>
-                  </motion.button>
-
-                  <motion.button
-                    variants={{
-                      hidden: { y: 20, opacity: 0 },
-                      visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 300 } }
-                    }}
-                    whileHover={{ scale: 1.05, y: -5 }}
-                    whileTap={{ scale: 0.95 }}
-                    className={`${styles.categoryCard} ${selectedCategory === 'PÓS REVELAÇÃO' ? styles.categoryCardActive : ''}`}
-                    onClick={() => setSelectedCategory('PÓS REVELAÇÃO')}
-                  >
-                    <span className={styles.categoryEmoji}>🔥</span>
-                    <span className={styles.categoryName}>PÓS REVELAÇÃO</span>
-                    <span className={styles.categoryCount}>{songs.filter(s => s.selos?.includes('PÓS REVELAÇÃO')).length} músicas</span>
-                  </motion.button>
-                </>
-              )}
-
-              {gameArtist === 'MELANIE' && (
-                <>
-                  <motion.button
-                    variants={{
-                      hidden: { y: 20, opacity: 0 },
-                      visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 300 } }
-                    }}
-                    whileHover={{ scale: 1.05, y: -5 }}
-                    whileTap={{ scale: 0.95 }}
-                    className={`${styles.categoryCard} ${selectedCategory === 'POP' ? styles.categoryCardActive : ''}`}
-                    onClick={() => setSelectedCategory('POP')}
-                  >
-                    <span className={styles.categoryEmoji}>🎤</span>
-                    <span className={styles.categoryName}>POP</span>
-                    <span className={styles.categoryCount}>{songs.filter(s => s.artist === 'MELANIE').length} músicas</span>
-                  </motion.button>
-                </>
-              )}
-
-              {gameArtist === 'MITSKI' && (
-                <>
-                  <motion.button
-                    variants={{
-                      hidden: { y: 20, opacity: 0 },
-                      visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 300 } }
-                    }}
-                    whileHover={{ scale: 1.05, y: -5 }}
-                    whileTap={{ scale: 0.95 }}
-                    className={`${styles.categoryCard} ${selectedCategory === 'POP' ? styles.categoryCardActive : ''}`}
-                    onClick={() => setSelectedCategory('POP')}
-                  >
-                    <span className={styles.categoryEmoji}>🎤</span>
-                    <span className={styles.categoryName}>POP</span>
-                    <span className={styles.categoryCount}>{songs.filter(s => s.artist === 'MITSKI').length} músicas</span>
-                  </motion.button>
-                </>
-              )}
-
-              {gameArtist === 'M4RKIM' && (
-                <>
-                  <motion.button
-                    variants={{
-                      hidden: { y: 20, opacity: 0 },
-                      visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 300 } }
-                    }}
-                    whileHover={{ scale: 1.05, y: -5 }}
-                    whileTap={{ scale: 0.95 }}
-                    className={`${styles.categoryCard} ${selectedCategory === 'M4RKIM' ? styles.categoryCardActive : ''}`}
-                    onClick={() => setSelectedCategory('M4RKIM')}
-                  >
-                    <span className={styles.categoryEmoji}>🎤</span>
-                    <span className={styles.categoryName}>M4RKIM</span>
-                    <span className={styles.categoryCount}>{songs.filter(s => s.artist === 'M4RKIM').length} músicas</span>
-                  </motion.button>
-                </>
-              )}
-
-              {gameArtist === 'ANIRAP' && (
-                <>
-                  <motion.button
-                    variants={{
-                      hidden: { y: 20, opacity: 0 },
-                      visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 300 } }
-                    }}
-                    whileHover={{ scale: 1.05, y: -5 }}
-                    whileTap={{ scale: 0.95 }}
-                    className={`${styles.categoryCard} ${selectedCategory === 'ANIRAP' ? styles.categoryCardActive : ''}`}
-                    onClick={() => setSelectedCategory('ANIRAP')}
-                  >
-                    <span className={styles.categoryEmoji}>🎤</span>
-                    <span className={styles.categoryName}>ANIRAP</span>
-                    <span className={styles.categoryCount}>{songs.filter(s => s.artist === 'ANIRAP').length} músicas</span>
-                  </motion.button>
-                </>
-              )}
-
-              {gameArtist === 'DAIKINEZ' && (
-                <>
-                  <motion.button
-                    variants={{
-                      hidden: { y: 20, opacity: 0 },
-                      visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 300 } }
-                    }}
-                    whileHover={{ scale: 1.05, y: -5 }}
-                    whileTap={{ scale: 0.95 }}
-                    className={`${styles.categoryCard} ${selectedCategory === 'DAIKINEZ' ? styles.categoryCardActive : ''}`}
-                    onClick={() => setSelectedCategory('DAIKINEZ')}
-                  >
-                    <span className={styles.categoryEmoji}>🎤</span>
-                    <span className={styles.categoryName}>DAIKINEZ</span>
-                    <span className={styles.categoryCount}>{songs.filter(s => s.artist === 'DAIKINEZ').length} músicas</span>
-                  </motion.button>
-                </>
-              )}
-
-              {gameArtist === 'RODRIGOZIN' && (
-                <>
-                  <motion.button
-                    variants={{
-                      hidden: { y: 20, opacity: 0 },
-                      visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 300 } }
-                    }}
-                    whileHover={{ scale: 1.05, y: -5 }}
-                    whileTap={{ scale: 0.95 }}
-                    className={`${styles.categoryCard} ${selectedCategory === 'GEEKS' ? styles.categoryCardActive : ''}`}
-                    onClick={() => setSelectedCategory('GEEKS')}
-                  >
-                    <span className={styles.categoryEmoji}>🎮</span>
-                    <span className={styles.categoryName}>GEEKS</span>
-                    <span className={styles.categoryCount}>{songs.filter(s => s.category === 'GEEKS').length} músicas</span>
-                  </motion.button>
-
-                  <motion.button
-                    variants={{
-                      hidden: { y: 20, opacity: 0 },
-                      visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 300 } }
-                    }}
-                    whileHover={{ scale: 1.05, y: -5 }}
-                    whileTap={{ scale: 0.95 }}
-                    className={`${styles.categoryCard} ${selectedCategory === 'AUTORAIS' ? styles.categoryCardActive : ''}`}
-                    onClick={() => setSelectedCategory('AUTORAIS')}
-                  >
-                    <span className={styles.categoryEmoji}>🎵</span>
-                    <span className={styles.categoryName}>AUTORAIS</span>
-                    <span className={styles.categoryCount}>{songs.filter(s => s.category === 'AUTORAIS').length} músicas</span>
-                  </motion.button>
-                </>
-              )}
+              {artistCategories.length === 0 ? (
+                <span style={{ opacity: 0.5 }}>Carregando categorias...</span>
+              ) : artistCategories.map(cat => (
+                <motion.button
+                  key={cat.key}
+                  variants={{
+                    hidden: { y: 20, opacity: 0 },
+                    visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 300 } }
+                  }}
+                  whileHover={{ scale: 1.05, y: -5 }}
+                  whileTap={{ scale: 0.95 }}
+                  className={`${styles.categoryCard} ${selectedCategory === cat.key ? styles.categoryCardActive : ''}`}
+                  onClick={() => setSelectedCategory(cat.key)}
+                >
+                  <span className={styles.categoryEmoji}>{cat.emoji}</span>
+                  <span className={styles.categoryName}>{cat.label}</span>
+                  <span className={styles.categoryCount}>
+                    {cat.key === 'PÓS REVELAÇÃO'
+                      ? artistSongs.filter(s => s.selos?.includes('PÓS REVELAÇÃO')).length
+                      : artistSongs.filter(s => s.category === cat.key).length} músicas
+                  </span>
+                </motion.button>
+              ))}
 
               <motion.button
                 variants={{
@@ -666,8 +441,9 @@ export default function PlayPage() {
               >
                 <span className={styles.categoryEmoji}>🌌</span>
                 <span className={styles.categoryName}>TODAS AS MÚSICAS</span>
-                <span className={styles.categoryCount}>{gameArtist === '7MZ' ? songs.filter(s => s.artist === '7MZ').length : gameArtist === 'RODRIGOZIN' ? songs.filter(s => s.artist === 'RODRIGOZIN').length : gameArtist === 'MELANIE' ? songs.filter(s => s.artist === 'MELANIE').length : gameArtist === 'MITSKI' ? songs.filter(s => s.artist === 'MITSKI').length : gameArtist === 'M4RKIM' ? songs.filter(s => s.artist === 'M4RKIM').length : gameArtist === 'ANIRAP' ? songs.filter(s => s.artist === 'ANIRAP').length : gameArtist === 'DAIKINEZ' ? songs.filter(s => s.artist === 'DAIKINEZ').length : songs.filter(s => s.artist === 'ENYGMA').length} músicas</span>
+                <span className={styles.categoryCount}>{artistSongs.length} músicas</span>
               </motion.button>
+
             </motion.div>
 
             <div className={styles.rules}>

@@ -1,7 +1,9 @@
-export type SongCategory = 'NERD HITS' | '7MZ RECORDS' | 'ENYGMA' | 'POP' | 'GEEKS' | 'AUTORAIS' | 'M4RKIM' | 'ANIRAP' | 'DAIKINEZ' | 'NISHIKAY';
-export type SeloKey = SongCategory | 'PÓS REVELAÇÃO';
-export type Artist = '7MZ' | 'ENYGMA' | 'MELANIE' | 'RODRIGOZIN' | 'MITSKI' | 'M4RKIM' | 'ANIRAP' | 'DAIKINEZ' | 'NISHIKAY';
+// Open string types — new artists/categories added via Supabase require no code changes
+export type SongCategory = string;
+export type SeloKey = string;
+export type Artist = string;
 export type AppSection = 'geek' | 'pop';
+
 
 export interface Song {
   id: string;

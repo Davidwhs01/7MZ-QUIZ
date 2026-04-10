@@ -1,0 +1,22 @@
+INSERT INTO public.songs (id,title,youtube_id,duration,category,artist_id,anime,search_terms,intro_skip,outro_buffer,selos,active) VALUES
+('daikinez-qYWsZK7V8eo','Daikinez - Perfeita Destruição (Itoshi Rin) ','qYWsZK7V8eo',0,'DAIKINEZ','DAIKINEZ',NULL,NULL,NULL,NULL,NULL,true),
+('daikinez-ojJMIA7Ohcw','Daikinez - Envolto em Grades (Neji Hyuga)','ojJMIA7Ohcw',0,'DAIKINEZ','DAIKINEZ',NULL,NULL,NULL,NULL,NULL,true),
+('daikinez-rD-vM5NQmww','Daikinez - Ordenar (Sung Jin Woo)','rD-vM5NQmww',0,'DAIKINEZ','DAIKINEZ',NULL,NULL,NULL,NULL,NULL,true),
+('daikinez-kl3mmFtXt6c','Daikinez - Segunda Chance (Rudeus)','kl3mmFtXt6c',0,'DAIKINEZ','DAIKINEZ',NULL,NULL,NULL,NULL,NULL,true),
+('daikinez-Z-v6LseYWw8','Daikinez - Perdas ft. @Raphyxz e @MavizinOficial ','Z-v6LseYWw8',0,'DAIKINEZ','DAIKINEZ',NULL,NULL,NULL,NULL,NULL,true),
+('daikinez-zsINtQltRc4','Daikinez - Dor  (Aki Hayakawa)','zsINtQltRc4',0,'DAIKINEZ','DAIKINEZ',NULL,NULL,NULL,NULL,NULL,true),
+('daikinez-_5OOLQ3b4GQ','Daikinez - Clamar das Almas (Belzebub)','_5OOLQ3b4GQ',0,'DAIKINEZ','DAIKINEZ',NULL,NULL,NULL,NULL,NULL,true),
+('daikinez--yK4JJNutZ8','Daikinez - Brisa Hostil (Sanemi)','-yK4JJNutZ8',0,'DAIKINEZ','DAIKINEZ',NULL,NULL,NULL,NULL,NULL,true),
+('daikinez-_jh8qCV5mUQ','Daikinez - Luz (Yuta Okkotsu)','_jh8qCV5mUQ',0,'DAIKINEZ','DAIKINEZ',NULL,NULL,NULL,NULL,NULL,true),
+('daikinez-LEoW8AjN9JA','Daikinez - Colapso (Gabimaru)','LEoW8AjN9JA',0,'DAIKINEZ','DAIKINEZ',NULL,NULL,NULL,NULL,NULL,true),
+('nishikay-aD0iZjHJZnw','Promessas Vazias | Reze (Chainsaw Man) | Nishikay ft. @Daikinez','aD0iZjHJZnw',0,'NISHIKAY','NISHIKAY',NULL,NULL,NULL,NULL,NULL,true),
+('nishikay-MDkF9z0V1_k','Iluminar | Rengoku (Kimetsu no Yaiba) | Nishikay','MDkF9z0V1_k',0,'NISHIKAY','NISHIKAY',NULL,NULL,NULL,NULL,NULL,true),
+('nishikay-Kxnuzg_3ebQ','Seu Maior Vilão | Michael Kaiser (Blue Lock) | Nishikay','Kxnuzg_3ebQ',0,'NISHIKAY','NISHIKAY',NULL,NULL,NULL,NULL,NULL,true),
+('nishikay-8XrRo4y3c9w','Mundo Cruel | Ekko (Arcane) | Nishikay','8XrRo4y3c9w',0,'NISHIKAY','NISHIKAY',NULL,NULL,NULL,NULL,NULL,true),
+('nishikay-Vng1iQQyVig','No Fundo do Poço | Makima (Chainsaw Man) | Nishikay ft.@Daikinez','Vng1iQQyVig',0,'NISHIKAY','NISHIKAY',NULL,NULL,NULL,NULL,NULL,true),
+('nishikay-7wPZBpHncg0','A Morte Não é o Fim | Singed (Arcane) | Nishikay','7wPZBpHncg0',0,'NISHIKAY','NISHIKAY',NULL,NULL,NULL,NULL,NULL,true),
+('nishikay-xLOYhqNnfWE','Um Poder Que Não Deveria Ter | Jayce (Arcane) | Nishikay','xLOYhqNnfWE',0,'NISHIKAY','NISHIKAY',NULL,NULL,NULL,NULL,NULL,true),
+('nishikay-WKPLy6pL0u0','Now I Am Your Enemy | Jinx (Arcane) | Nishikay','WKPLy6pL0u0',0,'NISHIKAY','NISHIKAY',NULL,NULL,NULL,NULL,NULL,true),
+('nishikay-RUvs0bKcTXQ','Apenas Uma Engrenagem | Itadori Yuji (Jujutsu Kaisen) | Nishikay (Prod. A. Houz)','RUvs0bKcTXQ',0,'NISHIKAY','NISHIKAY',NULL,NULL,NULL,NULL,NULL,true),
+('nishikay-q2chJH_Ox7g','Para Viver Como Rei | Doflamingo (One Piece) | Nishikay (Prod. A. Houz)','q2chJH_Ox7g',0,'NISHIKAY','NISHIKAY',NULL,NULL,NULL,NULL,NULL,true)
+ON CONFLICT (youtube_id) DO NOTHING;
