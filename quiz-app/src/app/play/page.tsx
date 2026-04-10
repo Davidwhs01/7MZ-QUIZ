@@ -17,19 +17,19 @@ import { motion } from 'framer-motion';
 import { useChannel } from '@/context/ChannelContext';
 import { getAllArtists } from '@/lib/artists-store';
 
-// Detect artist from URL — reads synchronously to avoid race conditions
+// Detect artist from URL — fully dynamic, no hardcoded allowlist
 function useGameArtistFromURL(activeChannel: Artist): Artist {
-  // Lazy initializer: reads URL param on first render (client-only, safe since this is 'use client')
-  const [detectedArtist, setDetectedArtist] = useState<Artist>(() => {
-    if (typeof window === 'undefined') return activeChannel;
-    const param = new URLSearchParams(window.location.search).get('artist');
-    return param ? param.toUpperCase() : (activeChannel || '7MZ');
-  });
+  const [detectedArtist, setDetectedArtist] = useState<Artist>(activeChannel);
 
   useEffect(() => {
     const artistParam = new URLSearchParams(window.location.search).get('artist');
-    const resolved = artistParam ? artistParam.toUpperCase() : (activeChannel || '7MZ');
-    setDetectedArtist(resolved);
+    if (artistParam) {
+      // URL param is lowercase artist_id → uppercase to match DB
+      setDetectedArtist(artistParam.toUpperCase());
+    } else {
+      // Fall back to active channel from context
+      setDetectedArtist(activeChannel || '7MZ');
+    }
   }, [activeChannel]);
 
   return detectedArtist;
