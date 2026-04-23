@@ -11,9 +11,11 @@
 import { supabase } from '@/lib/supabase';
 import type { Song, Artist, SeloKey, AppSection } from '@/data/types';
 
-// ─── In-memory cache ─────────────────────────────────────────────────────────
+// ─── In-memory cache with TTL ────────────────────────────────────────────────
 let _songs: Song[] | null = null;
 let _loading: Promise<Song[]> | null = null;
+let _lastFetchTime = 0;
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
 
 function mapRow(row: Record<string, unknown>): Song {
   return {
@@ -32,8 +34,16 @@ function mapRow(row: Record<string, unknown>): Song {
 }
 
 export async function getAllSongs(): Promise<Song[]> {
-  if (_songs) return _songs;
+  const now = Date.now();
+  const isExpired = _songs && (now - _lastFetchTime > CACHE_TTL_MS);
+  
+  if (_songs && !isExpired) return _songs;
   if (_loading) return _loading;
+
+  // If expired, clear for fresh fetch
+  if (isExpired) {
+    _songs = null;
+  }
 
   _loading = (async () => {
     const { data, error } = await supabase
@@ -44,10 +54,11 @@ export async function getAllSongs(): Promise<Song[]> {
 
     if (error) {
       console.error('[songs-store] Failed to load songs:', error.message);
-      return [];
+      return _songs ?? []; // return stale data if available
     }
 
     _songs = (data ?? []).map(mapRow);
+    _lastFetchTime = Date.now();
     _loading = null;
     return _songs;
   })();
