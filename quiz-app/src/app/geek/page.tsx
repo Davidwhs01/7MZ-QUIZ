@@ -147,6 +147,8 @@ export default function GeekHome() {
   const [songsReady, setSongsReady] = useState(false);
   useEffect(() => {
     setSongsReady(false);
+    // Always invalidate to avoid stale serverless cache showing 0 songs
+    invalidateSongsCache();
     getAllSongs().then(all => {
       setArtistSongs(all.filter(s => s.artist === activeChannel));
       const categories = [...new Set(all.filter(s => s.artist === activeChannel).map(s => s.category))].filter(Boolean);
