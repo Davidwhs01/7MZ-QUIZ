@@ -14,13 +14,93 @@ import { createClient } from '@/utils/supabase/client';
 import { createRoom, joinRoom } from '@/utils/supabase/battle';
 import { SECTIONS } from '@/data/sections';
 
+// ── SVG Icons (taste-skill: zero emojis) ──────────────────────────────────────
+const IconUser = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+  </svg>
+);
+const IconTrophy = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M6 9H4a2 2 0 0 1-2-2V5h4"/><path d="M18 9h2a2 2 0 0 0 2-2V5h-4"/>
+    <path d="M12 17v4"/><path d="M8 21h8"/><path d="M6 9a6 6 0 0 0 12 0V3H6z"/>
+  </svg>
+);
+const IconMusic = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+  </svg>
+);
+const IconSwords = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"/><line x1="13" y1="19" x2="19" y2="13"/>
+    <polyline points="9.5 6.5 6 3 3 6 6.5 9.5"/><polyline points="14.5 6.5 18 3 21 6 17.5 9.5"/>
+    <line x1="5" y1="19" x2="11" y2="13"/>
+  </svg>
+);
+const IconPencil = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+  </svg>
+);
+const IconMic = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/>
+    <path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/>
+    <line x1="8" y1="22" x2="16" y2="22"/>
+  </svg>
+);
+const IconGamepad = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="2" y="6" width="20" height="12" rx="2"/>
+    <path d="M6 12h4M8 10v4"/><circle cx="15" cy="11" r="1"/><circle cx="18" cy="13" r="1"/>
+  </svg>
+);
+const IconArrowRight = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="18" height="18">
+    <path d="m9 18 6-6-6-6"/>
+  </svg>
+);
+const IconGeek = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/>
+    <line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/>
+  </svg>
+);
+const IconChevronRight = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="m9 18 6-6-6-6"/>
+  </svg>
+);
+const IconYoutube = () => (
+  <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+  </svg>
+);
+
+const MARQUEE_ITEMS = [
+  { label: 'Pop Arena', accent: false },
+  { label: '·', accent: true },
+  { label: 'Melanie Martinez', accent: false },
+  { label: '·', accent: true },
+  { label: 'Mitski', accent: false },
+  { label: '·', accent: true },
+  { label: 'Meln', accent: false },
+  { label: '·', accent: true },
+  { label: 'Adivinhe a Música', accent: false },
+  { label: '·', accent: true },
+  { label: '7MZ Records', accent: false },
+  { label: '·', accent: true },
+  { label: 'Pop & Indie', accent: false },
+  { label: '·', accent: true },
+];
+
 type GameMode = 'single' | 'multi';
 
 export default function PopHome() {
   const router = useRouter();
   const { isLoaded, activeChannel } = useChannel();
   const [gameMode, setGameMode] = useState<GameMode>('single');
-  const [selectedSelo] = useState<'POP'>('POP');
   const [battleMode, setBattleMode] = useState<'normal' | 'inferno'>('normal');
   const [roomCode, setRoomCode] = useState('');
   const [loading, setLoading] = useState(false);
@@ -42,7 +122,7 @@ export default function PopHome() {
       return;
     }
     router.push(`/battle/${room.id}`);
-  }, [battleMode, router, isLoggedIn]);
+  }, [battleMode, router, isLoggedIn, activeChannel]);
 
   const handleJoinRoom = useCallback(async () => {
     if (roomCode.length < 4) return;
@@ -82,9 +162,10 @@ export default function PopHome() {
     check();
   }, [isLoggedIn]);
 
+  // ── Loading state premium ──────────────────────────────────────────────────
   if (!isLoaded) {
     return (
-      <div className={styles.page}>
+      <div className={styles.page} style={{ minHeight: '100dvh' }}>
         <div className={styles.bgLayer}>
           <div className={`${styles.orb} ${styles.orb1}`} />
           <div className={`${styles.orb} ${styles.orb2}`} />
@@ -92,28 +173,53 @@ export default function PopHome() {
           <div className={`${styles.splatter} ${styles.splatterPink}`} />
           <div className={`${styles.splatter} ${styles.splatterPurple}`} />
           <div className={`${styles.splatter} ${styles.splatterHotPink}`} />
-          <div className={`${styles.geometric} ${styles.triangle}`} />
-          <div className={`${styles.geometric} ${styles.circle}`} />
-          <div className={`${styles.geometric} ${styles.diamond}`} />
           <div className={styles.noise} />
         </div>
-        <div style={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'center', 
-          height: '100vh',
-          flexDirection: 'column',
-          gap: '20px'
+        <div style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          minHeight: '100dvh', flexDirection: 'column', gap: '32px', padding: '40px',
         }}>
-          <div className={styles.spinner} style={{ width: 48, height: 48 }} />
-          <p style={{ color: 'var(--text-primary)', opacity: 0.7 }}>Carregando...</p>
+          <div style={{ position: 'relative', width: 72, height: 72, flexShrink: 0 }}>
+            <div style={{
+              position: 'absolute', inset: 0, borderRadius: '50%',
+              border: '2px solid transparent',
+              borderTopColor: 'var(--accent-orange)',
+              borderRightColor: 'rgba(var(--accent-orange-rgb), 0.3)',
+              animation: 'rotateRing 1.2s linear infinite',
+            }} />
+            <div style={{
+              position: 'absolute', inset: 8, borderRadius: '50%',
+              border: '1.5px solid transparent',
+              borderBottomColor: 'var(--accent-blue)',
+              borderLeftColor: 'rgba(var(--accent-blue-rgb), 0.2)',
+              animation: 'rotateRing 2s linear infinite reverse',
+            }} />
+            <div style={{
+              position: 'absolute', inset: '50%', transform: 'translate(-50%,-50%)',
+              width: 10, height: 10, borderRadius: '50%',
+              background: 'var(--accent-orange)',
+              boxShadow: '0 0 12px var(--accent-orange)',
+            }} />
+          </div>
+          <div style={{ width: '100%', maxWidth: 420, display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div className="skeleton-shimmer" style={{ height: 20, width: '60%', margin: '0 auto', borderRadius: 6 }} />
+            <div className="skeleton-shimmer" style={{ height: 14, width: '40%', margin: '0 auto', borderRadius: 6 }} />
+            <div style={{ marginTop: 12 }}>
+              {[1, 2, 3].map(i => (
+                <div key={i} className="skeleton-shimmer" style={{
+                  height: 72, borderRadius: 16, marginBottom: 12,
+                  animationDelay: `${i * 150}ms`,
+                }} />
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className={styles.page}>
+    <div className={styles.page} style={{ minHeight: '100dvh' }}>
       <div className={styles.bgLayer}>
         <div className={`${styles.orb} ${styles.orb1}`} />
         <div className={`${styles.orb} ${styles.orb2}`} />
@@ -130,44 +236,39 @@ export default function PopHome() {
       </div>
 
       <div className={styles.lobbyContainer}>
+        {/* Sidebar esquerda */}
         <aside className={styles.sidebarLeft}>
           <div className={styles.sidebarCard}>
             <div className={styles.sidebarHeader}>
-              <span className={styles.sidebarIcon}>👤</span>
+              <span className={styles.sidebarIcon}><IconUser /></span>
               <h3 className={styles.sidebarTitle}>SEU PERFIL</h3>
             </div>
             <LoginProfileCard />
             <Link href="/geek" className={styles.sectionSwitch}>
-              <span className={styles.sectionSwitchIcon}>🎮</span>
+              <span className={styles.sectionSwitchIcon}><IconGeek /></span>
               <span className={styles.sectionSwitchText}>Ir para GEEK</span>
+              <span style={{ marginLeft: 'auto', opacity: 0.5 }}><IconChevronRight /></span>
             </Link>
           </div>
         </aside>
 
+        {/* Centro */}
         <main className={styles.centerContent}>
           <section className={styles.hero}>
             <ChannelSelector />
-
             <div className={styles.titleBlock}>
               <h1 className={styles.title}>
-                <span className={styles.titleQuiz}>
-                  {section.title}
-                </span>
+                <span className={styles.titleQuiz}>{section.title}</span>
               </h1>
               <div className={styles.subtitleLine}>
                 <span className={styles.subtitleDecor} />
-                <p className={styles.subtitle}>
-                  {section.subtitle}
-                </p>
+                <p className={styles.subtitle}>{section.subtitle}</p>
                 <span className={styles.subtitleDecor} />
               </div>
             </div>
-
             <div className={styles.statsBar}>
               <div className={styles.statItem}>
-                <span className={styles.statNumber}>
-                  {sectionSongs.length}+
-                </span>
+                <span className={styles.statNumber}>{sectionSongs.length}+</span>
                 <span className={styles.statLabel}>Músicas</span>
               </div>
               <div className={styles.statDivider} />
@@ -194,172 +295,196 @@ export default function PopHome() {
                   className={`${styles.modeToggleBtn} ${gameMode === 'single' ? styles.modeToggleActive : ''}`}
                   onClick={() => { setGameMode('single'); setError(''); }}
                 >
-                  🎵 SINGLE
+                  <IconMusic /> SINGLE
                 </button>
                 <button
                   className={`${styles.modeToggleBtn} ${gameMode === 'multi' ? styles.modeToggleActive : ''}`}
                   onClick={() => { setGameMode('multi'); setError(''); }}
                 >
-                  ⚔️ MULTI
+                  <IconSwords /> MULTI
                 </button>
               </div>
             </div>
 
             {gameMode === 'multi' && activeGame && (
               <Link href={`/battle/${activeGame.id}`} className={styles.activeBanner}>
-                <span>🎮</span>
+                <span><IconGamepad /></span>
                 <div>
                   <strong>Partida em andamento</strong>
                   <span> Sala {activeGame.code}</span>
                 </div>
-                <span className={styles.activeBannerArrow}>→</span>
+                <span className={styles.activeBannerArrow}><IconArrowRight /></span>
               </Link>
             )}
 
             {gameMode === 'single' ? (
-                <div key="single-panel" className={`${styles.modesGrid} ${styles.panelEnter}`}>
-                  <Link href={`/play?artist=${activeChannel === 'MITSKI' ? 'mitski' : 'meln'}`} className={styles.modeCard}>
-                    <div className={styles.modeCardShine} />
-                    <div className={styles.modeCardBorder} />
-                    <div className={styles.modeCardInner}>
-                      <div className={styles.modeIconWrap}>
-                        <span className={styles.modeIcon}>🎵</span>
-                        <div className={styles.modeIconGlow} />
-                      </div>
-                      <div className={styles.modeInfo}>
-                        <h3 className={styles.modeName}>Adivinhe a Música pelo Áudio</h3>
-                        <p className={styles.modeDesc}>Ouça um trecho aleatório e lute para descobrir qual música está tocando</p>
-                      </div>
-                      <div className={styles.modeRight}>
-                        <span className={styles.modeStatus}>JOGAR</span>
-                        <svg className={styles.modeArrow} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="20" height="20">
-                          <path d="m9 18 6-6-6-6" />
-                        </svg>
-                      </div>
+              <div key="single-panel" className={`${styles.modesGrid} ${styles.panelEnter}`}>
+                <Link
+                  href={`/play?artist=${activeChannel === 'MITSKI' ? 'mitski' : 'meln'}`}
+                  className={styles.modeCard}
+                >
+                  <div className={styles.modeCardShine} />
+                  <div className={styles.modeCardBorder} />
+                  <div className={styles.modeCardInner}>
+                    <div className={styles.modeIconWrap}>
+                      <span className={styles.modeIcon}><IconMusic /></span>
+                      <div className={styles.modeIconGlow} />
                     </div>
-                  </Link>
-
-                  <div className={`${styles.modeCard} ${styles.modeCardLocked}`}>
-                    <div className={styles.modeCardInner}>
-                      <div className={styles.modeIconWrap}>
-                        <span className={styles.modeIcon}>✍️</span>
-                      </div>
-                      <div className={styles.modeInfo}>
-                        <h3 className={styles.modeName}>Complete a Letra</h3>
-                        <p className={styles.modeDesc}>Complete os versos que faltam na música para pontuar</p>
-                      </div>
-                      <div className={styles.modeRight}>
-                        <span className={styles.modeLock}>EM BREVE</span>
-                      </div>
+                    <div className={styles.modeInfo}>
+                      <h3 className={styles.modeName}>Adivinhe a Música pelo Áudio</h3>
+                      <p className={styles.modeDesc}>Ouça um trecho aleatório e descubra qual música está tocando</p>
+                    </div>
+                    <div className={styles.modeRight}>
+                      <span className={styles.modeStatus}>JOGAR</span>
+                      <IconArrowRight />
                     </div>
                   </div>
+                </Link>
 
-                  <div className={`${styles.modeCard} ${styles.modeCardLocked}`}>
-                    <div className={styles.modeCardInner}>
-                      <div className={styles.modeIconWrap}>
-                        <span className={styles.modeIcon}>🎤</span>
-                      </div>
-                      <div className={styles.modeInfo}>
-                        <h3 className={styles.modeName}>Adivinhe o Álbum</h3>
-                        <p className={styles.modeDesc}>Descubra de qual álbum a música faz parte</p>
-                      </div>
-                      <div className={styles.modeRight}>
-                        <span className={styles.modeLock}>EM BREVE</span>
-                      </div>
+                <div className={`${styles.modeCard} ${styles.modeCardLocked}`}>
+                  <div className={styles.modeCardInner}>
+                    <div className={styles.modeIconWrap}>
+                      <span className={styles.modeIcon}><IconPencil /></span>
+                    </div>
+                    <div className={styles.modeInfo}>
+                      <h3 className={styles.modeName}>Complete a Letra</h3>
+                      <p className={styles.modeDesc}>Complete os versos que faltam na música para pontuar</p>
+                    </div>
+                    <div className={styles.modeRight}>
+                      <span className={styles.modeLock}>EM BREVE</span>
                     </div>
                   </div>
                 </div>
-              ) : (
-                <div key="multi-panel" className={`${styles.multiPanel} ${styles.panelEnter}`}>
-                  <div className={`${styles.multiCard} ${styles.multiCardActive}`}>
-                    <span className={styles.multiCardEmoji}>⚔️</span>
-                    <div className={styles.multiCardInfo}>
-                      <div className={styles.multiCardName}>Batalha 1v1</div>
-                      <div className={styles.multiCardDesc}>5 rodadas • 3 vidas • Quem somar mais pontos vence</div>
-                    </div>
-                    <span className={styles.multiCardBadge}>PRONTO</span>
-                  </div>
 
-                  <div className={styles.multiSection}>
-                    <div className={styles.multiLabel}>Dificuldade</div>
-                    <div className={styles.diffRow}>
-                      <button
-                        className={`${styles.diffBtn} ${battleMode === 'normal' ? styles.diffBtnActive : ''}`}
-                        onClick={() => setBattleMode('normal')}
-                      >
-                        <span className={styles.diffBtnName}>⚡ Normal</span>
-                        <span className={styles.diffBtnTag}>Com dicas</span>
-                      </button>
-                      <button
-                        className={`${styles.diffBtn} ${battleMode === 'inferno' ? styles.diffBtnActive : ''}`}
-                        onClick={() => setBattleMode('inferno')}
-                      >
-                        <span className={styles.diffBtnName}>🔥 Inferno</span>
-                        <span className={styles.diffBtnTag}>Sem dicas</span>
-                      </button>
+                <div className={`${styles.modeCard} ${styles.modeCardLocked}`}>
+                  <div className={styles.modeCardInner}>
+                    <div className={styles.modeIconWrap}>
+                      <span className={styles.modeIcon}><IconMic /></span>
+                    </div>
+                    <div className={styles.modeInfo}>
+                      <h3 className={styles.modeName}>Adivinhe o Álbum</h3>
+                      <p className={styles.modeDesc}>Descubra de qual álbum a música faz parte</p>
+                    </div>
+                    <div className={styles.modeRight}>
+                      <span className={styles.modeLock}>EM BREVE</span>
                     </div>
                   </div>
+                </div>
+              </div>
+            ) : (
+              <div key="multi-panel" className={`${styles.multiPanel} ${styles.panelEnter}`}>
+                <div className={`${styles.multiCard} ${styles.multiCardActive}`}>
+                  <span className={styles.multiCardEmoji}><IconSwords /></span>
+                  <div className={styles.multiCardInfo}>
+                    <div className={styles.multiCardName}>Batalha 1v1</div>
+                    <div className={styles.multiCardDesc}>5 rodadas · 3 vidas · Quem somar mais pontos vence</div>
+                  </div>
+                  <span className={styles.multiCardBadge}>PRONTO</span>
+                </div>
 
-                  <button
-                    className={styles.createBtn}
-                    onClick={handleCreateRoom}
-                    disabled={loading || !isLoggedIn}
-                  >
-                    {!isLoggedIn ? 'FAÇA LOGIN PARA JOGAR' : loading ? 'CRIANDO...' : '⚔️ CRIAR SALA'}
-                  </button>
-
-                  <div className={styles.joinDivider}>ou entre com código</div>
-                  <div className={styles.joinRow}>
-                    <input
-                      className={styles.codeInput}
-                      type="text"
-                      placeholder="CÓDIGO"
-                      value={roomCode}
-                      onChange={e => { setRoomCode(e.target.value.toUpperCase()); setError(''); }}
-                      maxLength={6}
-                      autoComplete="off"
-                      spellCheck={false}
-                    />
+                <div className={styles.multiSection}>
+                  <div className={styles.multiLabel}>Dificuldade</div>
+                  <div className={styles.diffRow}>
                     <button
-                      className={styles.joinBtn}
-                      onClick={handleJoinRoom}
-                      disabled={loading || roomCode.length < 4 || !isLoggedIn}
+                      className={`${styles.diffBtn} ${battleMode === 'normal' ? styles.diffBtnActive : ''}`}
+                      onClick={() => setBattleMode('normal')}
                     >
-                      ENTRAR
+                      <span className={styles.diffBtnName}>Normal</span>
+                      <span className={styles.diffBtnTag}>Com dicas</span>
+                    </button>
+                    <button
+                      className={`${styles.diffBtn} ${battleMode === 'inferno' ? styles.diffBtnActive : ''}`}
+                      onClick={() => setBattleMode('inferno')}
+                    >
+                      <span className={styles.diffBtnName}>Inferno</span>
+                      <span className={styles.diffBtnTag}>Sem dicas</span>
                     </button>
                   </div>
-
-                  {error && <div className={styles.multiError}>{error}</div>}
-
-                  <div className={`${styles.multiCard} ${styles.multiCardLocked}`}>
-                    <span className={styles.multiCardEmoji}>🏆</span>
-                    <div className={styles.multiCardInfo}>
-                      <div className={styles.multiCardName}>Torneio</div>
-                      <div className={styles.multiCardDesc}>Eliminatório com 4, 8 ou 16 jogadores</div>
-                    </div>
-                    <span className={styles.multiCardBadgeSoon}>EM BREVE</span>
-                  </div>
                 </div>
-              )}
+
+                <button
+                  className={styles.createBtn}
+                  onClick={handleCreateRoom}
+                  disabled={loading || !isLoggedIn}
+                >
+                  {!isLoggedIn ? 'FAÇA LOGIN PARA JOGAR' : loading ? 'CRIANDO...' : 'CRIAR SALA'}
+                </button>
+
+                <div className={styles.joinDivider}>ou entre com código</div>
+                <div className={styles.joinRow}>
+                  <input
+                    className={styles.codeInput}
+                    type="text"
+                    placeholder="CÓDIGO"
+                    value={roomCode}
+                    onChange={e => { setRoomCode(e.target.value.toUpperCase()); setError(''); }}
+                    maxLength={6}
+                    autoComplete="off"
+                    spellCheck={false}
+                  />
+                  <button
+                    className={styles.joinBtn}
+                    onClick={handleJoinRoom}
+                    disabled={loading || roomCode.length < 4 || !isLoggedIn}
+                  >
+                    ENTRAR
+                  </button>
+                </div>
+
+                {error && (
+                  <div className={styles.multiError}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                      <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                    </svg>
+                    {error}
+                  </div>
+                )}
+
+                <div className={`${styles.multiCard} ${styles.multiCardLocked}`}>
+                  <span className={styles.multiCardEmoji}><IconTrophy /></span>
+                  <div className={styles.multiCardInfo}>
+                    <div className={styles.multiCardName}>Torneio</div>
+                    <div className={styles.multiCardDesc}>Eliminatório com 4, 8 ou 16 jogadores</div>
+                  </div>
+                  <span className={styles.multiCardBadgeSoon}>EM BREVE</span>
+                </div>
+              </div>
+            )}
           </section>
         </main>
 
+        {/* Sidebar direita */}
         <aside className={styles.sidebarRight}>
           <div className={styles.sidebarCard}>
             <div className={styles.sidebarHeader}>
-              <span className={styles.sidebarIcon}>🏆</span>
+              <span className={styles.sidebarIcon}><IconTrophy /></span>
               <h3 className={styles.sidebarTitle}>RANKING GLOBAL</h3>
+              <span className="live-dot" style={{ marginLeft: 'auto' }} title="Ao vivo" />
             </div>
             <GlobalRankingCard />
           </div>
         </aside>
       </div>
 
+      {/* Footer Marquee */}
       <footer className={styles.footer}>
+        <div className={styles.marqueeStrip}>
+          <div className={styles.marqueeTrack}>
+            {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, i) => (
+              <span key={i} className={`${styles.marqueeItem} ${item.accent ? styles.marqueeItemAccent : ''}`}>
+                {item.label}
+              </span>
+            ))}
+          </div>
+        </div>
         <div className={styles.footerInner}>
           <p className={styles.footerText}>
             Feito com <span className={styles.footerHeart}>♥</span> para a fanbase de música pop
           </p>
+          <a href="https://www.youtube.com/@7minutoz" target="_blank" rel="noopener noreferrer" className={styles.footerLink}>
+            <IconYoutube />
+            Canal no YouTube
+          </a>
         </div>
       </footer>
       <BottomDrawer />

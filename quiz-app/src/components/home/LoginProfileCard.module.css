@@ -1,39 +1,66 @@
+/* LoginProfileCard — taste-skill upgrade */
+
+/* Loading state — shimmer skeleton */
 .loadingContent {
   display: flex;
   align-items: center;
   gap: 14px;
+  animation: fadeIn 300ms ease;
 }
 
 .loadingAvatar {
-  width: 48px;
-  height: 48px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
-  animation: pulse 2s infinite;
+  flex-shrink: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0.04) 25%,
+    rgba(255,255,255,0.09) 50%,
+    rgba(255,255,255,0.04) 75%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 1.6s infinite linear;
 }
 
 .loadingTextWrap {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .loadingBar {
-  height: 16px;
+  height: 14px;
   width: 60%;
-  background: rgba(255, 255, 255, 0.1);
   border-radius: 4px;
-  margin-bottom: 8px;
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0.04) 25%,
+    rgba(255,255,255,0.09) 50%,
+    rgba(255,255,255,0.04) 75%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 1.6s infinite linear;
 }
 
 .loadingBarSmall {
-  height: 12px;
+  height: 10px;
   width: 80%;
-  background: rgba(255, 255, 255, 0.05);
   border-radius: 4px;
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0.03) 25%,
+    rgba(255,255,255,0.06) 50%,
+    rgba(255,255,255,0.03) 75%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 1.6s 0.2s infinite linear;
 }
 
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+@keyframes shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
 }
 
 /* Logged in */
@@ -41,14 +68,20 @@
   display: flex;
   align-items: center;
   gap: 14px;
+  animation: fadeInUp 400ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .avatarLink {
   position: relative;
-  width: 56px;
-  height: 56px;
+  width: 52px;
+  height: 52px;
   flex-shrink: 0;
   text-decoration: none;
+  transition: transform 250ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.avatarLink:hover {
+  transform: scale(1.05);
 }
 
 .avatarImg {
@@ -61,6 +94,13 @@
   inset: -4px;
   border-radius: 50%;
   border: 1.5px solid var(--accent-orange);
+  opacity: 0.7;
+  animation: pulseGlow 3s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; box-shadow: 0 0 10px rgba(var(--accent-orange-rgb), 0.4); }
 }
 
 .loginText {
@@ -75,39 +115,54 @@
 
 .username {
   margin: 0;
-  font-family: var(--font-ui);
-  font-size: 1rem;
+  font-family: var(--font-data);
+  font-size: 0.95rem;
   font-weight: 700;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  letter-spacing: -0.01em;
 }
 
 .userMeta {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   margin-top: 4px;
 }
 
 .userPoints {
-  font-size: 0.8rem;
+  font-family: var(--font-data);
+  font-size: 0.75rem;
   font-weight: 700;
   color: var(--accent-orange);
+  font-variant-numeric: tabular-nums;
 }
 
 .metaDot {
-  color: var(--border-medium);
+  color: rgba(255, 255, 255, 0.15);
+  font-size: 0.6rem;
 }
 
 .logoutBtn {
   background: none;
   border: none;
   color: var(--text-muted);
-  font-size: 0.75rem;
-  padding: 0;
+  font-family: var(--font-data);
+  font-size: 0.72rem;
+  padding: 2px 6px;
   cursor: pointer;
-  text-decoration: underline;
+  border-radius: 4px;
+  transition: color 150ms ease, background 150ms ease;
+}
+
+.logoutBtn:hover {
+  color: var(--color-error);
+  background: rgba(255, 59, 92, 0.08);
+}
+
+.logoutBtn:active {
+  transform: scale(0.97);
 }
 
 /* Not logged in */
@@ -115,6 +170,7 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
+  animation: fadeInUp 400ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .guestRow {
@@ -125,14 +181,14 @@
 
 .guestAvatar {
   position: relative;
-  width: 56px;
-  height: 56px;
+  width: 52px;
+  height: 52px;
   flex-shrink: 0;
 }
 
 .guestAvatarImg {
   border-radius: 50%;
-  opacity: 0.3;
+  opacity: 0.25;
   filter: grayscale(1);
 }
 
@@ -140,8 +196,8 @@
   position: absolute;
   inset: -4px;
   border-radius: 50%;
-  border: 1.5px dashed var(--border-medium);
-  animation: rotateRing 10s linear infinite;
+  border: 1.5px dashed rgba(255, 255, 255, 0.15);
+  animation: rotateRing 12s linear infinite;
 }
 
 @keyframes rotateRing {
@@ -156,15 +212,17 @@
 
 .guestTitle {
   margin: 0;
-  font-family: var(--font-ui);
-  font-size: 0.95rem;
-  font-weight: 600;
+  font-family: var(--font-data);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
 }
 
 .guestDesc {
-  font-size: 0.75rem;
+  font-family: var(--font-data);
+  font-size: 0.72rem;
   color: var(--text-muted);
-  margin: 2px 0 0;
+  margin: 3px 0 0;
 }
 
 .loginButtons {
@@ -173,40 +231,70 @@
   gap: 8px;
 }
 
+/* taste-skill: spring + tactile feedback nos botões */
 .loginBtn {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 10px 16px;
+  padding: 11px 16px;
   border: none;
-  border-radius: var(--radius-md);
-  font-family: var(--font-ui);
-  font-size: 0.78rem;
+  border-radius: 10px;
+  font-family: var(--font-data);
+  font-size: 0.75rem;
   font-weight: 700;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
   cursor: pointer;
   flex-shrink: 0;
   white-space: nowrap;
   width: 100%;
-  transition: opacity 0.15s;
+  transition:
+    transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 200ms ease,
+    opacity 150ms ease;
 }
 
 .loginBtn:hover {
-  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+.loginBtn:active {
+  transform: scale(0.98) translateY(0);
 }
 
 .discordBtn {
   background: #5865F2;
   color: white;
+  box-shadow: 0 4px 16px rgba(88, 101, 242, 0.3);
+}
+
+.discordBtn:hover {
+  box-shadow: 0 8px 24px rgba(88, 101, 242, 0.45);
 }
 
 .googleBtn {
   background: #ffffff;
   color: #111111;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.googleBtn:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
 }
 
 .loginBtnIcon {
   width: 16px;
   height: 16px;
+  flex-shrink: 0;
+}
+
+/* Animações locais */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }

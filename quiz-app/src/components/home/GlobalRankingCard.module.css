@@ -1,87 +1,158 @@
+/* GlobalRankingCard — taste-skill upgrade */
+
 .rankingList {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
 }
 
-.loadingItem {
-  height: 40px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: var(--radius-md);
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
-
-.emptyMessage {
-  text-align: center;
-  font-size: 0.85rem;
-  color: var(--text-muted);
-  margin: 20px 0;
-}
-
+/* Stagger entrance nos itens */
 .rankItem {
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 10px 12px;
   background: rgba(255, 255, 255, 0.02);
-  border-radius: var(--radius-md);
   border: 1px solid transparent;
+  border-radius: 10px;
+  transition:
+    background 200ms ease,
+    border-color 200ms ease,
+    transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: fadeInUp 400ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  cursor: default;
+}
+
+.rankItem:hover {
+  background: rgba(255, 255, 255, 0.045);
+  border-color: rgba(255, 255, 255, 0.06);
+  transform: translateX(3px);
 }
 
 .rankNumber {
-  font-family: var(--font-display);
-  font-size: 1.2rem;
-  font-weight: 700;
-  min-width: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  flex-shrink: 0;
 }
 
 .rankName {
-  font-family: var(--font-ui);
-  font-size: 0.88rem;
+  font-family: var(--font-data);
+  font-size: 0.82rem;
   font-weight: 600;
   color: var(--text-primary);
   flex: 1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  letter-spacing: -0.01em;
 }
 
 .rankPoints {
-  font-size: 0.78rem;
-  font-weight: 700;
+  font-family: var(--font-data);
+  font-size: 0.72rem;
+  font-weight: 600;
   color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
+/* View all */
 .viewAllWrap {
-  margin-top: 16px;
-  width: 100%;
-  display: flex;
-  justify-content: center;
+  margin-top: 8px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .viewAllBtn {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  padding: 10px 20px;
-  background: rgba(255, 136, 0, 0.1);
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 9px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: transparent;
   color: var(--accent-orange);
-  font-family: var(--font-ui);
-  font-size: 0.8rem;
-  font-weight: 700;
-  border-radius: 100px;
-  cursor: pointer;
-  border: 1px solid rgba(255, 136, 0, 0.2);
+  font-family: var(--font-data);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
   text-decoration: none;
-  letter-spacing: 0.02em;
-  transition: all 0.2s;
+  text-transform: uppercase;
+  transition:
+    background 200ms ease,
+    border-color 200ms ease,
+    transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .viewAllBtn:hover {
-  background: rgba(255, 136, 0, 0.18);
-  border-color: rgba(255, 136, 0, 0.35);
+  background: rgba(var(--accent-orange-rgb), 0.08);
+  border-color: rgba(var(--accent-orange-rgb), 0.3);
+  transform: translateY(-1px);
+}
+
+.viewAllBtn:active {
+  transform: scale(0.98);
+}
+
+/* Skeleton shimmer items (taste-skill) */
+.skeletonItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  animation: fadeIn 400ms ease both;
+}
+
+.skeletonRank {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.skeletonText {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Empty state bonito (taste-skill) */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 32px 16px;
+  gap: 12px;
+}
+
+.emptyTitle {
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  letter-spacing: 0.02em;
+}
+
+.emptyDesc {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  max-width: 200px;
+}
+
+/* Keyframes locais */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }

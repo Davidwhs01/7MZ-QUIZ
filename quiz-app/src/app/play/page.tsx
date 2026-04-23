@@ -122,9 +122,14 @@ export default function PlayPage() {
     [artists, gameArtist]
   );
   const [artistSongs, setArtistSongs] = useState<Song[]>([]);
+  const [songsReady, setSongsReady] = useState(false);
   useEffect(() => {
+    setSongsReady(false);
     import('@/lib/songs-store').then(({ getAllSongs }) =>
-      getAllSongs().then(all => setArtistSongs(all.filter(s => s.artist === gameArtist)))
+      getAllSongs().then(all => {
+        setArtistSongs(all.filter(s => s.artist === gameArtist));
+        setSongsReady(true);
+      })
     );
   }, [gameArtist]);
 
@@ -132,12 +137,22 @@ export default function PlayPage() {
   const artistCategories = useMemo(() => {
     const cats = [...new Set(artistSongs.map(s => s.category))].filter(Boolean);
     const hasPosRev = artistSongs.some(s => s.selos?.includes('PÓS REVELAÇÃO'));
-    const opts: { key: string; label: string; emoji: string }[] = cats.map(cat => ({
+    const opts: { key: string; label: string; icon: React.ReactNode }[] = cats.map(cat => ({
       key: cat,
       label: cat,
-      emoji: cat === 'NERD HITS' ? '⚡' : cat === '7MZ RECORDS' ? '🎤' : cat === 'GEEKS' ? '🎮' : cat === 'AUTORAIS' ? '🎵' : cat === 'ENYGMA' ? '🔮' : '🎤',
+      icon: cat === 'NERD HITS'
+        ? <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        : cat === '7MZ RECORDS'
+        ? <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+        : cat === 'GEEKS'
+        ? <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h4M8 10v4"/><circle cx="15" cy="11" r="1"/><circle cx="18" cy="13" r="1"/></svg>
+        : <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>,
     }));
-    if (hasPosRev) opts.push({ key: 'PÓS REVELAÇÃO', label: 'PÓS REVELAÇÃO', emoji: '🔥' });
+    if (hasPosRev) opts.push({
+      key: 'PÓS REVELAÇÃO',
+      label: 'PÓS REVELAÇÃO',
+      icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+    });
     return opts;
   }, [artistSongs]);
 
@@ -354,13 +369,15 @@ export default function PlayPage() {
         </Link>
         <div className={styles.logoHeader}>
           {artistInfo?.logo_url ? (
-            <Image
+            // Use regular img for external URLs (yt3, lh3, etc.) to bypass Next.js domain check
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
               src={artistInfo.logo_url}
               alt={`${artistInfo.name} Logo`}
               width={36}
               height={36}
               className={styles.logoHeaderImg}
-              unoptimized={!artistInfo.logo_url.startsWith('/')}
+              style={{ borderRadius: '50%', objectFit: 'cover' }}
             />
           ) : null}
           <h1 className={styles.logo}>
@@ -375,7 +392,11 @@ export default function PlayPage() {
               <span className={styles.scoreValue}>{state.score}</span>
             </div>
             <div className={`${styles.streakBadge} ${isOnFire ? styles.streakHot : ''}`}>
-              <span className={styles.streakIcon}>🔥</span>
+              <span className={styles.streakIcon}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>
+                </svg>
+              </span>
               <span className={styles.streakValue}>{state.trueStreak}</span>
             </div>
           </div>
@@ -387,7 +408,11 @@ export default function PlayPage() {
         {/* IDLE - Category Selection Screen */}
         {state.phase === 'IDLE' && (
           <div className={styles.startScreen} suppressHydrationWarning>
-            <div className={styles.modeIcon}>🎵</div>
+            <div className={styles.modeIcon}>
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+              </svg>
+            </div>
             <h2 className={styles.modeTitle}>Escolha a Categoria</h2>
             <p className={styles.modeDesc}>
               Ouça um trecho e adivinhe qual música geek está tocando.
@@ -419,7 +444,7 @@ export default function PlayPage() {
                   className={`${styles.categoryCard} ${selectedCategory === cat.key ? styles.categoryCardActive : ''}`}
                   onClick={() => setSelectedCategory(cat.key)}
                 >
-                  <span className={styles.categoryEmoji}>{cat.emoji}</span>
+                  <span className={styles.categoryEmoji}>{cat.icon}</span>
                   <span className={styles.categoryName}>{cat.label}</span>
                   <span className={styles.categoryCount}>
                     {cat.key === 'PÓS REVELAÇÃO'
@@ -439,7 +464,11 @@ export default function PlayPage() {
                 className={`${styles.categoryCard} ${selectedCategory === 'ALL' ? styles.categoryCardActive : ''}`}
                 onClick={() => setSelectedCategory('ALL')}
               >
-                <span className={styles.categoryEmoji}>🌌</span>
+                <span className={styles.categoryEmoji}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                  </svg>
+                </span>
                 <span className={styles.categoryName}>TODAS AS MÚSICAS</span>
                 <span className={styles.categoryCount}>{artistSongs.length} músicas</span>
               </motion.button>
@@ -448,26 +477,41 @@ export default function PlayPage() {
 
             <div className={styles.rules}>
               <div className={styles.rule}>
-                <span className={styles.ruleIcon}>🎧</span>
-                <span>5s de áudio • 100 pts</span>
+                <span className={styles.ruleIcon}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"/>
+                    <path d="M16 9a5 5 0 0 1 0 6"/>
+                  </svg>
+                </span>
+                <span>5s de áudio · 100 pts</span>
               </div>
               <div className={styles.rule}>
-                <span className={styles.ruleIcon}>💡</span>
-                <span>Dica 1 → 10s • 60 pts</span>
+                <span className={styles.ruleIcon}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
+                    <path d="M9 18h6"/><path d="M10 22h4"/>
+                  </svg>
+                </span>
+                <span>Dica 1 → 10s · 60 pts</span>
               </div>
               <div className={styles.rule}>
-                <span className={styles.ruleIcon}>💡</span>
-                <span>Dica 2 → 15s • 30 pts</span>
+                <span className={styles.ruleIcon}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
+                    <path d="M9 18h6"/><path d="M10 22h4"/>
+                  </svg>
+                </span>
+                <span>Dica 2 → 15s · 30 pts</span>
               </div>
             </div>
             <motion.button
-              whileHover={{ scale: !selectedCategory || !isReady ? 1 : 1.05 }}
-              whileTap={{ scale: !selectedCategory || !isReady ? 1 : 0.95 }}
+              whileHover={{ scale: !selectedCategory || !isReady || !songsReady ? 1 : 1.05 }}
+              whileTap={{ scale: !selectedCategory || !isReady || !songsReady ? 1 : 0.95 }}
               className={styles.startBtn}
               onClick={handleStart}
-              disabled={!isReady || !selectedCategory}
+              disabled={!isReady || !selectedCategory || !songsReady}
             >
-              {!selectedCategory ? 'SELECIONE UM ARTISTA' : (!isReady ? 'CARREGANDO...' : 'COMEÇAR')}
+              {!songsReady ? 'CARREGANDO...' : !selectedCategory ? 'SELECIONE UMA CATEGORIA' : (!isReady ? 'CARREGANDO...' : 'COMEÇAR')}
             </motion.button>
           </div>
         )}
@@ -558,7 +602,12 @@ export default function PlayPage() {
                   className={styles.hintBtn}
                   onClick={handleHint}
                 >
-                  <span className={styles.hintIcon}>💡</span>
+                  <span className={styles.hintIcon}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
+                      <path d="M9 18h6"/><path d="M10 22h4"/>
+                    </svg>
+                  </span>
                   <span>Dica ({state.hintLevel + 1}/2)</span>
                   <span className={styles.hintCost}>
                     {state.hintLevel === 0 ? '-40 pts' : '-30 pts'}
@@ -629,7 +678,11 @@ export default function PlayPage() {
                   </div>
                   <div className={styles.feedbackInfo}>
                     <div className={styles.feedbackBadgeRow}>
-                      <span className={styles.correctEmoji}>✅</span>
+                      <span className={styles.correctEmoji}>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                      </span>
                       <span className={styles.earnedPoints}>+{pointsEarned} pts</span>
                     </div>
                     {bonusEarned > 0 && (
@@ -639,7 +692,12 @@ export default function PlayPage() {
                         transition={{ delay: 0.3 }}
                         className={styles.bonusPointsWrap}
                       >
-                        <span className={styles.bonusPoints}>+{bonusEarned} COMBO 🔥</span>
+                        <span className={styles.bonusPoints}>
+                          +{bonusEarned} COMBO
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style={{ display: 'inline', marginLeft: 4 }}>
+                            <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>
+                          </svg>
+                        </span>
                       </motion.div>
                     )}
                     <h3 className={styles.feedbackSongTitle}>{state.currentSong.title}</h3>
@@ -666,7 +724,13 @@ export default function PlayPage() {
               />
             )}
             <div className={styles.gameOverContent}>
-              <div className={styles.gameOverIcon}>💀</div>
+              <div className={styles.gameOverIcon}>
+                <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <path d="M9 9h.01M15 9h.01"/>
+                  <path d="M8 13h8"/>
+                </svg>
+              </div>
               <h2 className={styles.gameOverTitle}>GAME OVER</h2>
               
               <div className={styles.correctAnswer}>
@@ -729,7 +793,12 @@ export default function PlayPage() {
                 animate={{ scale: 1 }}
                 transition={{ type: 'spring', stiffness: 200, damping: 15 }}
               >
-                <div className={styles.gameOverIcon} style={{ fontSize: '4rem' }}>🏆</div>
+                <div className={styles.gameOverIcon} style={{ fontSize: '4rem' }}>
+                <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M6 9H4a2 2 0 0 1-2-2V5h4"/><path d="M18 9h2a2 2 0 0 0 2-2V5h-4"/>
+                  <path d="M12 17v4"/><path d="M8 21h8"/><path d="M6 9a6 6 0 0 0 12 0V3H6z"/>
+                </svg>
+              </div>
               </motion.div>
               <h2 className={styles.gameOverTitle}>CATEGORIA COMPLETA!</h2>
               <p className={styles.correctAnswerLabel}>Você acertou todas as músicas!</p>

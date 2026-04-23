@@ -1,5 +1,5 @@
 .page {
-  min-height: 100vh;
+  min-height: 100dvh;
   background: var(--bg-dark);
   color: var(--text-primary);
   display: flex;
@@ -51,15 +51,23 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--border-light);
+  background: rgba(12, 12, 22, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 50%;
   color: var(--text-primary);
-  transition: all 0.2s;
+  backdrop-filter: blur(12px);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.07);
+  transition:
+    background 200ms ease,
+    transform 250ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 .backBtn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateY(-50%) scale(1.05);
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-50%) scale(1.08);
+}
+.backBtn:active {
+  transform: translateY(-50%) scale(0.95);
 }
 .logoHeader {
   display: flex;
@@ -117,17 +125,21 @@
 
 .pageTitle {
   font-family: var(--font-display);
-  font-size: 2.2rem;
+  font-size: clamp(1.8rem, 5vw, 2.8rem);
   font-weight: 800;
   margin-bottom: 8px;
   text-align: center;
+  letter-spacing: 0.1em;
+  text-wrap: balance;
 }
 
 .pageSubtitle {
+  font-family: var(--font-data);
   color: var(--text-muted);
-  font-size: 0.95rem;
+  font-size: 0.88rem;
   margin-bottom: 32px;
   text-align: center;
+  text-wrap: balance;
 }
 
 /* Tabs */
@@ -148,19 +160,26 @@
   background: transparent;
   border: none;
   color: var(--text-muted);
-  font-family: var(--font-ui);
-  font-weight: 600;
-  font-size: 0.85rem;
+  font-family: var(--font-data);
+  font-weight: 700;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
   padding: 10px 0;
   border-radius: 100px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition:
+    background 200ms ease,
+    color 200ms ease,
+    transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  text-transform: uppercase;
 }
+
+.tabBtn:active { transform: scale(0.97); }
 
 .tabBtnActive {
   background: var(--accent-orange);
-  color: white;
-  box-shadow: 0 4px 12px rgba(255, 87, 34, 0.3);
+  color: #060606;
+  box-shadow: 0 4px 16px rgba(var(--accent-orange-rgb), 0.35);
 }
 
 /* Podium */
@@ -237,20 +256,24 @@
 .second .podiumRing { border-color: #c0c0c0; }
 .third .podiumRing { border-color: #cd7f32; }
 
+/* Crown SVG (sem emoji) */
 .podiumCrown {
   position: absolute;
-  top: -25px;
+  top: -32px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 1.8rem;
-  filter: drop-shadow(0 2px 10px rgba(255, 215, 0, 0.8));
+  display: flex;
+  align-items: center;
+  justify-content: center;
   z-index: 10;
+  color: #ffd700;
+  filter: drop-shadow(0 2px 12px rgba(255, 215, 0, 0.7));
   animation: floatCrown 3s ease-in-out infinite;
 }
 
 @keyframes floatCrown {
   0%, 100% { transform: translateX(-50%) translateY(0); }
-  50% { transform: translateX(-50%) translateY(-5px); }
+  50% { transform: translateX(-50%) translateY(-6px); }
 }
 
 .podiumName {
@@ -269,7 +292,9 @@
   font-size: 1.1rem;
   color: var(--accent-orange);
   font-weight: 800;
-  font-family: var(--font-display);
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
   text-shadow: 0 0 10px rgba(255, 68, 0, 0.5);
   margin-top: 4px;
 }
@@ -285,24 +310,33 @@
 .rankItem {
   display: flex;
   align-items: center;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-md);
+  background: rgba(12, 12, 22, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-top: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 12px;
   padding: 12px 20px;
-  transition: transform 0.2s, background 0.2s;
+  backdrop-filter: blur(12px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  transition:
+    transform 250ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    background 200ms ease,
+    border-color 200ms ease;
+  animation: fadeInUp 400ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .rankItem:hover {
-  background: rgba(255, 255, 255, 0.07);
-  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.1);
+  transform: translateX(4px);
 }
 
 .rankNumber {
-  font-family: var(--font-display);
-  font-size: 1.2rem;
+  font-family: var(--font-data);
+  font-size: 0.95rem;
   font-weight: 700;
   min-width: 40px;
   color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
 }
 
 .rankItemUser {
@@ -317,29 +351,72 @@
 }
 
 .rankItemName {
-  font-family: var(--font-ui);
+  font-family: var(--font-data);
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 0.9rem;
+  letter-spacing: -0.01em;
 }
 
 .rankItemScore {
+  font-family: var(--font-data);
   font-weight: 700;
   color: var(--accent-orange);
-  font-size: 1rem;
+  font-size: 0.88rem;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
 }
 
+/* Skeleton loading (taste-skill) */
 .loadingSpinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid rgba(255,255,255,0.1);
-  border-top-color: var(--accent-orange);
-  border-radius: 50%;
-  animation: spinner 1s linear infinite;
-  margin: 60px auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 40px 0;
 }
 
-@keyframes spinner {
-  to { transform: rotate(360deg); }
+.skeletonPodium {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 12px;
+  height: 180px;
+  margin-bottom: 40px;
+}
+
+.skeletonBar {
+  border-radius: 8px 8px 0 0;
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0.04) 25%,
+    rgba(255,255,255,0.09) 50%,
+    rgba(255,255,255,0.04) 75%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 1.6s infinite linear;
+}
+
+.skeletonRow {
+  height: 56px;
+  border-radius: 12px;
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0.04) 25%,
+    rgba(255,255,255,0.09) 50%,
+    rgba(255,255,255,0.04) 75%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 1.6s infinite linear;
+}
+
+@keyframes shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @media (max-width: 768px) {

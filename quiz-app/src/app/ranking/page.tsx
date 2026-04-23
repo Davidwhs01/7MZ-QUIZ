@@ -193,7 +193,18 @@ export default function RankingPage() {
         </div>
 
         {loading ? (
-          <div className={styles.loadingSpinner} />
+          <div className={styles.loadingSpinner}>
+            {/* Skeleton pódio */}
+            <div className={styles.skeletonPodium}>
+              <div className={styles.skeletonBar} style={{ width: 90, height: 100, animationDelay: '80ms' }} />
+              <div className={styles.skeletonBar} style={{ width: 90, height: 150 }} />
+              <div className={styles.skeletonBar} style={{ width: 90, height: 70, animationDelay: '160ms' }} />
+            </div>
+            {/* Skeleton linhas */}
+            {[0,1,2,3,4].map(i => (
+              <div key={i} className={styles.skeletonRow} style={{ animationDelay: `${i * 80}ms` }} />
+            ))}
+          </div>
         ) : ranking.length === 0 ? (
           <p style={{ color: 'var(--text-muted)' }}>Nenhum jogador pontuou nesta categoria ainda.</p>
         ) : (
@@ -215,7 +226,13 @@ export default function RankingPage() {
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: rankPos * 0.1, type: 'spring' }}
                   >
-                    {rankPos === 1 && <span className={styles.podiumCrown}>👑</span>}
+                    {rankPos === 1 && (
+                    <span className={styles.podiumCrown}>
+                      <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M2 19h20v2H2v-2zm0-6l4-8 6 5 4-9 4 8v6H2v-6z"/>
+                      </svg>
+                    </span>
+                  )}
                     <div className={styles.podiumAvatarWrap}>
                       <Image
                         src={player.avatar_url || '/7mz-logo.jpg'}
@@ -228,7 +245,7 @@ export default function RankingPage() {
                     </div>
                     <div className={styles.podiumStep}>
                       <div className={styles.podiumName}>{player.username}</div>
-                      <div className={styles.podiumScore}>{player.score.toLocaleString()}</div>
+                      <div className={styles.podiumScore}>{player.score.toLocaleString('pt-BR')}</div>
                     </div>
                   </motion.div>
                 );
@@ -258,7 +275,7 @@ export default function RankingPage() {
                         />
                         <span className={styles.rankItemName}>{player.username}</span>
                       </div>
-                      <span className={styles.rankItemScore}>{player.score.toLocaleString()} pts</span>
+                      <span className={styles.rankItemScore}>{player.score.toLocaleString('pt-BR')} pts</span>
                     </motion.div>
                   );
                 })}
