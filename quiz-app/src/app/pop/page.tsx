@@ -8,11 +8,11 @@ import BottomDrawer from '@/components/home/BottomDrawer';
 import LoginProfileCard from '@/components/home/LoginProfileCard';
 import GlobalRankingCard from '@/components/home/GlobalRankingCard';
 import ChannelSelector from '@/components/home/ChannelSelector';
-import { getSongsBySection } from '@/data/songs';
 import { useChannel } from '@/context/ChannelContext';
 import { createClient } from '@/utils/supabase/client';
 import { createRoom, joinRoom } from '@/utils/supabase/battle';
 import { SECTIONS } from '@/data/sections';
+import { getSongsBySectionAsync } from '@/lib/songs-store';
 
 // ── SVG Icons (taste-skill: zero emojis) ──────────────────────────────────────
 const IconUser = () => (
@@ -109,7 +109,10 @@ export default function PopHome() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const section = SECTIONS.pop;
-  const sectionSongs = useMemo(() => getSongsBySection('pop'), []);
+  const [sectionSongCount, setSectionSongCount] = useState(0);
+  useEffect(() => {
+    getSongsBySectionAsync('pop').then(songs => setSectionSongCount(songs.length));
+  }, []);
 
   const handleCreateRoom = useCallback(async () => {
     if (!isLoggedIn) return;
@@ -268,7 +271,7 @@ export default function PopHome() {
             </div>
             <div className={styles.statsBar}>
               <div className={styles.statItem}>
-                <span className={styles.statNumber}>{sectionSongs.length}+</span>
+                <span className={styles.statNumber}>{sectionSongCount > 0 ? `${sectionSongCount}+` : '...'}</span>
                 <span className={styles.statLabel}>Músicas</span>
               </div>
               <div className={styles.statDivider} />
@@ -320,7 +323,7 @@ export default function PopHome() {
             {gameMode === 'single' ? (
               <div key="single-panel" className={`${styles.modesGrid} ${styles.panelEnter}`}>
                 <Link
-                  href={`/play?artist=${activeChannel === 'MITSKI' ? 'mitski' : 'meln'}`}
+                  href={`/play?artist=${activeChannel.toLowerCase()}`}
                   className={styles.modeCard}
                 >
                   <div className={styles.modeCardShine} />
